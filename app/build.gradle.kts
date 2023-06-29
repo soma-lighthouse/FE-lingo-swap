@@ -23,6 +23,10 @@ android {
             )
         }
     }
+    buildFeatures {
+        dataBinding = true
+        buildConfig = true
+    }
 }
 kapt {
     correctErrorTypes = true

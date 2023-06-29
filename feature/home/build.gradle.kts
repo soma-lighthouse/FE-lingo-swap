@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.material)
     implementation(libs.constraintlayout)
+    implementation(libs.kotlin.coroutines)
     implementation(libs.hilt)
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
