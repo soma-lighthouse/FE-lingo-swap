@@ -16,3 +16,5 @@ rootProject.name = "lingo-swap"
 include ':app'
 include ':domain'
 include ':data'
+include ':feature:home'
+include ':shared'
