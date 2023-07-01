@@ -24,7 +24,9 @@ dependencies {
 
     implementation(libs.hilt)
     kapt(libs.hilt.kapt)
+    kapt(libs.room.complier)
     implementation(libs.bundles.basic.test)
+    implementation(libs.bundles.room)
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.okhttp)
     implementation(libs.bundles.gson)

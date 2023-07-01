@@ -15,8 +15,11 @@ android {
     }
 
     buildTypes {
+//        debug {
+//
+//        }
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = true // APK or AAB
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -35,11 +38,15 @@ kapt {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
-    implementation(project(":shared"))
+    implementation(project(":entity"))
     implementation(project(":feature:home"))
 
     implementation(libs.hilt)
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
-    implementation("androidx.appcompat:appcompat:1.1.0")
+    implementation(libs.bundles.retrofit)
+    implementation(libs.bundles.gson)
+    implementation(libs.bundles.room)
+    kapt(libs.room.complier)
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
 }

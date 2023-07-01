@@ -22,7 +22,7 @@ android {
 
 dependencies {
     api(project(":domain"))
-    implementation(project(":shared"))
+    implementation(project(":entity"))
 
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.constraintlayout)
