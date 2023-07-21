@@ -24,7 +24,7 @@ class NetModule {
 //    @Singleton
 //    fun provideIntroRetrofit(): Retrofit {
 //        return Retrofit.Builder()
-//            .baseUrl("http://13.209.143.6/")
+//            .baseUrl()
 //            .addConverterFactory(ScalarsConverterFactory.create())
 //            .build()
 //    }
