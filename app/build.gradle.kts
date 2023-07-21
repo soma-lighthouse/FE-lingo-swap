@@ -49,4 +49,6 @@ dependencies {
     implementation(libs.bundles.room)
     kapt(libs.room.complier)
     implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation("com.squareup.retrofit2:converter-scalars:2.5.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.6")
 }
