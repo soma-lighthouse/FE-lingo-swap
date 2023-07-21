@@ -50,7 +50,7 @@ class NetModule {
     @Singleton
     fun provideDrivenRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .baseUrl("https://demo3624522.mockable.io/")
+            .baseUrl("")
             .client(okHttpClient)
             .addConverterFactory(
                 GsonConverterFactory.create(
