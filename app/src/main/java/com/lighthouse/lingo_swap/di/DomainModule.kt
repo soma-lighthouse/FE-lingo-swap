@@ -1,7 +1,7 @@
 package com.lighthouse.lingo_swap.di
 
-import com.lighthouse.domain.repository.PostRepository
-import com.lighthouse.domain.usecase.GetPostUseCase
+import com.lighthouse.domain.repository.IntroRepository
+import com.lighthouse.domain.usecase.GetIntroUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class DomainModule {
     @Provides
     @Singleton
-    fun provideGetPostUseCase(postRepository: PostRepository): GetPostUseCase {
-        return GetPostUseCase(postRepository)
+    fun provideGetPostUseCase(postRepository: IntroRepository): GetIntroUseCase {
+        return GetIntroUseCase(postRepository)
     }
 }
