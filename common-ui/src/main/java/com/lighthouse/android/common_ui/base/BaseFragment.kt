@@ -1,4 +1,4 @@
-package com.lighthouse.android.common_ui
+package com.lighthouse.android.common_ui.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
