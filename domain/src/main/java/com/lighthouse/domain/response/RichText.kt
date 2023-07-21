@@ -4,7 +4,8 @@ data class RichText(
     val text: String?,
     val style: List<String>?,
     val textColor: String?,
-    val size: Double?,
+    val background: String?,
+    val size: Float?,
     val url: String?,
     val width: Float?,
     val height: Float?

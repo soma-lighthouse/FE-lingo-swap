@@ -1,6 +1,5 @@
 package com.lighthouse.lingo_swap
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -18,13 +17,13 @@ class ViewTypeDeserializer : JsonDeserializer<ViewTypeVO> {
         context: JsonDeserializationContext?
     ): ViewTypeVO {
         val jsonObject = json?.asJsonObject ?: throw IllegalArgumentException("Json Parsing 실패")
-        Log.d("MYTAG", jsonObject.toString())
+        val id = jsonObject["id"].asInt
         val viewTypeString = jsonObject["viewType"].asString
         val viewType: ViewType = findClassByItsName(viewTypeString)
         val content = jsonObject["content"].asJsonObject
         val contentVO: Type = ViewType.findViewTypeClassByItsName(viewTypeString)
         val deserialize: ContentVO = Gson().fromJson(content, contentVO)
 
-        return ViewTypeVO(viewType, deserialize)
+        return ViewTypeVO(id, viewType, deserialize)
     }
 }
