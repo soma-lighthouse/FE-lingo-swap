@@ -18,7 +18,7 @@ import com.lighthouse.domain.response.RichText
 import kotlinx.coroutines.coroutineScope
 import java.net.URL
 
-class RichTextSpannable(richText: RichText) : SpannableString(richText.text ?: " "){
+class RichTextSpannable(richText: RichText) : SpannableString(richText.text ?: " ") {
     class Builder(private val richText: RichText) {
         private val spannableString = SpannableString(richText.text ?: " ")
 
@@ -48,7 +48,7 @@ class RichTextSpannable(richText: RichText) : SpannableString(richText.text ?: "
 
         fun setTextStyle(style: List<String>?): Builder {
             style?.forEach {
-                val type = when(it) {
+                val type = when (it) {
                     "underline" -> UnderlineSpan()
                     "italic" -> StyleSpan(Typeface.ITALIC)
                     "bold" -> StyleSpan(Typeface.BOLD)
@@ -59,11 +59,16 @@ class RichTextSpannable(richText: RichText) : SpannableString(richText.text ?: "
             return this
         }
 
-        suspend fun setImage(url: String?, context: Context, width: Float?, height: Float?): Builder = coroutineScope {
+        suspend fun setImage(
+            url: String?,
+            context: Context,
+            width: Float?,
+            height: Float?
+        ): Builder = coroutineScope {
             val density = Resources.getSystem().displayMetrics.density
             url?.let {
-//                val imageWidth = (width!! * density).toInt()
-//                val imageHeight = (height!! * density).toInt()
+                val imageWidth = (width?.times(density) ?: 0).toInt()
+                val imageHeight = (height?.times(density) ?: 0).toInt()
                 val bitmap =
                     BitmapFactory.decodeStream(URL(url).openConnection().getInputStream())
 
@@ -71,7 +76,7 @@ class RichTextSpannable(richText: RichText) : SpannableString(richText.text ?: "
 
                 val dynamicDrawableSpan = object : DynamicDrawableSpan() {
                     override fun getDrawable(): Drawable {
-                        imageSpan.drawable.setBounds(0, 0, width!!.toInt(), height!!.toInt())
+                        imageSpan.drawable.setBounds(0, 0, imageWidth, imageHeight)
                         return imageSpan.drawable
                     }
                 }
