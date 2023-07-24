@@ -1,4 +1,4 @@
-package com.lighthouse.android.common_ui.server_driven.viewholders
+package com.lighthouse.android.common_ui.server_driven.viewholders.viewholder
 
 import android.view.ViewGroup
 import com.lighthouse.android.common_ui.R

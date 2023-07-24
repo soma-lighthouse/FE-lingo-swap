@@ -8,7 +8,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.SpannableString
 import android.text.style.BackgroundColorSpan
-import android.text.style.CharacterStyle
 import android.text.style.DynamicDrawableSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.ImageSpan
@@ -49,12 +48,11 @@ class RichTextSpannable(richText: RichText) : SpannableString(richText.text ?: "
 
         fun setTextStyle(style: List<String>?): Builder {
             style?.forEach {
-                lateinit var type: CharacterStyle
-                when(it) {
-                    "underline" -> type = UnderlineSpan()
-                    "italic" -> type = StyleSpan(Typeface.ITALIC)
-                    "bold" -> type = StyleSpan(Typeface.BOLD)
-                    else -> type = StyleSpan(Typeface.NORMAL)
+                val type = when(it) {
+                    "underline" -> UnderlineSpan()
+                    "italic" -> StyleSpan(Typeface.ITALIC)
+                    "bold" -> StyleSpan(Typeface.BOLD)
+                    else -> StyleSpan(Typeface.NORMAL)
                 }
                 setSpan(type)
             }
@@ -64,8 +62,8 @@ class RichTextSpannable(richText: RichText) : SpannableString(richText.text ?: "
         suspend fun setImage(url: String?, context: Context, width: Float?, height: Float?): Builder = coroutineScope {
             val density = Resources.getSystem().displayMetrics.density
             url?.let {
-                val imageWidth = (width!! * density).toInt()
-                val imageHeight = (height!! * density).toInt()
+//                val imageWidth = (width!! * density).toInt()
+//                val imageHeight = (height!! * density).toInt()
                 val bitmap =
                     BitmapFactory.decodeStream(URL(url).openConnection().getInputStream())
 
@@ -73,7 +71,7 @@ class RichTextSpannable(richText: RichText) : SpannableString(richText.text ?: "
 
                 val dynamicDrawableSpan = object : DynamicDrawableSpan() {
                     override fun getDrawable(): Drawable {
-                        imageSpan.drawable.setBounds(0, 0, imageWidth, imageHeight)
+                        imageSpan.drawable.setBounds(0, 0, width!!.toInt(), height!!.toInt())
                         return imageSpan.drawable
                     }
                 }

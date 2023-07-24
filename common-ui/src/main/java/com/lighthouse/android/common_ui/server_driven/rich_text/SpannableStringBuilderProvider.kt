@@ -9,7 +9,10 @@ import kotlinx.coroutines.async
 
 class SpannableStringBuilderProvider {
     companion object {
-        suspend fun getSpannableBuilder(richText: List<RichText>, context: Context): SpannableStringBuilder {
+        suspend fun getSpannableBuilder(
+            richText: List<RichText>,
+            context: Context
+        ): SpannableStringBuilder {
             val result = CoroutineScope(Dispatchers.IO).async {
                 val spannableText = SpannableStringBuilder()
                 richText.forEach {
@@ -20,12 +23,11 @@ class SpannableStringBuilderProvider {
                         .setTextStyle(it.style)
                         .setImage(it.url, context, it.width, it.height)
                         .build()
-
-                    spannableText.append("$spannableString ")
+                    spannableText.append(spannableString)
+                    spannableText.append(" ")
                 }
                 spannableText
             }
-
             return result.await()
         }
     }
