@@ -7,7 +7,7 @@ data class RichText(
 )
 
 data class RichTextType(
-    val text: String?,
+    val text: String,
     val style: List<String>?,
     val textColor: String?,
     val background: String?,
@@ -15,7 +15,7 @@ data class RichTextType(
 )
 
 data class RichImageType(
-    val url: String?,
+    val url: String,
     val width: Float?,
     val height: Float?
 )
