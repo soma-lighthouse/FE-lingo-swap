@@ -27,6 +27,6 @@ object ContentInterceptor : Interceptor {
     }
 
     private fun getContentsList(json: JsonObject): JsonArray {
-        return json.getAsJsonArray("contents")
+        return json.getAsJsonObject("data").getAsJsonArray("content")
     }
 }

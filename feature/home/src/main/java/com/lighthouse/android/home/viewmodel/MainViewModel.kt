@@ -1,6 +1,5 @@
 package com.lighthouse.android.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lighthouse.android.home.util.UiState
@@ -28,7 +27,6 @@ class MainViewModel @Inject constructor(
             emit(UiState.Loading)
         }
         .onCompletion {
-            Log.d("TEST", it.toString())
         }.shareIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),

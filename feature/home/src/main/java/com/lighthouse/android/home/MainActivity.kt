@@ -1,7 +1,6 @@
 package com.lighthouse.android.home
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -10,7 +9,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.lighthouse.android.common_ui.server_driven.adapter.DrivenAdapter
 import com.lighthouse.android.home.databinding.ActivityMainBinding
-import com.lighthouse.android.home.util.*
+import com.lighthouse.android.home.util.UiState
+import com.lighthouse.android.home.util.setGone
+import com.lighthouse.android.home.util.setVisible
+import com.lighthouse.android.home.util.toast
 import com.lighthouse.android.home.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -46,7 +48,6 @@ class MainActivity @Inject constructor() : AppCompatActivity() {
             is UiState.Success -> {
                 binding.rvDriven.setVisible()
                 adapter.submitList(uiState.drivenData)
-                Log.d("MYTAG", uiState.drivenData.toString())
                 binding.pbLoading.setGone()
             }
 

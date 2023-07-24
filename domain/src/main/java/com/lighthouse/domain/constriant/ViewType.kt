@@ -27,14 +27,3 @@ enum class ViewType(
         }
     }
 }
-
-enum class ColorTest(
-    private val color: String
-) {
-    RED("red"),
-    YELLOW("yello");
-}
-
-fun test() {
-    ColorTest.RED
-}
