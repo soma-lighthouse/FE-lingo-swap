@@ -5,6 +5,7 @@ import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.IntroAPIService
 import com.lighthouse.android.data.api.interceptor.ContentInterceptor
 import com.lighthouse.domain.response.ViewTypeVO
+import com.lighthouse.lingo_swap.BuildConfig
 import com.lighthouse.lingo_swap.ViewTypeDeserializer
 import dagger.Module
 import dagger.Provides
@@ -24,7 +25,7 @@ class NetModule {
 //    @Singleton
 //    fun provideIntroRetrofit(): Retrofit {
 //        return Retrofit.Builder()
-//            .baseUrl()
+//            .baseUrl(BuildConfig.LIGHTHOUSE_BASE_URL)
 //            .addConverterFactory(ScalarsConverterFactory.create())
 //            .build()
 //    }
@@ -50,7 +51,7 @@ class NetModule {
     @Singleton
     fun provideDrivenRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .baseUrl("")
+            .baseUrl(BuildConfig.TEST_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(
                 GsonConverterFactory.create(

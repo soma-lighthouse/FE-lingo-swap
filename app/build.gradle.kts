@@ -1,3 +1,9 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+
+val lighthouseFile = rootProject.file("lighthouse.properties")
+val properties = Properties()
+properties.load(lighthouseFile.inputStream())
+
 plugins {
     kotlin("android")
     id("com.android.application")
@@ -12,6 +18,18 @@ android {
         applicationId = "com.lighthouse.lingo_swap"
         versionCode = libs.versions.versionCode.get().toInt()
         versionName = libs.versions.appVersion.get()
+
+        buildConfigField(
+            "String",
+            "LIGHTHOUSE_BASE_URL",
+            properties.getProperty("LIGHTHOUSE_BASE_URL")
+        )
+
+        buildConfigField(
+            "String",
+            "TEST_BASE_URL",
+            properties.getProperty("TEST_BASE_URL")
+        )
     }
 
     buildTypes {
@@ -26,6 +44,8 @@ android {
             )
         }
     }
+
+
     buildFeatures {
         dataBinding = true
         buildConfig = true
