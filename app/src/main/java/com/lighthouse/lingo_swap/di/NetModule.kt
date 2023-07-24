@@ -24,7 +24,7 @@ class NetModule {
 //    @Singleton
 //    fun provideIntroRetrofit(): Retrofit {
 //        return Retrofit.Builder()
-//            .baseUrl("http://13.209.143.6/")
+//            .baseUrl()
 //            .addConverterFactory(ScalarsConverterFactory.create())
 //            .build()
 //    }
@@ -50,7 +50,7 @@ class NetModule {
     @Singleton
     fun provideDrivenRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .baseUrl("https://demo3624522.mockable.io/")
+            .baseUrl("")
             .client(okHttpClient)
             .addConverterFactory(
                 GsonConverterFactory.create(
