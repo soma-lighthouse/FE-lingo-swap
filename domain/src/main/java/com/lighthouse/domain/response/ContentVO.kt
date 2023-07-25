@@ -1,16 +1,15 @@
 package com.lighthouse.domain.response
 
 sealed class ContentVO {
-    data class TitleContent(
-        val title: List<RichText>,
-        val detail: List<RichText>
+    data class HomeTitleContent(
+        val tvHomeTitle: List<RichText>
     ) : ContentVO()
 
-    data class ChatRoomContent(
-        val userName: List<RichText>,
-        val userAge: Int,
-        val nation: String,
-        val lastMessage: List<RichText>,
+    data class UserInfoTile(
+        val tvProfileName: List<RichText>,
+        val tvProfileIntro: List<RichText>,
+        val tvProfileImg: RichText,
+        val tvProfileNation: List<String>,
     ) : ContentVO()
 
     object UnknownContent : ContentVO()
