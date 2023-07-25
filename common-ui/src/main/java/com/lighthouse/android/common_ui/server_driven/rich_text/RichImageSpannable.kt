@@ -11,9 +11,9 @@ import com.lighthouse.domain.response.RichImageType
 import kotlinx.coroutines.coroutineScope
 import java.net.URL
 
-class RichImageSpannable(richImage: RichImageType) : SpannableString(richImage.url ?: " ") {
+class RichImageSpannable(richImage: RichImageType) : SpannableString(richImage.url) {
     class Builder(private val richImage: RichImageType) {
-        private val spannableString = SpannableString(richImage.url ?: " ")
+        private val spannableString = SpannableString(richImage.url)
 
         suspend fun setImage(
             url: String?,
@@ -39,7 +39,7 @@ class RichImageSpannable(richImage: RichImageType) : SpannableString(richImage.u
                 spannableString.setSpan(
                     dynamicDrawableSpan,
                     0,
-                    richImage.url?.length ?: 0,
+                    richImage.url.length,
                     SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             }

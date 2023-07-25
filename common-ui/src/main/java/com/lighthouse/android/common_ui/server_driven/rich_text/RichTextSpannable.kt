@@ -10,9 +10,9 @@ import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import com.lighthouse.domain.response.RichTextType
 
-class RichTextSpannable(richText: RichTextType) : SpannableString(richText.text ?: " ") {
+class RichTextSpannable(richText: RichTextType) : SpannableString(richText.text) {
     class Builder(private val richText: RichTextType) {
-        private val spannableString = SpannableString(richText.text ?: " ")
+        private val spannableString = SpannableString(richText.text)
 
         fun setTextColor(color: String?): Builder {
             color?.let {
@@ -55,7 +55,7 @@ class RichTextSpannable(richText: RichTextType) : SpannableString(richText.text 
             spannableString.setSpan(
                 span,
                 0,
-                richText.text?.length ?: 0,
+                richText.text.length,
                 SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }

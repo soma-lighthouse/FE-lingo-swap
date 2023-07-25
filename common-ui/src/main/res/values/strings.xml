@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">lingo swap</string>
     <string name="unknown_view_type">Unknown View Type!</string>
+    <string name="btn_nav_home">홈</string>
+    <string name="btn_nav_chat">채팅</string>
+    <string name="btn_nav_board">질문게시판</string>
+    <string name="btn_nav_profile">내 정보</string>
+    <string name="unknown">Error: No right viewType found</string>
 </resources>
