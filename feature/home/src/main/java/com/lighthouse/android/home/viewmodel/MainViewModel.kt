@@ -18,7 +18,8 @@ class MainViewModel @Inject constructor(
     private val drivenRepository: DrivenRepository
 ) : ViewModel() {
 
-    val dataDriven: Flow<UiState> = drivenRepository
+
+    val homeData: Flow<UiState> = drivenRepository
         .getDriven()
         .map {
             UiState.Success(it) as UiState
