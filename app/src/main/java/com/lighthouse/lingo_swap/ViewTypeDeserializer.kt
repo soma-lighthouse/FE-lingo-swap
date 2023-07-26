@@ -20,7 +20,7 @@ class ViewTypeDeserializer : JsonDeserializer<ViewTypeVO> {
         val id = jsonObject["id"].asInt
         val viewTypeString = jsonObject["viewType"].asString
         val viewType: ViewType = findClassByItsName(viewTypeString)
-        val content = jsonObject["content"].asJsonObject
+        val content = jsonObject["viewTypeContents"].asJsonObject
         val contentVO: Type = ViewType.findViewTypeClassByItsName(viewTypeString)
         val deserialize: ContentVO = Gson().fromJson(content, contentVO)
         return ViewTypeVO(id, viewType, deserialize)
