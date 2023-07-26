@@ -1,6 +1,7 @@
 package com.lighthouse.android.home.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +54,7 @@ class HomeFragment @Inject constructor() : Fragment() {
             }
 
             is UiState.Success -> {
+                Log.d("RESPONSE", uiState.drivenData.toString())
                 binding.rvHome.setVisible()
                 adapter.submitList(uiState.drivenData)
                 binding.pbHomeLoading.setGone()
