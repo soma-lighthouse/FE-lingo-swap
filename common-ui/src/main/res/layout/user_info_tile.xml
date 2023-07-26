@@ -16,45 +16,54 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/tv_profile_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="26dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="img" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_profile_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintStart_toEndOf="@+id/tv_profile_img"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="name" />
 
+            <ImageView
+                android:id="@+id/iv_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="-25dp"
+                app:layout_constraintStart_toStartOf="@+id/tv_profile_img"
+                app:layout_constraintTop_toBottomOf="@+id/tv_profile_img"
+                tools:size="10dp" />
+
             <TextView
                 android:id="@+id/tv_profile_intro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="-10dp"
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
                 app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
                 tools:text="introduction" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_language"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginTop="8dp"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_intro"
                 app:layout_constraintTop_toBottomOf="@+id/tv_profile_intro"
                 app:layout_constraintVertical_bias="1.0" />

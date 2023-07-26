@@ -1,11 +1,12 @@
 package com.lighthouse.android.common_ui.server_driven.rich_text
 
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.SpannableString
+import android.text.style.AbsoluteSizeSpan
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import com.lighthouse.domain.response.RichTextType
@@ -32,7 +33,7 @@ class RichTextSpannable(richText: RichTextType) : SpannableString(richText.text)
 
         fun setTextSize(size: Float?): Builder {
             size?.let {
-                val span = RelativeSizeSpan(it)
+                val span = AbsoluteSizeSpan(convertSpToPx(it).toInt())
                 setSpan(span)
             }
             return this
@@ -58,6 +59,11 @@ class RichTextSpannable(richText: RichTextType) : SpannableString(richText.text)
                 richText.text.length,
                 SPAN_EXCLUSIVE_EXCLUSIVE
             )
+        }
+
+        private fun convertSpToPx(sp: Float): Float {
+            val metrics = Resources.getSystem().displayMetrics
+            return sp * metrics.scaledDensity
         }
 
         fun build() = spannableString

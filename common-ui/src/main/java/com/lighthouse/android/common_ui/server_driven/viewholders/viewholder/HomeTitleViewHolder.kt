@@ -27,6 +27,7 @@ class HomeTitleViewHolder(
                 data.tvHomeTitle,
                 binding.root.context
             )
+
         }
     }
 

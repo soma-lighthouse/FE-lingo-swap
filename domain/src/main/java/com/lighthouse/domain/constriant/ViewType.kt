@@ -7,7 +7,7 @@ enum class ViewType(
     private val viewTypeClass: Type
 ) {
     HomeTitleViewType(ContentVO.HomeTitleContent::class.java),
-    ChatRoomInfoViewType(ContentVO.UserInfoTile::class.java),
+    UserInfoViewType(ContentVO.UserInfoTile::class.java),
     UnknownViewType(ContentVO.UnknownContent::class.java);
 
 
