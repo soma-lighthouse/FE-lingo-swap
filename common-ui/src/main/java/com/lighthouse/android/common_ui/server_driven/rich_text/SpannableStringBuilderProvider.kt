@@ -16,22 +16,12 @@ class SpannableStringBuilderProvider {
             val result = CoroutineScope(Dispatchers.IO).async {
                 val spannableText = SpannableStringBuilder()
                 richText.forEach { richText ->
-                    richText.textRichType?.let {
-                        val spannableString = RichTextSpannable.Builder(it)
-                            .setTextColor(it.textColor)
-                            .setBackgroundColor(it.background)
-                            .setTextSize(it.size)
-                            .setTextStyle(it.style)
-                            .build()
-                        spannableText.append(spannableString)
-                    }
-
-                    richText.imageRichType?.let {
-                        val spannableString = RichImageSpannable.Builder(it)
-                            .setImage(it.url, context, it.width, it.height)
-                            .build()
-
-                        spannableText.append(spannableString)
+                    val text = richText.textRichType
+                    val image = richText.imageRichType
+                    if (text != null) {
+                        spannableText.append(RichTextSpannable(text).applyRichTextStyle())
+                    } else if (image != null) {
+                        spannableText.append(RichImageSpannable(image).setImage(context))
                     }
                 }
                 spannableText
