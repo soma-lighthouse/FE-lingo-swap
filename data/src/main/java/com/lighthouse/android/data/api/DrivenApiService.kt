@@ -5,6 +5,6 @@ import retrofit2.Response
 import retrofit2.http.GET
 
 fun interface DrivenApiService {
-    @GET("/test")
+    @GET("/home")
     suspend fun getDriven(): Response<List<ViewTypeVO>>
 }

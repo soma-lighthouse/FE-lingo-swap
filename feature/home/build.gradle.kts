@@ -16,6 +16,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+        defaultConfig {
+            version = 1
+            version
+        }
     }
 
 

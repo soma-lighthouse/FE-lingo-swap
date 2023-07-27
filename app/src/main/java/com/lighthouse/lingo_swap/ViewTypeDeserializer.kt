@@ -18,9 +18,9 @@ class ViewTypeDeserializer : JsonDeserializer<ViewTypeVO> {
     ): ViewTypeVO {
         val jsonObject = json?.asJsonObject ?: throw IllegalArgumentException("Json Parsing 실패")
         val id = jsonObject["id"].asInt
-        val viewTypeString = jsonObject["viewType"].asString
+        val viewTypeString = jsonObject["name"].asString
         val viewType: ViewType = findClassByItsName(viewTypeString)
-        val content = jsonObject["viewTypeContents"].asJsonObject
+        val content = jsonObject["contents"].asJsonObject
         val contentVO: Type = ViewType.findViewTypeClassByItsName(viewTypeString)
         val deserialize: ContentVO = Gson().fromJson(content, contentVO)
         return ViewTypeVO(id, viewType, deserialize)

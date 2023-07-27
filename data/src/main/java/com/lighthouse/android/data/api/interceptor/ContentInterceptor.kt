@@ -1,5 +1,6 @@
 package com.lighthouse.android.data.api.interceptor
 
+import android.util.Log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -16,6 +17,7 @@ object ContentInterceptor : Interceptor {
             val responseJson = convertStringToJsonObject(responseData)
             val contentsArray = getContentsList(responseJson)
             val contentsString = contentsArray.toString()
+            Log.d("TESTING1", contentsString)
             response.newBuilder().body(contentsString.toResponseBody()).build()
         } catch (e: Exception) {
             response
@@ -27,6 +29,6 @@ object ContentInterceptor : Interceptor {
     }
 
     private fun getContentsList(json: JsonObject): JsonArray {
-        return json.getAsJsonObject("data").getAsJsonArray("screenContents")
+        return json.getAsJsonObject("data").getAsJsonArray("contents")
     }
 }

@@ -12,7 +12,7 @@ sealed class ContentVO {
         val ivProfileNation: ImageType,
         val rvLanguage: List<List<RichText>>,
     ) : ContentVO()
-
+    
     object UnknownContent : ContentVO()
 }
 

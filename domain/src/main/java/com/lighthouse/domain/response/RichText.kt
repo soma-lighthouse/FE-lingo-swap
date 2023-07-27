@@ -6,6 +6,7 @@ data class RichText(
     val imageRichType: RichImageType?
 )
 
+
 data class RichTextType(
     val text: String,
     val style: List<String>?,

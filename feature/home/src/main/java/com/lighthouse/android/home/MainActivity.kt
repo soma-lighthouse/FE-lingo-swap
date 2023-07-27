@@ -1,6 +1,7 @@
 package com.lighthouse.android.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -9,16 +10,21 @@ import com.lighthouse.android.home.adapter.HomePageAdapter
 import com.lighthouse.android.home.databinding.ActivityMainBinding
 import com.lighthouse.android.home.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.UUID
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainActivity @Inject constructor() : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.viewModel = viewModel
+        val uuid = UUID.randomUUID().toString()
+        Log.d("UUID", uuid)
         initBtnNav()
     }
 
