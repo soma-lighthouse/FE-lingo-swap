@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -23,6 +24,9 @@ android {
 dependencies {
     api(project(":domain"))
     implementation(project(":entity"))
+
+    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
 
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.constraintlayout)

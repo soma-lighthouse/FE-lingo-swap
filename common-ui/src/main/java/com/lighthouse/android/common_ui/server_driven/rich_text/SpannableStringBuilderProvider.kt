@@ -17,21 +17,10 @@ class SpannableStringBuilderProvider {
                 val spannableText = SpannableStringBuilder()
                 richText.forEach { richText ->
                     richText.textRichType?.let {
-                        val spannableString = RichTextSpannable.Builder(it)
-                            .setTextColor(it.textColor)
-                            .setBackgroundColor(it.background)
-                            .setTextSize(it.size)
-                            .setTextStyle(it.style)
-                            .build()
-                        spannableText.append(spannableString)
+                        spannableText.append(RichTextSpannable(it).applyRichTextStyle())
                     }
-
                     richText.imageRichType?.let {
-                        val spannableString = RichImageSpannable.Builder(it)
-                            .setImage(it.url, context, it.width, it.height)
-                            .build()
-
-                        spannableText.append(spannableString)
+                        spannableText.append(RichImageSpannable(it).setImage(context))
                     }
                 }
                 spannableText

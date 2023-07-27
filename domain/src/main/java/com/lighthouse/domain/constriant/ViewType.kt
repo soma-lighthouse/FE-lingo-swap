@@ -6,8 +6,8 @@ import java.lang.reflect.Type
 enum class ViewType(
     private val viewTypeClass: Type
 ) {
-    TitleViewType(ContentVO.TitleContent::class.java),
-    ChatRoomInfoViewType(ContentVO.ChatRoomContent::class.java),
+    HomeTitleViewType(ContentVO.HomeTitleContent::class.java),
+    UserInfoViewType(ContentVO.UserInfoTile::class.java),
     UnknownViewType(ContentVO.UnknownContent::class.java);
 
 

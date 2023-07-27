@@ -9,8 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,18 +17,16 @@ class MainViewModel @Inject constructor(
     private val drivenRepository: DrivenRepository
 ) : ViewModel() {
 
-    val dataDriven: Flow<UiState> = drivenRepository
+
+    val homeData: Flow<UiState> = drivenRepository
         .getDriven()
         .map {
             UiState.Success(it) as UiState
         }
-        .onStart {
-            emit(UiState.Loading)
-        }
         .onCompletion {
-        }.shareIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            1
+        }.stateIn(
+            scope = viewModelScope,
+            initialValue = UiState.Loading,
+            started = SharingStarted.WhileSubscribed(5000)
         )
 }
