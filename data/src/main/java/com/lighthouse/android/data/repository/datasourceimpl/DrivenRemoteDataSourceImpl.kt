@@ -11,7 +11,7 @@ class DrivenRemoteDataSourceImpl @Inject constructor(
     private val drivenServer: DrivenApiService,
 ) : DrivenRemoteDataSource, NetworkResponse() {
     override fun getDriven(): Flow<List<ViewTypeVO>> = flow {
-        drivenServer.getDriven()
+        emit(drivenServer.getDriven().body()!!)
     }
 
 }
