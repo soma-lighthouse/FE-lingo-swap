@@ -9,7 +9,7 @@ import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
-import com.lighthouse.domain.response.RichTextType
+import com.lighthouse.domain.response.server_driven.RichTextType
 
 
 class RichTextSpannable(private val richText: RichTextType) : SpannableString(richText.text) {

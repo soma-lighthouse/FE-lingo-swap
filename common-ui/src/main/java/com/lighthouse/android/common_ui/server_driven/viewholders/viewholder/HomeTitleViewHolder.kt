@@ -7,7 +7,7 @@ import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringB
 import com.lighthouse.android.common_ui.server_driven.viewholders.default_holder.DefaultViewHolder
 import com.lighthouse.android.common_ui.server_driven.viewholders.util.InflateViewType
 import com.lighthouse.domain.constriant.ViewType
-import com.lighthouse.domain.response.ContentVO
+import com.lighthouse.domain.response.server_driven.ContentVO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ class HomeTitleViewHolder(
     private val binding: HomeInfoTileBinding = InflateViewType.inflateView(
         parent,
         R.layout.home_info_tile
-    )
+    ),
 ) : DefaultViewHolder(binding) {
     override fun onBind(data: ContentVO) {
         data as ContentVO.HomeTitleContent

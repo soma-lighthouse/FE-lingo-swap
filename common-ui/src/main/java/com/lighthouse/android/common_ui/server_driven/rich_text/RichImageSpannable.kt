@@ -7,7 +7,7 @@ import android.graphics.drawable.Drawable
 import android.text.SpannableString
 import android.text.style.DynamicDrawableSpan
 import android.text.style.ImageSpan
-import com.lighthouse.domain.response.RichImageType
+import com.lighthouse.domain.response.server_driven.RichImageType
 import kotlinx.coroutines.coroutineScope
 import java.net.URL
 

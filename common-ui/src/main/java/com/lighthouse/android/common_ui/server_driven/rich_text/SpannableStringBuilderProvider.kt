@@ -2,7 +2,7 @@ package com.lighthouse.android.common_ui.server_driven.rich_text
 
 import android.content.Context
 import android.text.SpannableStringBuilder
-import com.lighthouse.domain.response.RichText
+import com.lighthouse.domain.response.server_driven.RichText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -11,7 +11,7 @@ class SpannableStringBuilderProvider {
     companion object {
         suspend fun getSpannableBuilder(
             richText: List<RichText>,
-            context: Context
+            context: Context,
         ): SpannableStringBuilder {
             val result = CoroutineScope(Dispatchers.IO).async {
                 val spannableText = SpannableStringBuilder()

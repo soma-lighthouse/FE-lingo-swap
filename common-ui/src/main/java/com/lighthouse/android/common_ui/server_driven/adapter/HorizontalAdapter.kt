@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
 import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
 import com.lighthouse.android.common_ui.server_driven.viewholders.util.ItemDiffCallback
-import com.lighthouse.domain.response.RichText
+import com.lighthouse.domain.response.server_driven.RichText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
