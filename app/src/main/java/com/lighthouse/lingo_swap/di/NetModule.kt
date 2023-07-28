@@ -1,12 +1,7 @@
 package com.lighthouse.lingo_swap.di
 
-import com.google.gson.GsonBuilder
-import com.lighthouse.android.data.api.DrivenApiService
-import com.lighthouse.android.data.api.IntroAPIService
-import com.lighthouse.android.data.api.interceptor.ContentInterceptor
-import com.lighthouse.domain.response.ViewTypeVO
 import com.lighthouse.lingo_swap.BuildConfig
-import com.lighthouse.lingo_swap.ViewTypeDeserializer
+import com.lighthouse.lingo_swap.HeaderInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,53 +16,62 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class NetModule {
-//    @Provides
-//    @Singleton
-//    fun provideIntroRetrofit(): Retrofit {
-//        return Retrofit.Builder()
-//            .baseUrl(BuildConfig.LIGHTHOUSE_BASE_URL)
-//            .addConverterFactory(ScalarsConverterFactory.create())
-//            .build()
-//    }
-
     @Provides
     @Singleton
-    fun provideIntroAPIService(retrofit: Retrofit): IntroAPIService {
-        return retrofit.create(IntroAPIService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideDrivenHttpClient(): OkHttpClient =
+    fun provideLightHouseHttpClient(headerInterceptor: HeaderInterceptor): OkHttpClient =
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
-            .addInterceptor(ContentInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
+            .addInterceptor(headerInterceptor)
             .build()
 
     @Provides
     @Singleton
-    fun provideDrivenRetrofit(okHttpClient: OkHttpClient): Retrofit =
-        Retrofit.Builder()
-            .baseUrl(BuildConfig.TEST_BASE_URL)
+    fun provideLightHouseRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.LIGHTHOUSE_BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(
-                GsonConverterFactory.create(
-                    GsonBuilder()
-                        .registerTypeAdapter(ViewTypeVO::class.java, ViewTypeDeserializer())
-                        .create()
-                )
-            )
-
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
 
-    @Provides
-    @Singleton
-    fun provideDrivenAPIService(retrofit: Retrofit): DrivenApiService =
-        retrofit.create(DrivenApiService::class.java)
+
+//    @Provides
+//    @Singleton
+//    fun provideDrivenHttpClient(): OkHttpClient =
+//        OkHttpClient.Builder()
+//            .connectTimeout(15, TimeUnit.SECONDS)
+//            .readTimeout(15, TimeUnit.SECONDS)
+//            .writeTimeout(20, TimeUnit.SECONDS)
+//            .addInterceptor(ContentInterceptor)
+//            .addInterceptor(HttpLoggingInterceptor().apply {
+//                level = HttpLoggingInterceptor.Level.BODY
+//            })
+//            .build()
+//
+//    @Provides
+//    @Singleton
+//    fun provideDrivenRetrofit(okHttpClient: OkHttpClient): Retrofit =
+//        Retrofit.Builder()
+//            .baseUrl(BuildConfig.TEST_BASE_URL)
+//            .client(okHttpClient)
+//            .addConverterFactory(
+//                GsonConverterFactory.create(
+//                    GsonBuilder()
+//                        .registerTypeAdapter(ViewTypeVO::class.java, ViewTypeDeserializer())
+//                        .create()
+//                )
+//            )
+//
+//            .addConverterFactory(GsonConverterFactory.create())
+//            .build()
+
+//    @Provides
+//    @Singleton
+//    fun provideDrivenAPIService(retrofit: Retrofit): DrivenApiService =
+//        retrofit.create(DrivenApiService::class.java)
 }

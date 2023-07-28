@@ -71,4 +71,5 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.5.0")
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.6")
+    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
 }
