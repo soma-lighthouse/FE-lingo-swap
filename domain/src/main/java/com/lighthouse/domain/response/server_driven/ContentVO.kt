@@ -1,8 +1,8 @@
-package com.lighthouse.domain.response
+package com.lighthouse.domain.response.server_driven
 
 sealed class ContentVO {
     data class HomeTitleContent(
-        val tvHomeTitle: List<RichText>
+        val tvHomeTitle: List<RichText>,
     ) : ContentVO()
 
     data class UserInfoTile(
@@ -12,12 +12,12 @@ sealed class ContentVO {
         val ivProfileNation: ImageType,
         val rvLanguage: List<List<RichText>>,
     ) : ContentVO()
-    
+
     object UnknownContent : ContentVO()
 }
 
 data class ImageType(
     val image: String,
     val width: Float,
-    val height: Float
+    val height: Float,
 )

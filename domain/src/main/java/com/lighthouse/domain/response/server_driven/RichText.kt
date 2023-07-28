@@ -1,9 +1,9 @@
-package com.lighthouse.domain.response
+package com.lighthouse.domain.response.server_driven
 
 
 data class RichText(
     val textRichType: RichTextType?,
-    val imageRichType: RichImageType?
+    val imageRichType: RichImageType?,
 )
 
 
@@ -18,5 +18,5 @@ data class RichTextType(
 data class RichImageType(
     val url: String,
     val width: Float?,
-    val height: Float?
+    val height: Float?,
 )
