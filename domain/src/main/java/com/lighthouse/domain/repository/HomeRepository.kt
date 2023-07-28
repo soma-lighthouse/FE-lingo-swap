@@ -1,9 +1,9 @@
 package com.lighthouse.domain.repository
 
-import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.response.dto.UserProfileVO
+import androidx.paging.PagingData
+import com.lighthouse.domain.response.dto.ProfileVO
 import kotlinx.coroutines.flow.Flow
 
 interface HomeRepository {
-    fun getMatchedUser(): Flow<Resource<UserProfileVO>>
+    fun getMatchedUser(): Flow<PagingData<ProfileVO>>
 }

@@ -39,6 +39,9 @@ android {
 
 dependencies {
     implementation(project(":common-ui"))
+    val paging_version = "3.1.1"
+
+    implementation("androidx.paging:paging-runtime:$paging_version")
 
     implementation("androidx.activity:activity-ktx:1.7.2")
     implementation("androidx.fragment:fragment-ktx:1.6.0")

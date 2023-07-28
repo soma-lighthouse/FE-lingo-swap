@@ -1,13 +1,15 @@
 package com.lighthouse.android.home.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.lighthouse.android.common_ui.server_driven.adapter.DrivenAdapter
 import com.lighthouse.android.home.R
 import com.lighthouse.android.home.databinding.FragmentHomeBinding
@@ -17,6 +19,7 @@ import com.lighthouse.android.home.util.setVisible
 import com.lighthouse.android.home.util.toast
 import com.lighthouse.android.home.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -31,6 +34,13 @@ class HomeFragment @Inject constructor() : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         initAdapter()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect {
+                    render(it)
+                }
+            }
+        }
         return binding.root
     }
 
@@ -42,14 +52,17 @@ class HomeFragment @Inject constructor() : Fragment() {
             }
 
             is UiState.Success -> {
-                Log.d("RESPONSE", uiState.drivenData.toString())
                 binding.rvHome.setVisible()
-                adapter.submitList(uiState.drivenData)
+                viewModel.pagingDataFlow
                 binding.pbHomeLoading.setGone()
             }
 
             is UiState.Error -> {
                 context.toast(uiState.message)
+                binding.pbHomeLoading.setGone()
+            }
+
+            else -> {
                 binding.pbHomeLoading.setGone()
             }
         }
