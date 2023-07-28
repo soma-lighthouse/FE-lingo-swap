@@ -1,8 +1,9 @@
 package com.lighthouse.lingo_swap.di
 
-import com.lighthouse.android.data.api.HomeApiService
-import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
-import com.lighthouse.android.data.repository.datasourceimpl.HomeRemoteDataSourceImpl
+import com.lighthouse.android.data.api.DrivenApiService
+import com.lighthouse.android.data.repository.datasource.DrivenRemoteDataSource
+import com.lighthouse.android.data.repository.datasourceimpl.DrivenRemoteDataSourceImpl
+import com.lighthouse.lingo_swap.di.Annotation.Test
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,13 +15,7 @@ import javax.inject.Singleton
 class DataSourceModule {
     @Provides
     @Singleton
-    fun provideHomeRemoteDataSource(homeApiService: HomeApiService): HomeRemoteDataSource {
-        return HomeRemoteDataSourceImpl(homeApiService)
+    fun provideDrivenDataSource(@Test drivenApiService: DrivenApiService): DrivenRemoteDataSource {
+        return DrivenRemoteDataSourceImpl(drivenApiService)
     }
-
-//    @Provides
-//    @Singleton
-//    fun provideDrivenDataSource(drivenApiService: DrivenApiService): DrivenRemoteDataSource {
-//        return DrivenRemoteDataSourceImpl(drivenApiService)
-//    }
 }
