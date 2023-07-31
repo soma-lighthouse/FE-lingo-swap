@@ -17,7 +17,7 @@
         android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="@+id/tv_home_title"
         app:layout_constraintStart_toEndOf="@+id/tv_home_title"
-        tools:context=".view.HomeFragment">
+        tools:context=".HomeFragment">
 
 
         <ProgressBar

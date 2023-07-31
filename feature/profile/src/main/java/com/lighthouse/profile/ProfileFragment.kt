@@ -1,4 +1,4 @@
-package com.lighthouse.android.home.view
+package com.lighthouse.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,65 +11,61 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.lighthouse.android.common_ui.server_driven.adapter.DrivenAdapter
-import com.lighthouse.android.home.R
-import com.lighthouse.android.home.databinding.FragmentHomeBinding
-import com.lighthouse.android.home.util.UiState
-import com.lighthouse.android.home.util.setGone
-import com.lighthouse.android.home.util.setVisible
-import com.lighthouse.android.home.util.toast
-import com.lighthouse.android.home.viewmodel.MainViewModel
+import com.lighthouse.profile.databinding.FragmentProfileBinding
+import com.lighthouse.profile.util.UiState
+import com.lighthouse.profile.util.setGone
+import com.lighthouse.profile.util.setVisible
+import com.lighthouse.profile.util.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment @Inject constructor() : Fragment() {
-    private val viewModel: MainViewModel by viewModels()
-    private lateinit var binding: FragmentHomeBinding
+class ProfileFragment : Fragment() {
+    private lateinit var binding: FragmentProfileBinding
+    private val viewModel: ProfileViewModel by viewModels()
     private lateinit var adapter: DrivenAdapter
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
+
         initAdapter()
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect {
+                viewModel.drivenData.collect {
                     render(it)
                 }
             }
         }
+
+        // Inflate the layout for this fragment
         return binding.root
     }
 
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
-                binding.pbHomeLoading.setVisible()
-                binding.rvHome.setGone()
+                binding.pbProfileLoading.setVisible()
+                binding.rvProfile.setGone()
             }
 
             is UiState.Success -> {
-                binding.rvHome.setVisible()
-                viewModel.pagingDataFlow
-                binding.pbHomeLoading.setGone()
+                binding.rvProfile.setVisible()
+                adapter.submitList(uiState.drivenData)
+                binding.pbProfileLoading.setGone()
             }
 
             is UiState.Error -> {
                 context.toast(uiState.message)
-                binding.pbHomeLoading.setGone()
-            }
-
-            else -> {
-                binding.pbHomeLoading.setGone()
+                binding.pbProfileLoading.setGone()
             }
         }
     }
 
     private fun initAdapter() {
         adapter = DrivenAdapter()
-        binding.rvHome.adapter = adapter
+        binding.rvProfile.adapter = adapter
+
     }
 }

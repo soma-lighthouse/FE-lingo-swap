@@ -7,4 +7,8 @@
     <string name="btn_nav_board">질문게시판</string>
     <string name="btn_nav_profile">내 정보</string>
     <string name="unknown">Error: No right viewType found</string>
+    <string name="next_fragment">next fragment</string>
+    <string name="to_chat_fragment_via_deeplink">To chat fragment via deepLink</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
