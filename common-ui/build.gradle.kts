@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -23,7 +24,7 @@ android {
 
 dependencies {
     api(project(":domain"))
-    implementation(project(":entity"))
+    implementation(project(":navigation"))
 
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
@@ -32,4 +33,5 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.material)
     implementation(libs.bundles.basic.test)
+    implementation(libs.bundles.navigation)
 }

@@ -3,6 +3,7 @@ plugins {
     id("com.android.library")
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -10,15 +11,11 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-        defaultConfig {
-            version = 1
-            version
         }
     }
 
@@ -39,6 +36,7 @@ android {
 
 dependencies {
     implementation(project(":common-ui"))
+    implementation(project(":navigation"))
     val paging_version = "3.1.1"
 
     implementation("androidx.paging:paging-runtime:$paging_version")
@@ -52,4 +50,5 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
+    implementation(libs.bundles.navigation)
 }
