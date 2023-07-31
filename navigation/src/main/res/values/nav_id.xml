@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="base_flow" type="id" />
+    <item name="home_flow" type="id" />
+    <item name="chats_flow" type="id" />
+    <item name="board_flow" type="id" />
+    <item name="profile_flow" type="id" />
+    <item name="next_flow" type="id" />
+</resources>
