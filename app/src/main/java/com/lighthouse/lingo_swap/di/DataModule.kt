@@ -4,16 +4,15 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.local.LocalPreferenceDataSourceImpl
 import com.lighthouse.android.data.repository.DrivenRepositoryImpl
 import com.lighthouse.android.data.repository.HomeRepositoryImpl
 import com.lighthouse.android.data.repository.datasource.DrivenRemoteDataSource
+import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
 import com.lighthouse.domain.repository.DrivenRepository
 import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.lingo_swap.HeaderInterceptor
-import com.lighthouse.lingo_swap.di.Annotation.Main
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,9 +34,9 @@ object DataModule {
     @Provides
     @Singleton
     fun provideHomeRepository(
-        @Main api: HomeApiService,
+        homeRemoteDataSource: HomeRemoteDataSource,
     ): HomeRepository {
-        return HomeRepositoryImpl(api)
+        return HomeRepositoryImpl(homeRemoteDataSource)
     }
 
     @Provides

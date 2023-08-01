@@ -1,8 +1,12 @@
 package com.lighthouse.lingo_swap.di
 
 import com.lighthouse.android.data.api.DrivenApiService
+import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.repository.datasource.DrivenRemoteDataSource
+import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
 import com.lighthouse.android.data.repository.datasourceimpl.DrivenRemoteDataSourceImpl
+import com.lighthouse.android.data.repository.datasourceimpl.HomeRemoteDataSourceImpl
+import com.lighthouse.lingo_swap.di.Annotation.Main
 import com.lighthouse.lingo_swap.di.Annotation.Test
 import dagger.Module
 import dagger.Provides
@@ -17,5 +21,11 @@ object DataSourceModule {
     @Singleton
     fun provideDrivenDataSource(@Test drivenApiService: DrivenApiService): DrivenRemoteDataSource {
         return DrivenRemoteDataSourceImpl(drivenApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHomeDataSource(@Main homeApiService: HomeApiService): HomeRemoteDataSource {
+        return HomeRemoteDataSourceImpl(homeApiService)
     }
 }

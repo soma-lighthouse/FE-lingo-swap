@@ -43,7 +43,7 @@ object NetModule {
     @Main
     fun provideLightHouseRetrofit(@Main okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.LIGHTHOUSE_BASE_URL)
+            .baseUrl(BuildConfig.TEST_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
