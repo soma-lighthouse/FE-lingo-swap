@@ -7,7 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface HomeApiService {
-    @GET("user")
+    @GET("api/v1/user")
     suspend fun getMatchedUser(
         @Query("page") page: Int,
     ): Response<BaseResponse<UserProfileDTO>>

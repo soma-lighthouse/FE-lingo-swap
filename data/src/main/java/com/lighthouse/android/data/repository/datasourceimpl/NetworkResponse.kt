@@ -11,10 +11,7 @@ abstract class NetworkResponse {
         body?.let {
             return when (HttpResponseStatus.create(body.code)) {
                 HttpResponseStatus.OK -> {
-                    body.let {
-                        Resource.Success(body.data)
-                    }
-                    Resource.Error("data not found")
+                    Resource.Success(body.data)
                 }
 
                 else -> {
