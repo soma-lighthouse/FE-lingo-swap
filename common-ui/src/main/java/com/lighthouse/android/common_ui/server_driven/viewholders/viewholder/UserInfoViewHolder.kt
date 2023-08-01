@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
-import com.lighthouse.android.common_ui.server_driven.adapter.HorizontalAdapter
 import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
+import com.lighthouse.android.common_ui.server_driven.viewholders.adapter.HorizontalAdapter
 import com.lighthouse.android.common_ui.server_driven.viewholders.default_holder.DefaultViewHolder
 import com.lighthouse.android.common_ui.server_driven.viewholders.util.InflateViewType
 import com.lighthouse.domain.constriant.ViewType
@@ -26,12 +26,12 @@ class UserInfoViewHolder(
         data as ContentVO.UserInfoTile
 
         CoroutineScope(Dispatchers.Main).launch {
-            Glide.with(binding.tvProfileImg)
+            Glide.with(binding.ivProfileImg)
                 .load(data.ivProfileImg.image)
                 .override(calSize(data.ivProfileImg.width), calSize(data.ivProfileImg.height))
-                .into(binding.tvProfileImg)
+                .into(binding.ivProfileImg)
 
-            binding.tvProfileImg
+            binding.ivProfileImg
             binding.tvProfileName.text = SpannableStringBuilderProvider.getSpannableBuilder(
                 data.tvProfileName,
                 binding.root.context

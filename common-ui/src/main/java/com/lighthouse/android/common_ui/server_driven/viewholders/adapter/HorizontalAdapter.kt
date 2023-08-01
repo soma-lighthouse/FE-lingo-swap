@@ -1,4 +1,4 @@
-package com.lighthouse.android.common_ui.server_driven.adapter
+package com.lighthouse.android.common_ui.server_driven.viewholders.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -1,5 +1,6 @@
 package com.lighthouse.android.common_ui.server_driven.viewholders.viewholder
 
+import android.util.Log
 import android.view.ViewGroup
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.databinding.HomeInfoTileBinding
@@ -21,6 +22,8 @@ class HomeTitleViewHolder(
 ) : DefaultViewHolder(binding) {
     override fun onBind(data: ContentVO) {
         data as ContentVO.HomeTitleContent
+
+        Log.d("TESTING", data.toString())
 
         CoroutineScope(Dispatchers.Main).launch {
             binding.tvHomeTitle.text = SpannableStringBuilderProvider.getSpannableBuilder(
