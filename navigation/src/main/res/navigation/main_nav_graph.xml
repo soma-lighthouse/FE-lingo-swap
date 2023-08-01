@@ -15,7 +15,9 @@
         app:destination="@id/home_flow"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
-        app:popUpTo="@id/main_nav_graph" />
+        app:popUpTo="@id/main_nav_graph"
+        app:popUpToSaveState="true"
+        app:restoreState="true" />
 
     <action
         android:id="@+id/action_global_chat_flow"
