@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.lighthouse.android.common_ui.server_driven.adapter.DrivenAdapter
+import com.lighthouse.android.common_ui.server_driven.viewholders.adapter.DrivenAdapter
 import com.lighthouse.profile.databinding.FragmentProfileBinding
 import com.lighthouse.profile.util.UiState
 import com.lighthouse.profile.util.setGone

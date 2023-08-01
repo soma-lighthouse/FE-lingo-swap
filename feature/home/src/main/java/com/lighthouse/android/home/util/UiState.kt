@@ -1,12 +1,9 @@
 package com.lighthouse.android.home.util
 
-import com.lighthouse.domain.response.dto.UserProfileVO
-import com.lighthouse.domain.response.server_driven.ViewTypeVO
+import com.lighthouse.domain.response.dto.ProfileVO
 
 sealed class UiState {
     object Loading : UiState()
-    data class Success2(val userProfile: UserProfileVO) : UiState()
-
-    data class Success(val drivenData: List<ViewTypeVO>) : UiState()
+    data class Success(val profiles: List<ProfileVO>) : UiState()
     data class Error(val message: String) : UiState()
 }
