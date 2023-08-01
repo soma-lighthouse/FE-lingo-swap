@@ -24,9 +24,6 @@ android {
 
 dependencies {
     implementation(project(":domain"))
-    val paging_version = "3.1.1"
-
-    implementation("androidx.paging:paging-runtime:$paging_version")
 
     implementation(libs.hilt)
     kapt(libs.hilt.kapt)

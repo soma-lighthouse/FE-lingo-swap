@@ -19,9 +19,8 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.material)
+    implementation(libs.bundles.basic.test)
     implementation(libs.bundles.navigation)
 }

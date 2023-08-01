@@ -22,11 +22,16 @@ navigation = "2.6.0"
 safe-args = "2.5.3"
 constraintlayout = "2.1.4"
 room = "2.5.2"
+shared-preference-security = "1.1.0-alpha06"
 
 # Google Libraries
 material = "1.9.0"
 accompanist = "0.30.1"
 in-app-update = "2.1.0"
+
+# Image Libraries
+circle-image = "3.1.0"
+glide = "4.15.1"
 
 # Test Libraries
 junit = "4.13.2"
@@ -77,6 +82,8 @@ room = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-complier = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 
+shared-preference-security = { module = "androidx.security:security-crypto-ktx", version.ref = "shared-preference-security" }
+
 navigation-fragment = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigation" }
 navigation-core = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigation" }
 
@@ -112,10 +119,14 @@ firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
 
+circle-image = { module = "de.hdodenhof:circleimageview", version.ref = "circle-image" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+
 
 [bundles]
 
 androidx-ui-foundation = ["core-ktx", "appcompat", "lifecycle-viewmodel", "lifecycle-livedata"]
+android-basic-ui = ["material", "constraintlayout"]
 okhttp = ["okhttp", "okhttp-logging-interceptor", "okhttp-bom"]
 retrofit = ["retrofit", "retrofit-kotlin-serialization-converter"]
 gson = ["gson", "gson-converter"]
@@ -125,6 +136,7 @@ androidx-android-test = ["androidx-test-runner", "androidx-test-rules"]
 basic-test = ["junit", "androidx-test-junit", "androidx-test-espresso"]
 room = ["room", "room-ktx"]
 navigation = ["navigation-core", "navigation-fragment"]
+image = ["circle-image", "glide"]
 
 [plugins]
 

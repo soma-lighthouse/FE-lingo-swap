@@ -66,9 +66,8 @@ dependencies {
     implementation(project(":navigation"))
 
     implementation(libs.hilt)
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.5.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation(libs.bundles.androidx.ui.foundation)
+    implementation(libs.bundles.android.basic.ui)
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.retrofit)
@@ -76,8 +75,6 @@ dependencies {
     implementation(libs.bundles.room)
     kapt(libs.room.complier)
     implementation(libs.bundles.navigation)
-    implementation("androidx.recyclerview:recyclerview:1.3.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.5.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.6")
-    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.shared.preference.security)
 }

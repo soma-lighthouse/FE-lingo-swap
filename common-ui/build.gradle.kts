@@ -20,15 +20,14 @@ android {
     buildFeatures {
         dataBinding = true
     }
+    
 }
 
 dependencies {
     api(project(":domain"))
     implementation(project(":navigation"))
 
-    implementation("de.hdodenhof:circleimageview:3.1.0")
-    implementation("com.github.bumptech.glide:glide:4.15.1")
-
+    implementation(libs.bundles.image)
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.constraintlayout)
     implementation(libs.material)
