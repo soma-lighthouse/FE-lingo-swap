@@ -6,6 +6,24 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.lighthouse.android.home.HomeFragment" />
+        android:name="com.lighthouse.android.home.HomeFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_filterFragment"
+            app:destination="@id/filterFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.lighthouse.android.home.view.FilterFragment">
+
+        <action
+            android:id="@+id/action_filterFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+
+    </fragment>
 
 </navigation>
