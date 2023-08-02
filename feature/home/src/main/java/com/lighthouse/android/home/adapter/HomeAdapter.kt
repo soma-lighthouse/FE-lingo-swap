@@ -14,8 +14,8 @@ import com.lighthouse.domain.response.dto.ProfileVO
 fun makeAdapter() =
     SimpleListAdapter<ProfileVO, UserInfoTileBinding>(
         diffCallBack = ItemDiffCallBack(
-            onContentsTheSame = { old, new -> old.id == new.id },
-            onItemsTheSame = { old, new -> old == new }),
+            onContentsTheSame = { old, new -> old == new },
+            onItemsTheSame = { old, new -> old.id == new.id }),
         layoutId = R.layout.user_info_tile,
         onBindCallback = { viewHolder, item ->
             val binding = viewHolder.binding

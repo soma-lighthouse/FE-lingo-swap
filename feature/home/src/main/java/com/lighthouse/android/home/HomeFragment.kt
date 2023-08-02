@@ -10,6 +10,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
 import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
@@ -40,6 +42,9 @@ class HomeFragment @Inject constructor() : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         initAdapter()
+        initScrollListener()
+        profileList.addAll(viewModel.getUserProfiles())
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.state.collect {
@@ -56,18 +61,27 @@ class HomeFragment @Inject constructor() : Fragment() {
         return binding.root
     }
 
+    override fun onStop() {
+        super.onStop()
+        viewModel.saveUserProfiles(profileList)
+    }
+
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
                 binding.pbHomeLoading.setVisible()
                 binding.rvHome.setGone()
+                binding.fabFilter.setGone()
             }
 
             is UiState.Success -> {
                 binding.rvHome.setVisible()
+                if (profileList.isEmpty()) {
+                    profileList.addAll(uiState.profiles)
+                }
                 adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
-                viewModel.page.value = 2
+                binding.fabFilter.setVisible()
             }
 
             is UiState.Error -> {
@@ -81,6 +95,37 @@ class HomeFragment @Inject constructor() : Fragment() {
     private fun initAdapter() {
         adapter = makeAdapter()
         binding.rvHome.adapter = adapter
-//        binding.rvHome.isNestedScrollingEnabled = false
+    }
+
+    private fun initScrollListener() {
+        binding.rvHome.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val rvPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+
+                val totalCount =
+                    recyclerView.adapter?.itemCount?.minus(1)
+
+                if (rvPosition == totalCount && viewModel.page.value != -1) {
+                    loadMoreProfiles()
+                }
+            }
+        })
+    }
+
+    private fun loadMoreProfiles() {
+        loading = true
+
+        lifecycleScope.launch {
+            viewModel.fetchNextPage().collect {
+                it?.let {
+                    profileList.addAll(it)
+                    adapter.submitList(profileList)
+                    loading = false
+                }
+            }
+        }
     }
 }

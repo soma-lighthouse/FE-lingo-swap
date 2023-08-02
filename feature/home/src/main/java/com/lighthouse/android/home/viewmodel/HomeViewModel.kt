@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lighthouse.android.home.util.UiState
 import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.domain.response.dto.ProfileVO
 import com.lighthouse.domain.usecase.GetMatchedUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -21,9 +22,10 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getMatchedUserUseCase: GetMatchedUserUseCase,
 ) : ViewModel() {
-    val page: MutableStateFlow<Int> = MutableStateFlow(1)
+    private val _page: MutableStateFlow<Int> = MutableStateFlow(1)
+    val page: StateFlow<Int> = _page
     private var cachedState: StateFlow<UiState>? = null
-
+    private var userProfiles = listOf<ProfileVO>()
 
     val state: Flow<UiState>
         get() {
@@ -34,13 +36,14 @@ class HomeViewModel @Inject constructor(
         }
 
     private fun fetchState(): StateFlow<UiState> {
-        return getMatchedUserUseCase.invoke(page.value)
+        _page.value = 1
+        return getMatchedUserUseCase.invoke(_page.value)
             .map {
-                Log.d("TESTING", it.toString())
                 when (it) {
                     is Resource.Success -> {
-                        if (it.data!!.page == -1) {
-                            page.value = -1
+                        Log.d("TESTING", it.data!!.nextId.toString())
+                        if (it.data!!.nextId == -1) {
+                            _page.value = -1
                         }
                         UiState.Success(it.data!!.profile)
                     }
@@ -61,5 +64,38 @@ class HomeViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5000)
             )
     }
+
+    fun fetchNextPage(): Flow<List<ProfileVO>?> {
+        _page.value++
+        return getMatchedUserUseCase.invoke(_page.value)
+            .map {
+                when (it) {
+                    is Resource.Success -> {
+                        Log.d("TESTING", it.data!!.nextId.toString())
+                        if (it.data!!.nextId == -1) {
+                            Log.d("PAGING", "enter")
+                            _page.value = -1
+                        }
+                        it.data!!.profile
+                    }
+
+                    is Resource.Error -> {
+                        Log.e("PAGING", "Paging error occurred ")
+                        null
+                    }
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                initialValue = null,
+                started = SharingStarted.WhileSubscribed(5000)
+            )
+    }
+
+    fun saveUserProfiles(profiles: List<ProfileVO>) {
+        userProfiles = profiles
+    }
+
+    fun getUserProfiles() = userProfiles
 
 }
