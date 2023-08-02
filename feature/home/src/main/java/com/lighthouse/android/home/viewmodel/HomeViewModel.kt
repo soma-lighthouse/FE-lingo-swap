@@ -1,6 +1,7 @@
 package com.lighthouse.android.home.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lighthouse.android.home.util.UiState
@@ -26,6 +27,7 @@ class HomeViewModel @Inject constructor(
     val page: StateFlow<Int> = _page
     private var cachedState: StateFlow<UiState>? = null
     private var userProfiles = listOf<ProfileVO>()
+    var loading = MutableLiveData<Boolean>()
 
     val state: Flow<UiState>
         get() {
