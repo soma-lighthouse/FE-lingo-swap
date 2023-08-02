@@ -29,4 +29,8 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
     override fun onBindViewHolder(holder: ViewHolder<B>, position: Int) {
         onBindCallback(holder, getItem(position))
     }
+
+    override fun submitList(list: List<T>?) {
+        super.submitList(list?.let { ArrayList(it) })
+    }
 }

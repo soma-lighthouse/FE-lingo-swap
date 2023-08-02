@@ -13,5 +13,6 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="android:fontFamily">@font/noto_sans_kr</item>
+        <item name="android:buttonTint">@color/main</item>
     </style>
 </resources>
