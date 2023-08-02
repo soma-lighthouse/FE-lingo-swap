@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/filter_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".view.FilterFragment">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_back"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/arrow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/filter"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/btn_back"
+                app:layout_constraintTop_toBottomOf="@+id/btn_back" />
+
+            <TextView
+                android:id="@+id/tv_prefer_country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/prefer_country"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/tv_filter"
+                app:layout_constraintTop_toBottomOf="@+id/tv_filter" />
+
+            <ImageButton
+                android:id="@+id/btn_select_country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/next_btn"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_prefer_country"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_prefer_country" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_prefer_country"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="@+id/btn_select_language"
+                app:layout_constraintStart_toStartOf="@+id/tv_prefer_country"
+                app:layout_constraintTop_toBottomOf="@+id/tv_prefer_country" />
+
+
+            <TextView
+                android:id="@+id/tv_prefer_language"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/prefer_language"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/chip_prefer_country"
+                app:layout_constraintTop_toBottomOf="@+id/chip_prefer_country" />
+
+            <ImageButton
+                android:id="@+id/btn_select_language"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/next_btn"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_prefer_language"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_prefer_language" />
+
+            <TextView
+                android:id="@+id/tv_prefer_hobby"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/prefer_language"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/chip_prefer_language"
+                app:layout_constraintTop_toBottomOf="@+id/chip_prefer_language" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_prefer_language"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:flow_horizontalStyle="spread_inside"
+                app:flow_wrapMode="aligned"
+                app:layout_constraintEnd_toEndOf="@+id/btn_select_country"
+                app:layout_constraintStart_toStartOf="@+id/tv_prefer_language"
+                app:layout_constraintTop_toBottomOf="@+id/tv_prefer_language" />
+
+            <ImageButton
+                android:id="@+id/btn_select_hobby"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/next_btn"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_prefer_hobby"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_prefer_hobby" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_prefer_hobby"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="@+id/btn_select_hobby"
+                app:layout_constraintStart_toStartOf="@+id/tv_prefer_hobby"
+                app:layout_constraintTop_toBottomOf="@+id/tv_prefer_hobby" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

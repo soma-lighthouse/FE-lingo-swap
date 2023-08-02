@@ -1,0 +1,7 @@
+<resources>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="filter">필터</string>
+    <string name="prefer_country">선호 국가</string>
+    <string name="prefer_language">선호 언어</string>
+</resources>
