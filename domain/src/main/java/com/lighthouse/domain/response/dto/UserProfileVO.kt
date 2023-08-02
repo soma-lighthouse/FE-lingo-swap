@@ -1,6 +1,6 @@
 package com.lighthouse.domain.response.dto
 
 data class UserProfileVO(
-    val page: Int,
+    val nextId: Int,
     val profile: List<ProfileVO>,
 )
