@@ -2,14 +2,27 @@
 <resources>
     <string name="app_name">lingo swap</string>
     <string name="unknown_view_type">Unknown View Type!</string>
+    <!--  Home  -->
     <string name="btn_nav_home">홈</string>
     <string name="btn_nav_chat">채팅</string>
     <string name="btn_nav_board">질문게시판</string>
     <string name="btn_nav_profile">내 정보</string>
     <string name="unknown">Error: No right viewType found</string>
-    <string name="next_fragment">next fragment</string>
-    <string name="to_chat_fragment_via_deeplink">To chat fragment via deepLink</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--  Home-filter  -->
+    <string name="filter">필터</string>
+    <string name="prefer_country">선호 국가</string>
+    <string name="prefer_language">선호 언어</string>
+    <string name="board_title">질문게시판</string>
     <string name="empty">empty</string>
+    <!--  Board  -->
+    <string name="cooking">요리</string>
+    <string name="game">게임</string>
+    <string name="movie">영화</string>
+    <string name="music">음악</string>
+    <string name="travel">여행</string>
+    <string name="study">공부</string>
+    <string name="sort_latest">최신 순</string>
+    <string name="sort_top_rated">최고 순</string>
+
+
 </resources>

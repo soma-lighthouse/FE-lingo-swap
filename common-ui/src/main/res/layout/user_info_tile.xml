@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.lighthouse.domain.response.dto.ProfileVO" />
+            type="com.lighthouse.domain.response.vo.ProfileVO" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -28,8 +28,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/iv_profile_img"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="26dp"
                 app:layout_constraintStart_toStartOf="parent"
