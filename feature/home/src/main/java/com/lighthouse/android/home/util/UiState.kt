@@ -1,6 +1,6 @@
 package com.lighthouse.android.home.util
 
-import com.lighthouse.domain.response.dto.ProfileVO
+import com.lighthouse.domain.response.vo.ProfileVO
 
 sealed class UiState {
     object Loading : UiState()

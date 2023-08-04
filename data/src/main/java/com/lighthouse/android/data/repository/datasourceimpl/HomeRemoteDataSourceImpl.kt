@@ -11,8 +11,12 @@ import javax.inject.Inject
 class HomeRemoteDataSourceImpl @Inject constructor(
     private val api: HomeApiService,
 ) : HomeRemoteDataSource, NetworkResponse() {
-    override fun getMatchedUser(page: Int): Flow<Resource<UserProfileDTO>> = flow {
-        emit(changeResult(api.getMatchedUser(page)))
+    override fun getMatchedUser(
+        userId: Int,
+        next: Int?,
+        pageSize: Int?,
+    ): Flow<Resource<UserProfileDTO>> = flow {
+        emit(changeResult(api.getMatchedUser(userId, next, pageSize)))
     }
 
 }

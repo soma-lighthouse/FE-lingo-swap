@@ -40,8 +40,7 @@ dependencies {
 
     implementation("androidx.activity:activity-ktx:1.7.2")
     implementation("androidx.fragment:fragment-ktx:1.6.0")
-    implementation("com.github.markomilos:paginate:1.0.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.material)
     implementation(libs.constraintlayout)

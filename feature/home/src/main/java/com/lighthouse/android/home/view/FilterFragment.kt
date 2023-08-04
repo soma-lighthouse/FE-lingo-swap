@@ -30,37 +30,7 @@ class FilterFragment : Fragment() {
                 "Korea",
                 "Japan",
                 "America",
-                "China",
-                "Korea",
-                "Japan",
-                "America",
-                "China",
-                "Korea",
-                "Japan",
-                "America",
-                "China",
-                "Korea",
-                "Japan",
-                "America",
-                "China",
-                "Korea",
-                "Japan",
-                "America",
-                "China",
-                "Korea",
-                "Japan",
-                "America",
-                "China",
-                "Korea",
-                "Japan",
-                "America",
-                "China",
-                "Korea", "Japan", "America", "China",
-                "Korea", "Japan", "America", "China",
-                "Korea", "Japan", "America", "China",
-                "Korea", "Japan", "America", "China",
-                "Korea", "Japan", "America", "China",
-                "Korea", "Japan", "America", "China"
+                "China"
             )
 
         addChipToGroup(binding.chipPreferCountry, contentList)
@@ -85,23 +55,4 @@ class FilterFragment : Fragment() {
             chipGroup.addView(chip)
         }
     }
-
-//    private fun addItemToFlow(flow: Flow, userInfoList: List<String>) {
-//        val constraintLayout = binding.filterLayout
-//
-//        userInfoList.forEach {
-//            val viewBinding: SelectionResultBinding = DataBindingUtil.inflate(
-//                LayoutInflater.from(context),
-//                com.lighthouse.android.common_ui.R.layout.selection_result,
-//                constraintLayout,
-//                false
-//            )
-//
-//            viewBinding.tvResult.text = it
-//            constraintLayout.addView(viewBinding.root)
-//            flow.addView(viewBinding.root)
-//        }
-//
-//    }
-
 }

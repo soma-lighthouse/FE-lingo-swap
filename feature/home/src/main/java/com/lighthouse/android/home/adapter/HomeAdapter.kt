@@ -10,7 +10,7 @@ import com.lighthouse.android.common_ui.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.constant.Constant
 import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
-import com.lighthouse.domain.response.dto.ProfileVO
+import com.lighthouse.domain.response.vo.ProfileVO
 
 fun makeAdapter() =
     SimpleListAdapter<ProfileVO, UserInfoTileBinding>(
@@ -20,11 +20,13 @@ fun makeAdapter() =
         layoutId = R.layout.user_info_tile,
         onBindCallback = { viewHolder, item ->
             val binding = viewHolder.binding
-            Glide.with(binding.ivProfileImg).load(item.imageUrl)
-                .override(calSize(Constant.PROFILE_IMAGE_SIZE))
+            Glide.with(binding.ivProfileImg).load(item.profileImage)
+                .placeholder(R.drawable.placeholder)
                 .skipMemoryCache(false)
                 .format(DecodeFormat.PREFER_RGB_565)
                 .centerInside()
+                .override(calSize(Constant.PROFILE_IMAGE_SIZE))
+                .dontAnimate()
                 .into(binding.ivProfileImg)
 
             val flag = binding.root.context.resources.getIdentifier(
@@ -42,12 +44,12 @@ fun makeAdapter() =
                     })
 
 
-            val languages = item.language.flatMap { map ->
-                map.entries.map { (key, value) -> "$key: $value" }
+            val languages = item.language.map {
+                "${it.code}/Lv.${it.level}"
             }
 
-
             adapter.submitList(languages)
+
 
             binding.rvLanguage.adapter = adapter
 

@@ -1,7 +1,7 @@
 package com.lighthouse.domain.constriant
 
-import com.lighthouse.domain.response.dto.ProfileVO
 import com.lighthouse.domain.response.server_driven.ContentVO
+import com.lighthouse.domain.response.vo.ProfileVO
 import java.lang.reflect.Type
 
 enum class ViewType(

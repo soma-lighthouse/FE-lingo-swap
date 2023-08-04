@@ -28,6 +28,8 @@ dependencies {
     implementation(project(":common-ui"))
     implementation(project(":navigation"))
 
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.material)
     implementation(libs.constraintlayout)
@@ -36,4 +38,5 @@ dependencies {
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.navigation)
+    implementation(libs.bundles.image)
 }

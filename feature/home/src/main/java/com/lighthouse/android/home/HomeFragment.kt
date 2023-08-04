@@ -1,6 +1,7 @@
 package com.lighthouse.android.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lighthouse.android.common_ui.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
 import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
@@ -24,7 +26,7 @@ import com.lighthouse.android.home.util.setGone
 import com.lighthouse.android.home.util.setVisible
 import com.lighthouse.android.home.util.toast
 import com.lighthouse.android.home.viewmodel.HomeViewModel
-import com.lighthouse.domain.response.dto.ProfileVO
+import com.lighthouse.domain.response.vo.ProfileVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,6 +37,7 @@ class HomeFragment @Inject constructor() : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: SimpleListAdapter<ProfileVO, UserInfoTileBinding>
     private val profileList = mutableListOf<ProfileVO>()
+    private var next: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,8 +51,8 @@ class HomeFragment @Inject constructor() : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.state.collect {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.fetchNextPage(1, null).collect {
                     render(it)
                 }
             }
@@ -65,11 +68,6 @@ class HomeFragment @Inject constructor() : Fragment() {
 
         }
 
-        viewModel.loading.observe(viewLifecycleOwner) {
-            adapter.showLoading(it)
-
-        }
-
         return binding.root
     }
 
@@ -81,16 +79,17 @@ class HomeFragment @Inject constructor() : Fragment() {
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
-                binding.pbHomeLoading.setVisible()
-                binding.rvHome.setGone()
-                binding.fabFilter.setGone()
+                if (profileList.isEmpty()) {
+                    binding.pbHomeLoading.setVisible()
+                    binding.rvHome.setGone()
+                    binding.fabFilter.setGone()
+                }
             }
 
             is UiState.Success -> {
                 binding.rvHome.setVisible()
-                if (profileList.isEmpty()) {
-                    profileList.addAll(uiState.profiles)
-                }
+                Log.d("MYTAG", profileList.toString())
+                profileList.addAll(uiState.profiles)
                 adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
                 binding.fabFilter.setVisible()
@@ -106,6 +105,9 @@ class HomeFragment @Inject constructor() : Fragment() {
 
     private fun initAdapter() {
         adapter = makeAdapter()
+        val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 128f)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        binding.rvHome.layoutManager = linearLayoutManager
         binding.rvHome.adapter = adapter
     }
 
@@ -117,10 +119,9 @@ class HomeFragment @Inject constructor() : Fragment() {
                 val rvPosition =
                     (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
 
-                val totalCount =
-                    recyclerView.adapter?.itemCount?.minus(1)
+                val totalCount = recyclerView.adapter?.itemCount?.minus(1)
 
-                if (rvPosition == totalCount && viewModel.page.value != -1 && viewModel.page.value <= 10) {
+                if (rvPosition == totalCount && viewModel.page.value != -1) {
                     loadMoreProfiles()
                 }
             }
@@ -129,14 +130,10 @@ class HomeFragment @Inject constructor() : Fragment() {
 
     private fun loadMoreProfiles() {
         viewModel.loading.value = true
-
         lifecycleScope.launch {
-            viewModel.fetchNextPage().collect {
-                it?.let {
-                    profileList.addAll(it)
-                    adapter.submitList(profileList)
-                    viewModel.loading.value = false
-                }
+            viewModel.fetchNextPage(1, null).collect {
+                render(it)
+                viewModel.loading.value = false
             }
         }
     }

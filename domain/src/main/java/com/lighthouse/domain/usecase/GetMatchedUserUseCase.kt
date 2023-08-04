@@ -6,5 +6,9 @@ import javax.inject.Inject
 class GetMatchedUserUseCase @Inject constructor(
     private val repository: HomeRepository,
 ) {
-    fun invoke(page: Int) = repository.getMatchedUser(page)
+    fun invoke(
+        userId: Int,
+        next: Int?,
+        pageSize: Int?,
+    ) = repository.getMatchedUser(userId, next, pageSize)
 }

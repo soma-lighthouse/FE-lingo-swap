@@ -2,10 +2,10 @@ package com.lighthouse.android.data.model
 
 
 import com.google.gson.annotations.SerializedName
-import com.lighthouse.domain.response.dto.UserProfileVO
+import com.lighthouse.domain.response.vo.UserProfileVO
 
 data class UserProfileDTO(
-    @SerializedName("nextId")
+    @SerializedName("lastMemberId")
     val nextId: Int?,
     @SerializedName("profiles")
     val profiles: List<ProfileDTO>?,

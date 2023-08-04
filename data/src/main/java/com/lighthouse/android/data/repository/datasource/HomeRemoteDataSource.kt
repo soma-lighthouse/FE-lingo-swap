@@ -5,5 +5,9 @@ import com.lighthouse.domain.constriant.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface HomeRemoteDataSource {
-    fun getMatchedUser(page: Int): Flow<Resource<UserProfileDTO>>
+    fun getMatchedUser(
+        userId: Int,
+        next: Int?,
+        pageSize: Int?,
+    ): Flow<Resource<UserProfileDTO>>
 }
