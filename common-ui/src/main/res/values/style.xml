@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TransparentAppBarTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize the colors as needed -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="colorPrimary">@android:color/transparent</item>
+    </style>
+</resources>

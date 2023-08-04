@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -19,17 +20,17 @@ android {
     buildFeatures {
         dataBinding = true
     }
+
 }
 
 dependencies {
     api(project(":domain"))
-    implementation(project(":entity"))
-
-    implementation("de.hdodenhof:circleimageview:3.1.0")
-    implementation("com.github.bumptech.glide:glide:4.15.1")
-
+    implementation(project(":navigation"))
+    implementation("com.github.markomilos:paginate:1.0.0")
+    implementation(libs.bundles.image)
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.constraintlayout)
     implementation(libs.material)
     implementation(libs.bundles.basic.test)
+    implementation(libs.bundles.navigation)
 }

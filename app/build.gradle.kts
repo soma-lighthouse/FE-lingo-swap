@@ -9,6 +9,7 @@ plugins {
     id("com.android.application")
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -58,17 +59,22 @@ kapt {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
-    implementation(project(":entity"))
     implementation(project(":feature:home"))
+    implementation(project(":feature:chats"))
+    implementation(project(":feature:board"))
+    implementation(project(":feature:profile"))
+    implementation(project(":navigation"))
 
     implementation(libs.hilt)
+    implementation(libs.bundles.androidx.ui.foundation)
+    implementation(libs.bundles.android.basic.ui)
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.gson)
     implementation(libs.bundles.room)
     kapt(libs.room.complier)
-    implementation("androidx.recyclerview:recyclerview:1.3.0")
-    implementation("com.squareup.retrofit2:converter-scalars:2.5.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.6")
+    implementation(libs.bundles.navigation)
+    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.shared.preference.security)
 }

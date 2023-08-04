@@ -1,14 +1,16 @@
 package com.lighthouse.domain.constriant
 
-import com.lighthouse.domain.response.ContentVO
+import com.lighthouse.domain.response.server_driven.ContentVO
+import com.lighthouse.domain.response.vo.ProfileVO
 import java.lang.reflect.Type
 
 enum class ViewType(
-    private val viewTypeClass: Type
+    private val viewTypeClass: Type,
 ) {
     HomeTitleViewType(ContentVO.HomeTitleContent::class.java),
     UserInfoViewType(ContentVO.UserInfoTile::class.java),
-    UnknownViewType(ContentVO.UnknownContent::class.java);
+    UnknownViewType(ContentVO.UnknownContent::class.java),
+    UserInfoViewHolder(ProfileVO::class.java);
 
 
     companion object {

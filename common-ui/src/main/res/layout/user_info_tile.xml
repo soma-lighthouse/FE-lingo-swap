@@ -3,13 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="item"
+            type="com.lighthouse.domain.response.dto.ProfileVO" />
+    </data>
+
     <androidx.cardview.widget.CardView
+        android:id="@+id/itemClickable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:clipToPadding="false"
         app:cardCornerRadius="20dp"
-        app:cardElevation="30dp"
+        app:cardElevation="10dp"
         app:cardPreventCornerOverlap="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,13 +27,16 @@
             android:layout_height="match_parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/tv_profile_img"
+                android:id="@+id/iv_profile_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="26dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_height="80dp"
+                tools:layout_width="80dp"
+                tools:src="@drawable/placeholder" />
 
             <TextView
                 android:id="@+id/tv_profile_name"
@@ -31,7 +44,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
-                app:layout_constraintStart_toEndOf="@+id/tv_profile_img"
+                android:text="@{item.name}"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/iv_profile_img"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="name" />
 
@@ -41,15 +58,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="55dp"
                 android:layout_marginTop="-25dp"
-                app:layout_constraintStart_toStartOf="@+id/tv_profile_img"
-                app:layout_constraintTop_toBottomOf="@+id/tv_profile_img"
-                tools:size="10dp" />
+                app:layout_constraintStart_toStartOf="@+id/iv_profile_img"
+                app:layout_constraintTop_toBottomOf="@+id/iv_profile_img"
+                tools:layout_height="25dp"
+                tools:layout_width="25dp"
+                tools:src="@drawable/placeholder" />
 
             <TextView
                 android:id="@+id/tv_profile_intro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-10dp"
+                android:layout_marginTop="-15dp"
+                android:text="@{item.description}"
+                android:textColor="@color/brownish_grey"
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
                 app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
                 tools:text="introduction" />
@@ -58,12 +79,13 @@
                 android:id="@+id/rv_language"
                 android:layout_width="0dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_intro"
                 app:layout_constraintTop_toBottomOf="@+id/tv_profile_intro"
                 app:layout_constraintVertical_bias="1.0" />
