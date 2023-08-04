@@ -1,6 +1,7 @@
 package com.lighthouse.lingo_swap.di
 
 import com.google.gson.GsonBuilder
+import com.lighthouse.android.data.api.BoardApiService
 import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.interceptor.ContentInterceptor
@@ -43,7 +44,7 @@ object NetModule {
     @Main
     fun provideLightHouseRetrofit(@Main okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.TEST_BASE_URL)
+            .baseUrl(BuildConfig.LIGHTHOUSE_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -93,5 +94,12 @@ object NetModule {
     @Main
     fun provideHomeService(@Main retrofit: Retrofit): HomeApiService {
         return retrofit.create(HomeApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Main
+    fun provideBoardService(@Main retrofit: Retrofit): BoardApiService {
+        return retrofit.create(BoardApiService::class.java)
     }
 }

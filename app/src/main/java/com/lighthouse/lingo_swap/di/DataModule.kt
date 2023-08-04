@@ -6,10 +6,13 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.local.LocalPreferenceDataSourceImpl
+import com.lighthouse.android.data.repository.BoardRepositoryImpl
 import com.lighthouse.android.data.repository.DrivenRepositoryImpl
 import com.lighthouse.android.data.repository.HomeRepositoryImpl
+import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.DrivenRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
+import com.lighthouse.domain.repository.BoardRepository
 import com.lighthouse.domain.repository.DrivenRepository
 import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.lingo_swap.HeaderInterceptor
@@ -37,6 +40,14 @@ object DataModule {
         homeRemoteDataSource: HomeRemoteDataSource,
     ): HomeRepository {
         return HomeRepositoryImpl(homeRemoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBoardRepository(
+        boardRemoteDataSource: BoardRemoteDataSource,
+    ): BoardRepository {
+        return BoardRepositoryImpl(boardRemoteDataSource)
     }
 
     @Provides
