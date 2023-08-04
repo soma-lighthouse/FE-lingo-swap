@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sort_name">
+        <item>@string/sort_latest</item>
+        <item>@string/sort_top_rated</item>
+    </string-array>
+
+    <string-array name="tab_name">
+        <item>@string/cooking</item>
+        <item>@string/game</item>
+        <item>@string/movie</item>
+        <item>@string/music</item>
+        <item>@string/travel</item>
+        <item>@string/study</item>
+    </string-array>
+</resources>
