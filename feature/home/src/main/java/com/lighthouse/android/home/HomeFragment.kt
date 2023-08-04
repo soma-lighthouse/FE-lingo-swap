@@ -52,7 +52,7 @@ class HomeFragment @Inject constructor() : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.fetchNextPage(1, null).collect {
+                viewModel.fetchNextPage(1, 200).collect {
                     render(it)
                 }
             }
@@ -131,7 +131,7 @@ class HomeFragment @Inject constructor() : Fragment() {
     private fun loadMoreProfiles() {
         viewModel.loading.value = true
         lifecycleScope.launch {
-            viewModel.fetchNextPage(1, null).collect {
+            viewModel.fetchNextPage(1, 200).collect {
                 render(it)
                 viewModel.loading.value = false
             }

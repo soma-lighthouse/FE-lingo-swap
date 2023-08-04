@@ -1,6 +1,5 @@
 package com.lighthouse.profile
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lighthouse.domain.repository.DrivenRepository
@@ -20,7 +19,6 @@ class ProfileViewModel @Inject constructor(
     val drivenData: Flow<UiState> = drivenRepository
         .getDriven()
         .map {
-            Log.d("MYTAG", it.toString())
             UiState.Success(it) as UiState
         }
         .onCompletion {
