@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.lighthouse.board.databinding.FragmentBoardBinding
@@ -27,6 +28,7 @@ class BoardFragment : Fragment() {
 
         initSpinner()
         initTab()
+        initFab()
 
         return binding.root
     }
@@ -69,5 +71,10 @@ class BoardFragment : Fragment() {
         }
     }
 
+    private fun initFab() {
+        binding.fabAdd.setOnClickListener {
+            findNavController().navigate(BoardFragmentDirections.actionBoardFragmentToAddFragment())
+        }
+    }
 
 }
