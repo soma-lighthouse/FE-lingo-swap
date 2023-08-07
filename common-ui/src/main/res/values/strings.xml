@@ -23,6 +23,19 @@
     <string name="study">공부</string>
     <string name="sort_latest">최신 순</string>
     <string name="sort_top_rated">최고 순</string>
+    <string name="add_title">질문 추가</string>
+    <string name="interest">관심 분야</string>
+    <string name="enter_question_here">질문을 입력하세요.</string>
 
+    <string name="enter_question">질문 입력</string>
+    <string name="add_question">추가하기</string>
+    <string name="question_size_error">10자 이상 200자 이하로 작성해주세요</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="edit_profile">편집하기</string>
+    <string name="occupation">직업</string>
+    <string name="no_occupation">미설정</string>
+    <string name="language_and_level">언어 및 레벨</string>
+    <string name="interest_country">관심있는 국가</string>
 
 </resources>
