@@ -14,17 +14,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lighthouse.android.common_ui.adapter.ScrollSpeedLinearLayoutManager
-import com.lighthouse.android.common_ui.adapter.SimpleListAdapter
+import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
+import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
+import com.lighthouse.android.common_ui.constant.setGone
+import com.lighthouse.android.common_ui.constant.setVisible
+import com.lighthouse.android.common_ui.constant.toast
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
 import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
 import com.lighthouse.android.home.adapter.makeAdapter
 import com.lighthouse.android.home.databinding.FragmentHomeBinding
 import com.lighthouse.android.home.util.UiState
 import com.lighthouse.android.home.util.homeTitle
-import com.lighthouse.android.home.util.setGone
-import com.lighthouse.android.home.util.setVisible
-import com.lighthouse.android.home.util.toast
 import com.lighthouse.android.home.viewmodel.HomeViewModel
 import com.lighthouse.domain.response.vo.ProfileVO
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,12 +46,13 @@ class HomeFragment @Inject constructor() : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
         initAdapter()
         initScrollListener()
+        initFab()
         if (profileList.isEmpty()) {
             profileList.addAll(viewModel.getUserProfiles())
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.fetchNextPage(1, 200).collect {
                     render(it)
                 }
@@ -63,10 +64,7 @@ class HomeFragment @Inject constructor() : Fragment() {
                 SpannableStringBuilderProvider.getSpannableBuilder(homeTitle, requireContext())
         }
 
-        binding.fabFilter.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFilterFragment())
 
-        }
 
         return binding.root
     }
@@ -105,7 +103,7 @@ class HomeFragment @Inject constructor() : Fragment() {
 
     private fun initAdapter() {
         adapter = makeAdapter()
-        val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 128f)
+        val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.rvHome.layoutManager = linearLayoutManager
         binding.rvHome.adapter = adapter
@@ -135,6 +133,13 @@ class HomeFragment @Inject constructor() : Fragment() {
                 render(it)
                 viewModel.loading.value = false
             }
+        }
+    }
+
+    private fun initFab() {
+        binding.fabFilter.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFilterFragment())
+
         }
     }
 }

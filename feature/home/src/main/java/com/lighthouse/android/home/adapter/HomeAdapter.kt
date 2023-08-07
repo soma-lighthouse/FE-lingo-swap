@@ -5,8 +5,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.R
-import com.lighthouse.android.common_ui.adapter.ItemDiffCallBack
-import com.lighthouse.android.common_ui.adapter.SimpleListAdapter
+import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
+import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.constant.Constant
 import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
@@ -44,7 +44,7 @@ fun makeAdapter() =
                     })
 
 
-            val languages = item.language.map {
+            val languages = item.languages.map {
                 "${it.code}/Lv.${it.level}"
             }
 
