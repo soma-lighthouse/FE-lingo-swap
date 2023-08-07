@@ -18,4 +18,16 @@ class BoardRemoteDataSourceImpl @Inject constructor(
     ): Flow<Resource<BoardDTO>> = flow {
         emit(changeResult(api.getQuestion(category, order, page)))
     }
+
+    override fun uploadQuestion(
+        memberId: Int,
+        categoryId: Int,
+        content: String,
+    ): Flow<Resource<String>> = flow {
+        emit(changeResult(api.uploadQuestion(memberId, categoryId, content)))
+    }
+
+    override fun updateLike(questionId: Int, memberId: Int): Flow<Resource<String>> = flow {
+        emit(changeResult(api.updateLike(questionId, memberId)))
+    }
 }

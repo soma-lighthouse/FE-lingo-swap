@@ -12,19 +12,22 @@ data class ProfileDTO(
     @SerializedName("profileImage")
     val profileImage: String?,
     @SerializedName("languages")
-    val language: List<LanguageDTO>?,
+    val languages: List<LanguageDTO>?,
     @SerializedName("name")
     val name: String?,
     @SerializedName("region")
     val region: String?,
+    @SerializedName("interests")
+    val interests: Map<String, List<String>>,
 ) {
     fun toVO() =
         ProfileVO(
             id ?: -1,
             description ?: "",
             profileImage ?: "",
-            language?.map { it.toVO() } ?: listOf(),
+            languages?.map { it.toVO() } ?: listOf(),
             name ?: "",
-            region ?: ""
+            region ?: "",
+            interests ?: mapOf()
         )
 }

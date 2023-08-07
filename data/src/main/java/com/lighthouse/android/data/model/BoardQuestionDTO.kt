@@ -7,9 +7,15 @@ data class BoardQuestionDTO(
     @SerializedName("questionId")
     val questionId: Int?,
     @SerializedName("userId")
-    val userId: Int?,
+    val memberId: Int?,
     @SerializedName("categoryId")
     val categoryId: Int?,
+    @SerializedName("profileImage")
+    val profileImage: String?,
+    @SerializedName("name")
+    val name: String?,
+    @SerializedName("region")
+    val region: String?,
     @SerializedName("contents")
     val contents: String?,
     @SerializedName("like")
@@ -17,9 +23,12 @@ data class BoardQuestionDTO(
 ) {
     fun toVO() = BoardQuestionVO(
         questionId = questionId ?: -1,
-        userId = userId ?: -1,
+        memberId = memberId ?: -1,
         categoryId = categoryId ?: -1,
         contents = contents ?: " ",
+        profileImage = profileImage ?: " ",
+        name = name ?: " ",
+        region = region ?: " ",
         like = like ?: -1
     )
 

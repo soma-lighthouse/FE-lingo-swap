@@ -22,4 +22,24 @@ class BoardRepositoryImpl @Inject constructor(
                 else -> Resource.Error(it.message ?: "No message found")
             }
         }
+
+    override fun uploadQuestion(
+        memberId: Int,
+        category: Int,
+        content: String,
+    ): Flow<Resource<String>> =
+        datasource.uploadQuestion(memberId, category, content).map {
+            when (it) {
+                is Resource.Success -> Resource.Success(it.data!!)
+                else -> Resource.Error(it.message ?: "No message Found")
+            }
+        }
+
+    override fun updateLike(questionId: Int, memberId: Int): Flow<Resource<String>> =
+        datasource.updateLike(questionId, memberId).map {
+            when (it) {
+                is Resource.Success -> Resource.Success(it.data!!)
+                else -> Resource.Error(it.message ?: "No message Found")
+            }
+        }
 }
