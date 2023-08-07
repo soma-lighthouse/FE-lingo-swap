@@ -1,4 +1,4 @@
-package com.lighthouse.android.home.util
+package com.lighthouse.android.common_ui.constant
 
 import android.content.Context
 import android.view.View

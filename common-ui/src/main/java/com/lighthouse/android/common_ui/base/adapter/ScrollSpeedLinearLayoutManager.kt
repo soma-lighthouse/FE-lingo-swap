@@ -1,4 +1,4 @@
-package com.lighthouse.android.common_ui.adapter
+package com.lighthouse.android.common_ui.base.adapter
 
 import android.content.Context
 import android.graphics.PointF

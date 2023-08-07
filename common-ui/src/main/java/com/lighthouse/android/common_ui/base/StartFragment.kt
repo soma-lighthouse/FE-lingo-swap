@@ -22,7 +22,7 @@ class StartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //decide where to go on the first app launch, check auth token if login needed
-        (requireActivity() as ToFlowNavigatable).navigateToFlow(NavigationFlow.HomeFlow)
+        (requireActivity() as ToFlowNavigatable).navigateToFlow(NavigationFlow.BoardFlow)
     }
 
 }
