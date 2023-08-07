@@ -5,5 +5,4 @@
     <item name="chats_flow" type="id" />
     <item name="board_flow" type="id" />
     <item name="profile_flow" type="id" />
-    <item name="next_flow" type="id" />
 </resources>

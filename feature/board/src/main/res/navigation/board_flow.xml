@@ -6,6 +6,24 @@
 
     <fragment
         android:id="@+id/boardFragment"
-        android:name="com.lighthouse.board.BoardFragment" />
+        android:name="com.lighthouse.board.BoardFragment">
+        <action
+            android:id="@+id/action_boardFragment_to_addFragment"
+            app:destination="@id/addFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addFragment"
+        android:name="com.lighthouse.board.view.AddFragment">
+        <action
+            android:id="@+id/action_addFragment_to_boardFragment"
+            app:destination="@id/boardFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+
+    </fragment>
 
 </navigation>
