@@ -25,9 +25,6 @@ class FilterFragment : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-
-
-
         addChipToGroup(binding.chipPreferCountry, contentList)
 
         return binding.root
@@ -37,8 +34,8 @@ class FilterFragment : Fragment() {
         val inflater = LayoutInflater.from(context)
         contentList.forEach { content ->
             val chip = inflater.inflate(
-                R.layout.home_chip,
-                binding.chipPreferCountry,
+                com.lighthouse.android.common_ui.R.layout.home_chip,
+                chipGroup,
                 false
             ) as Chip
 

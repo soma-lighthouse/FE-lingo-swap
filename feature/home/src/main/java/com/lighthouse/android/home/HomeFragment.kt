@@ -2,11 +2,7 @@ package com.lighthouse.android.home
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -14,16 +10,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
-import com.lighthouse.android.common_ui.constant.setGone
-import com.lighthouse.android.common_ui.constant.setVisible
-import com.lighthouse.android.common_ui.constant.toast
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
 import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
+import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.setGone
+import com.lighthouse.android.common_ui.util.setVisible
+import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.android.home.adapter.makeAdapter
 import com.lighthouse.android.home.databinding.FragmentHomeBinding
-import com.lighthouse.android.home.util.UiState
 import com.lighthouse.android.home.util.homeTitle
 import com.lighthouse.android.home.viewmodel.HomeViewModel
 import com.lighthouse.domain.response.vo.ProfileVO
@@ -32,18 +29,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment @Inject constructor() : Fragment() {
+class HomeFragment @Inject constructor() :
+    BindingFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val viewModel: HomeViewModel by activityViewModels()
-    private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: SimpleListAdapter<ProfileVO, UserInfoTileBinding>
     private val profileList = mutableListOf<ProfileVO>()
     private var next: Int? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initAdapter()
         initScrollListener()
         initFab()
@@ -63,10 +57,6 @@ class HomeFragment @Inject constructor() : Fragment() {
             binding.tvHomeTitle.text =
                 SpannableStringBuilderProvider.getSpannableBuilder(homeTitle, requireContext())
         }
-
-
-
-        return binding.root
     }
 
     override fun onStop() {
@@ -84,10 +74,10 @@ class HomeFragment @Inject constructor() : Fragment() {
                 }
             }
 
-            is UiState.Success -> {
+            is UiState.Success<*> -> {
                 binding.rvHome.setVisible()
                 Log.d("MYTAG", profileList.toString())
-                profileList.addAll(uiState.profiles)
+                profileList.addAll(uiState.data as List<ProfileVO>)
                 adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
                 binding.fabFilter.setVisible()
@@ -102,7 +92,13 @@ class HomeFragment @Inject constructor() : Fragment() {
 
 
     private fun initAdapter() {
-        adapter = makeAdapter()
+        adapter = makeAdapter() { userId ->
+            mainNavigator.navigateToProfile(
+                context = requireContext(),
+                userId = Pair("userId", userId),
+                isMe = Pair("isMe", false)
+            )
+        }
         val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.rvHome.layoutManager = linearLayoutManager
