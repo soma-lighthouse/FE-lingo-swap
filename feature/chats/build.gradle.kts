@@ -27,12 +27,15 @@ dependencies {
     implementation(project(":common-ui"))
     implementation(project(":navigation"))
 
+    implementation("com.sendbird.sdk:uikit:3.+")
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.kotlin.coroutines)
     implementation(libs.hilt)
+    implementation("androidx.appcompat:appcompat:1.6.1")
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.navigation)
+    implementation(libs.bundles.image)
 }
