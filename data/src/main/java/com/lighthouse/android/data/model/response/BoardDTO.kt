@@ -1,4 +1,4 @@
-package com.lighthouse.android.data.model
+package com.lighthouse.android.data.model.response
 
 import com.google.gson.annotations.SerializedName
 import com.lighthouse.domain.response.vo.BoardVO

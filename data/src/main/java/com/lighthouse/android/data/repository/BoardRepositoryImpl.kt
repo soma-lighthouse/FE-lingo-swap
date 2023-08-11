@@ -1,8 +1,12 @@
 package com.lighthouse.android.data.repository
 
+import com.lighthouse.android.data.model.request.UpdateLikeDTO
+import com.lighthouse.android.data.model.request.UploadQuestionDTO
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.repository.BoardRepository
+import com.lighthouse.domain.request.UpdateLikeVO
+import com.lighthouse.domain.request.UploadQuestionVO
 import com.lighthouse.domain.response.vo.BoardVO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,7 +17,7 @@ class BoardRepositoryImpl @Inject constructor(
 ) : BoardRepository {
     override fun getBoardQuestions(
         category: Int,
-        order: String,
+        order: String?,
         page: Int,
     ): Flow<Resource<BoardVO>> =
         datasource.getBoardQuestions(category, order, page).map {
@@ -24,19 +28,23 @@ class BoardRepositoryImpl @Inject constructor(
         }
 
     override fun uploadQuestion(
-        memberId: Int,
-        category: Int,
-        content: String,
+        info: UploadQuestionVO,
     ): Flow<Resource<String>> =
-        datasource.uploadQuestion(memberId, category, content).map {
+        datasource.uploadQuestion(
+            UploadQuestionDTO(
+                userId = info.userId,
+                categoryId = info.categoryId,
+                content = info.content
+            )
+        ).map {
             when (it) {
                 is Resource.Success -> Resource.Success(it.data!!)
                 else -> Resource.Error(it.message ?: "No message Found")
             }
         }
 
-    override fun updateLike(questionId: Int, memberId: Int): Flow<Resource<String>> =
-        datasource.updateLike(questionId, memberId).map {
+    override fun updateLike(questionId: Int, memberId: UpdateLikeVO): Flow<Resource<String>> =
+        datasource.updateLike(questionId, UpdateLikeDTO(memberId.memberId)).map {
             when (it) {
                 is Resource.Success -> Resource.Success(it.data!!)
                 else -> Resource.Error(it.message ?: "No message Found")

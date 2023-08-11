@@ -3,8 +3,6 @@
 
     <application android:theme="@style/Theme.LingoTheme">
 
-        <!-- Other application components (activities, services, etc.) go here -->
-
     </application>
 
 </manifest>

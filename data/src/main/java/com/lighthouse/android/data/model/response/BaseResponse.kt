@@ -1,9 +1,9 @@
-package com.lighthouse.android.data.model
+package com.lighthouse.android.data.model.response
 
 
 import com.google.gson.annotations.SerializedName
 
-data class BaseResponse<T> (
+data class BaseResponse<T>(
     @SerializedName("code")
     val code: Int,
     @SerializedName("data")
@@ -11,5 +11,5 @@ data class BaseResponse<T> (
     @SerializedName("message")
     val message: String,
     @SerializedName("timestamp")
-    val timestamp: String
+    val timestamp: String,
 )

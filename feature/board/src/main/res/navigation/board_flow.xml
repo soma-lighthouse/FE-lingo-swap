@@ -22,7 +22,9 @@
             android:id="@+id/action_addFragment_to_boardFragment"
             app:destination="@id/boardFragment"
             app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+            app:exitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@id/boardFragment"
+            app:popUpToInclusive="true" />
 
     </fragment>
 

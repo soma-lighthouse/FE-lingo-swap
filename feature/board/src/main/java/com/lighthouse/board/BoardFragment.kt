@@ -50,15 +50,16 @@ class BoardFragment : Fragment() {
     }
 
     private fun initTab() {
-        binding.tabBoard
         binding.vpBoard.adapter = TabViewPagerAdapter(this)
         TabLayoutMediator(binding.tabBoard, binding.vpBoard) { tab, position ->
-            tab.text = resources.getStringArray(R.array.tab_name)[position]
+            tab.text =
+                resources.getStringArray(com.lighthouse.android.common_ui.R.array.tab_name)[position]
         }.attach()
     }
 
     inner class TabViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-        override fun getItemCount(): Int = resources.getStringArray(R.array.tab_name).size
+        override fun getItemCount(): Int =
+            resources.getStringArray(com.lighthouse.android.common_ui.R.array.tab_name).size
 
         override fun createFragment(position: Int): Fragment {
             val fragment = TabContentFragment()

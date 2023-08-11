@@ -40,5 +40,4 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popUpTo="@id/main_nav_graph" />
 
-
 </navigation>

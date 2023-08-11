@@ -1,7 +1,9 @@
 package com.lighthouse.android.data.repository.datasourceimpl
 
 import com.lighthouse.android.data.api.BoardApiService
-import com.lighthouse.android.data.model.BoardDTO
+import com.lighthouse.android.data.model.request.UpdateLikeDTO
+import com.lighthouse.android.data.model.request.UploadQuestionDTO
+import com.lighthouse.android.data.model.response.BoardDTO
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
 import kotlinx.coroutines.flow.Flow
@@ -13,21 +15,20 @@ class BoardRemoteDataSourceImpl @Inject constructor(
 ) : BoardRemoteDataSource, NetworkResponse() {
     override fun getBoardQuestions(
         category: Int,
-        order: String,
+        order: String?,
         page: Int,
     ): Flow<Resource<BoardDTO>> = flow {
         emit(changeResult(api.getQuestion(category, order, page)))
     }
 
     override fun uploadQuestion(
-        memberId: Int,
-        categoryId: Int,
-        content: String,
+        info: UploadQuestionDTO,
     ): Flow<Resource<String>> = flow {
-        emit(changeResult(api.uploadQuestion(memberId, categoryId, content)))
+        emit(changeResult(api.uploadQuestion(info)))
     }
 
-    override fun updateLike(questionId: Int, memberId: Int): Flow<Resource<String>> = flow {
-        emit(changeResult(api.updateLike(questionId, memberId)))
-    }
+    override fun updateLike(questionId: Int, memberId: UpdateLikeDTO): Flow<Resource<String>> =
+        flow {
+            emit(changeResult(api.updateLike(questionId, memberId)))
+        }
 }

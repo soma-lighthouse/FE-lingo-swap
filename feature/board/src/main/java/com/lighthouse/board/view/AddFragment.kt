@@ -3,45 +3,37 @@ package com.lighthouse.board.view
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.lighthouse.android.common_ui.constant.toast
+import com.lighthouse.android.common_ui.base.BindingFragment
+import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.setGone
+import com.lighthouse.android.common_ui.util.setInvisible
+import com.lighthouse.android.common_ui.util.setVisible
+import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.board.R
 import com.lighthouse.board.databinding.FragmentAddBinding
 import com.lighthouse.board.viewmodel.BoardViewModel
+import com.lighthouse.domain.request.UploadQuestionVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AddFragment : Fragment() {
+class AddFragment : BindingFragment<FragmentAddBinding>(R.layout.fragment_add) {
     private val viewModel: BoardViewModel by viewModels()
-    private lateinit var binding: FragmentAddBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initBack()
         initAddButton()
 
-        val interestList = listOf(
-            requireContext().resources.getString(com.lighthouse.android.common_ui.R.string.cooking),
-            requireContext().resources.getString(com.lighthouse.android.common_ui.R.string.game),
-            requireContext().resources.getString(com.lighthouse.android.common_ui.R.string.movie),
-            requireContext().resources.getString(com.lighthouse.android.common_ui.R.string.music),
-            requireContext().resources.getString(com.lighthouse.android.common_ui.R.string.travel),
-            requireContext().resources.getString(com.lighthouse.android.common_ui.R.string.study),
+        addChipToGroup(
+            binding.chipInterest,
+            resources.getStringArray(com.lighthouse.android.common_ui.R.array.tab_name).toList()
         )
-
-        addChipToGroup(binding.chipInterest, interestList)
-
-        return binding.root
     }
 
     private fun initBack() {
@@ -79,8 +71,33 @@ class AddFragment : Fragment() {
             } else {
                 val categoryId = binding.chipInterest.checkedChipId - 2
                 viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.uploadQuestion(1, categoryId, text).collect {
+                    viewModel.uploadQuestion(UploadQuestionVO(521, categoryId, text)).collect {
+                        when (it) {
+                            is UiState.Loading -> {
+                                binding.apply {
+                                    pbAddLoading.setVisible()
+                                    btnAdd.isEnabled = false
+                                    btnBack.isEnabled = false
+                                }
+                            }
 
+                            is UiState.Success<*> -> {
+                                binding.apply {
+                                    pbAddLoading.setGone()
+                                    context.toast("question uploaded!")
+                                    findNavController().navigate(AddFragmentDirections.actionAddFragmentToBoardFragment())
+                                }
+                            }
+
+                            is UiState.Error -> {
+                                binding.apply {
+                                    pbAddLoading.setInvisible()
+                                    btnAdd.isEnabled = true
+                                    btnBack.isEnabled = true
+                                    context.toast("question uploaded failed")
+                                }
+                            }
+                        }
                     }
 
                 }

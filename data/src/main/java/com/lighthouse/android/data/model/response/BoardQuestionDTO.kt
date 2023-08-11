@@ -1,4 +1,4 @@
-package com.lighthouse.android.data.model
+package com.lighthouse.android.data.model.response
 
 import com.google.gson.annotations.SerializedName
 import com.lighthouse.domain.response.vo.BoardQuestionVO
@@ -18,7 +18,7 @@ data class BoardQuestionDTO(
     val region: String?,
     @SerializedName("contents")
     val contents: String?,
-    @SerializedName("like")
+    @SerializedName("likes")
     val like: Int?,
 ) {
     fun toVO() = BoardQuestionVO(
