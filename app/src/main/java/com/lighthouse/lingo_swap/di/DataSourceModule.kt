@@ -1,9 +1,12 @@
 package com.lighthouse.lingo_swap.di
 
+import com.lighthouse.android.data.api.BoardApiService
 import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
+import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.DrivenRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
+import com.lighthouse.android.data.repository.datasourceimpl.BoardRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasourceimpl.DrivenRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasourceimpl.HomeRemoteDataSourceImpl
 import com.lighthouse.lingo_swap.di.Annotation.Main
@@ -27,5 +30,11 @@ object DataSourceModule {
     @Singleton
     fun provideHomeDataSource(@Main homeApiService: HomeApiService): HomeRemoteDataSource {
         return HomeRemoteDataSourceImpl(homeApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBoardDataSource(@Main boardApiService: BoardApiService): BoardRemoteDataSource {
+        return BoardRemoteDataSourceImpl(boardApiService)
     }
 }

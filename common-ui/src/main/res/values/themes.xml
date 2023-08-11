@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.LingoTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/main</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -14,5 +14,7 @@
         <!-- Customize your theme here. -->
         <item name="android:fontFamily">@font/noto_sans_kr</item>
         <item name="android:buttonTint">@color/main</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
 </resources>

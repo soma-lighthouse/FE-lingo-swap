@@ -11,11 +11,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.lighthouse.android.common_ui.server_driven.viewholders.adapter.DrivenAdapter
+import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.setGone
+import com.lighthouse.android.common_ui.util.setVisible
+import com.lighthouse.android.common_ui.util.toast
+import com.lighthouse.domain.response.server_driven.ViewTypeVO
 import com.lighthouse.profile.databinding.FragmentProfileBinding
-import com.lighthouse.profile.util.UiState
-import com.lighthouse.profile.util.setGone
-import com.lighthouse.profile.util.setVisible
-import com.lighthouse.profile.util.toast
+import com.lighthouse.profile.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -53,9 +55,9 @@ class ProfileFragment : Fragment() {
                 binding.rvProfile.setGone()
             }
 
-            is UiState.Success -> {
+            is UiState.Success<*> -> {
                 binding.rvProfile.setVisible()
-                adapter.submitList(uiState.drivenData)
+                adapter.submitList(uiState.data as List<ViewTypeVO>)
                 binding.pbProfileLoading.setGone()
             }
 

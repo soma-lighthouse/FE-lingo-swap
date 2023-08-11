@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.chip.Chip
+        style="@style/ChipCustomStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="true"
+        android:textColor="@color/main"
+        android:theme="@style/Theme.MaterialComponents.Light"
+        app:chipBackgroundColor="#e0f1f0"
+        app:chipIconEnabled="true"
+        app:closeIcon="@drawable/cross"
+        app:closeIconEnabled="true"
+        app:closeIconSize="10dp"
+        app:closeIconTint="@color/main"
+        app:closeIconVisible="true"
+        tools:text="testing">
+
+
+    </com.google.android.material.chip.Chip>
+</layout>

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lighthouse.android.home.util.UiState
+import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.response.vo.ProfileVO
 import com.lighthouse.domain.usecase.GetMatchedUserUseCase

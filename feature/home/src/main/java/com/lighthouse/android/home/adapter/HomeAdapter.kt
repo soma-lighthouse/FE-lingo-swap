@@ -1,18 +1,20 @@
 package com.lighthouse.android.home.adapter
 
-import android.content.res.Resources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.R
-import com.lighthouse.android.common_ui.adapter.ItemDiffCallBack
-import com.lighthouse.android.common_ui.adapter.SimpleListAdapter
-import com.lighthouse.android.common_ui.constant.Constant
+import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
+import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
+import com.lighthouse.android.common_ui.util.Constant
+import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.domain.response.vo.ProfileVO
 
-fun makeAdapter() =
+fun makeAdapter(
+    navigateToProfile: (userId: Int) -> Unit,
+) =
     SimpleListAdapter<ProfileVO, UserInfoTileBinding>(
         diffCallBack = ItemDiffCallBack(
             onContentsTheSame = { old, new -> old == new },
@@ -44,8 +46,12 @@ fun makeAdapter() =
                     })
 
 
-            val languages = item.language.map {
+            val languages = item.languages.map {
                 "${it.code}/Lv.${it.level}"
+            }
+
+            binding.ivProfileImg.setOnClickListener {
+                navigateToProfile(item.id)
             }
 
             adapter.submitList(languages)
@@ -61,10 +67,3 @@ fun makeAdapter() =
             binding.setVariable(BR.item, item)
         }
     )
-
-
-private fun calSize(size: Float?): Int {
-    val density = Resources.getSystem().displayMetrics.density
-
-    return (size?.times(density) ?: 0).toInt()
-}

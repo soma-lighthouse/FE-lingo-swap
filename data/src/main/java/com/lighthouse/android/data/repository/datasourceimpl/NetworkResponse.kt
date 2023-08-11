@@ -1,6 +1,6 @@
 package com.lighthouse.android.data.repository.datasourceimpl
 
-import com.lighthouse.android.data.model.BaseResponse
+import com.lighthouse.android.data.model.response.BaseResponse
 import com.lighthouse.android.data.util.HttpResponseStatus
 import com.lighthouse.domain.constriant.Resource
 import retrofit2.Response

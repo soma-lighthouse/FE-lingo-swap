@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.chip.Chip
-        android:id="@+id/chip_layout"
+        style="@style/ChipCustomStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/main"
-        app:chipBackgroundColor="#e0f1f0"
+        android:checkable="true"
+        android:textColor="@color/chip_text_list"
+        app:chipBackgroundColor="@color/chip_state_list"
+        app:chipIconEnabled="true"
         app:closeIcon="@drawable/cross"
         app:closeIconEnabled="true"
         app:closeIconSize="10dp"
         app:closeIconTint="@color/main"
+        app:closeIconVisible="true"
         tools:text="testing">
 
 

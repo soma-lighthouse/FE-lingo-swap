@@ -65,7 +65,8 @@
                 android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="@+id/btn_select_language"
                 app:layout_constraintStart_toStartOf="@+id/tv_prefer_country"
-                app:layout_constraintTop_toBottomOf="@+id/tv_prefer_country" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_prefer_country"
+                app:singleSelection="true" />
 
 
             <TextView

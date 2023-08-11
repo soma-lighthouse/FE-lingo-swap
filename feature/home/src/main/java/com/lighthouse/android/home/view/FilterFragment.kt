@@ -13,6 +13,7 @@ import com.lighthouse.android.home.databinding.FragmentFilterBinding
 
 class FilterFragment : Fragment() {
     private lateinit var binding: FragmentFilterBinding
+    private val contentList = listOf("Korea", "Japan", "America", "China")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,15 +25,6 @@ class FilterFragment : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-
-        val contentList =
-            listOf(
-                "Korea",
-                "Japan",
-                "America",
-                "China"
-            )
-
         addChipToGroup(binding.chipPreferCountry, contentList)
 
         return binding.root
@@ -42,8 +34,8 @@ class FilterFragment : Fragment() {
         val inflater = LayoutInflater.from(context)
         contentList.forEach { content ->
             val chip = inflater.inflate(
-                com.lighthouse.android.common_ui.R.layout.chip,
-                binding.chipPreferCountry,
+                com.lighthouse.android.common_ui.R.layout.home_chip,
+                chipGroup,
                 false
             ) as Chip
 
