@@ -1,18 +1,19 @@
 package com.lighthouse.board.adapter
 
-import android.content.res.Resources
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
-import com.lighthouse.android.common_ui.constant.Constant
 import com.lighthouse.android.common_ui.databinding.QuestionTileBinding
+import com.lighthouse.android.common_ui.util.Constant
+import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.domain.response.vo.BoardQuestionVO
 
 fun makeAdapter(
     likeListener: (questionId: Int, memberId: Int) -> Unit,
+    navigateToProfile: (userId: Int) -> Unit,
 ) =
     SimpleListAdapter<BoardQuestionVO, QuestionTileBinding>(
         diffCallBack = ItemDiffCallBack(
@@ -55,13 +56,11 @@ fun makeAdapter(
                 }
             }
 
+            binding.ivProfile.setOnClickListener {
+                navigateToProfile(item.memberId)
+            }
+
             binding.setVariable(BR.item, item)
 
         }
     )
-
-private fun calSize(size: Float?): Int {
-    val density = Resources.getSystem().displayMetrics.density
-
-    return (size?.times(density) ?: 0).toInt()
-}
