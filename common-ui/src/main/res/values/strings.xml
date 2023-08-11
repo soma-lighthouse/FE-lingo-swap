@@ -30,12 +30,20 @@
     <string name="enter_question">질문 입력</string>
     <string name="add_question">추가하기</string>
     <string name="question_size_error">10자 이상 200자 이하로 작성해주세요</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit_profile">편집하기</string>
     <string name="occupation">직업</string>
     <string name="no_occupation">미설정</string>
     <string name="language_and_level">언어 및 레벨</string>
     <string name="interest_country">관심있는 국가</string>
+    <string name="chat_title">채팅</string>
+    <string name="hint_search">검색</string>
+    <string name="setting">설정</string>
+
+    <string name="turn_off_alarm">알람끄기</string>
+    <string name="type_here">Type here...</string>
+    <string name="enter_info">기본정보를 입력하세요 (1/3)</string>
+    <string name="basic_info">기본 정보</string>
+    <string name="name">이름</string>
+    <string name="enter_name">이름을 입력하세요</string>
 
 </resources>

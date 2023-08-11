@@ -33,7 +33,9 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.kotlin.coroutines)
     implementation(libs.hilt)
+    implementation("androidx.appcompat:appcompat:1.6.1")
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.navigation)
+    implementation(libs.bundles.image)
 }

@@ -1,4 +1,4 @@
-package com.lighthouse.android.common_ui.constant
+package com.lighthouse.android.common_ui.util
 
 object Constant {
     const val PROFILE_IMAGE_SIZE = 64.0f

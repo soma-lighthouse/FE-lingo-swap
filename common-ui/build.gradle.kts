@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("androidx.navigation.safeargs.kotlin")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -33,4 +34,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.navigation)
+    implementation(libs.hilt)
+    kapt(libs.hilt.kapt)
 }

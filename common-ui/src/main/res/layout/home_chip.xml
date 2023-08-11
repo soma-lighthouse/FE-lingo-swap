@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:checkable="true"
         android:textColor="@color/main"
+        android:theme="@style/Theme.MaterialComponents.Light"
         app:chipBackgroundColor="#e0f1f0"
         app:chipIconEnabled="true"
         app:closeIcon="@drawable/cross"

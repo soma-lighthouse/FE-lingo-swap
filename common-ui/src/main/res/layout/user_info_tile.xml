@@ -65,11 +65,13 @@
 
             <TextView
                 android:id="@+id/tv_profile_intro"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:layout_marginEnd="20dp"
                 android:text="@{item.description}"
                 android:textColor="@color/brownish_grey"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
                 app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
                 tools:text="introduction" />
@@ -79,7 +81,7 @@
                 android:layout_width="0dp"
                 android:layout_height="36dp"
                 android:layout_marginTop="6dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginBottom="12dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
