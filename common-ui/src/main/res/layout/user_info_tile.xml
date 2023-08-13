@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.lighthouse.domain.response.vo.ProfileVO" />
+            type="com.lighthouse.domain.entity.response.vo.ProfileVO" />
     </data>
 
     <androidx.cardview.widget.CardView

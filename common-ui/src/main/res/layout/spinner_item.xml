@@ -11,4 +11,4 @@
     android:paddingBottom="2dp"
     android:textColor="@color/brown_grey"
     android:textSize="14sp"
-    app:drawableEndCompat="@drawable/down_arrow" />
+    app:drawableEndCompat="@drawable/arrow_fill" />
