@@ -29,8 +29,7 @@ dependencies {
     implementation(project(":navigation"))
 
     implementation(libs.bundles.androidx.ui.foundation)
-    implementation(libs.material)
-    implementation(libs.constraintlayout)
+    implementation(libs.bundles.android.basic.ui)
     implementation(libs.kotlin.coroutines)
     implementation(libs.hilt)
     implementation("androidx.appcompat:appcompat:1.6.1")
