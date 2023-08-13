@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.sendbird.uikit.widgets.MentionEditText
+            android:id="@+id/et_message_input"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/message_input"
+            android:hint="@string/type_here"
+            android:imeOptions="flagNoExtractUi"
+            android:maxLines="5"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="16dp"
+            android:textColorHint="@color/silver"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/replyPanel" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/send"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/et_message_input"
+            app:layout_constraintEnd_toEndOf="@id/et_message_input"
+            app:layout_constraintTop_toTopOf="@id/et_message_input" />
+
+        <TextView
+            android:id="@+id/replyPanel"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:gravity="center_vertical|start"
+            android:padding="10dp"
+            android:paddingStart="@dimen/sb_size_16"
+            android:textAppearance="@style/SendbirdBody1OnLight01"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_cross"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/cross"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/replyPanel"
+            app:layout_constraintEnd_toEndOf="@id/replyPanel"
+            app:layout_constraintTop_toTopOf="@id/replyPanel" />
+
+
+        <LinearLayout
+            android:id="@+id/lr_features"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_message_input">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/iv_question"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@color/white"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/question" />
+
+            <ImageView
+                android:id="@+id/iv_emoticon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/emoticon" />
+
+            <ImageView
+                android:id="@+id/iv_translate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/translate" />
+
+            <ImageView
+                android:id="@+id/iv_camera"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/camera" />
+
+            <ImageView
+                android:id="@+id/iv_mick"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/mick" />
+        </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/rv_question_panel"
+            android:name="com.lighthouse.android.chats.view.QuestionFragment"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:background="@color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lr_features" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

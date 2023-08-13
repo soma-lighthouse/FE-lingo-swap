@@ -10,6 +10,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -57,12 +59,15 @@ kapt {
 }
 
 dependencies {
+    implementation("com.sendbird.sdk:uikit:3.+")
     implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(project(":common-ui"))
     implementation(project(":feature:home"))
     implementation(project(":feature:chats"))
     implementation(project(":feature:board"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:auth"))
     implementation(project(":navigation"))
 
     implementation(libs.hilt)
@@ -77,4 +82,6 @@ dependencies {
     implementation(libs.bundles.navigation)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.shared.preference.security)
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation(libs.bundles.firebase)
 }

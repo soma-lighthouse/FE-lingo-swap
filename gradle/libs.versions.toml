@@ -40,7 +40,7 @@ androidx-test-espresso = "3.5.1"
 androidx-test = "1.5.2"
 
 # Build Tools and Plugins
-gradleplugin = "8.0.0"
+gradleplugin = "8.0.2"
 kspplugin = "1.8.21-1.0.11"
 
 # Dependency Injection
@@ -61,6 +61,7 @@ lottie = "6.0.1"
 google-services = "4.3.15"
 crashlytics = "2.9.5"
 firebase = "32.1.0"
+messaging = "16.0.1"
 
 
 [libraries]
@@ -151,3 +152,4 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspplugin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 safe-args = { id = "androidx.navigation.safeargs", version.ref = "safe-args" }
+
