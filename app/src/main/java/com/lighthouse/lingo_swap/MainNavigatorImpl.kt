@@ -1,7 +1,10 @@
 package com.lighthouse.lingo_swap
 
 import android.content.Context
+import com.lighthouse.android.common_ui.util.buildIntent
 import com.lighthouse.android.common_ui.util.navigateActivity
+import com.lighthouse.auth.view.CountryListActivity
+import com.lighthouse.auth.view.InterestListActivity
 import com.lighthouse.navigation.MainNavigator
 import com.lighthouse.profile.view.DetailProfileActivity
 
@@ -17,4 +20,8 @@ class MainNavigatorImpl : MainNavigator {
     ) {
         context.navigateActivity<DetailProfileActivity>(userId, isMe)
     }
+
+    override fun navigateToInterest(context: Context) = context.buildIntent<InterestListActivity>()
+
+    override fun navigateToCountry(context: Context) = context.buildIntent<CountryListActivity>()
 }

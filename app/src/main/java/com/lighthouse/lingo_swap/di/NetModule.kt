@@ -1,11 +1,13 @@
 package com.lighthouse.lingo_swap.di
 
 import com.google.gson.GsonBuilder
+import com.lighthouse.android.data.api.AuthApiService
 import com.lighthouse.android.data.api.BoardApiService
 import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
+import com.lighthouse.android.data.api.ProfileApiService
 import com.lighthouse.android.data.api.interceptor.ContentInterceptor
-import com.lighthouse.domain.response.server_driven.ViewTypeVO
+import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
 import com.lighthouse.lingo_swap.BuildConfig
 import com.lighthouse.lingo_swap.HeaderInterceptor
 import com.lighthouse.lingo_swap.ViewTypeDeserializer
@@ -101,5 +103,19 @@ object NetModule {
     @Main
     fun provideBoardService(@Main retrofit: Retrofit): BoardApiService {
         return retrofit.create(BoardApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Main
+    fun provideProfileService(@Main retrofit: Retrofit): ProfileApiService {
+        return retrofit.create(ProfileApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Main
+    fun provideAuthService(@Main retrofit: Retrofit): AuthApiService {
+        return retrofit.create(AuthApiService::class.java)
     }
 }

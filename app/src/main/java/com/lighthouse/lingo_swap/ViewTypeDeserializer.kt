@@ -6,8 +6,8 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.lighthouse.domain.constriant.ViewType
 import com.lighthouse.domain.constriant.ViewType.Companion.findClassByItsName
-import com.lighthouse.domain.response.server_driven.ContentVO
-import com.lighthouse.domain.response.server_driven.ViewTypeVO
+import com.lighthouse.domain.entity.response.server_driven.ContentVO
+import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
 import java.lang.reflect.Type
 
 class ViewTypeDeserializer : JsonDeserializer<ViewTypeVO> {
