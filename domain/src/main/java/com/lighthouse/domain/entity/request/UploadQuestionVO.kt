@@ -1,4 +1,4 @@
-package com.lighthouse.domain.request
+package com.lighthouse.domain.entity.request
 
 data class UploadQuestionVO(
     val userId: Int,

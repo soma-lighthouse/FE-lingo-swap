@@ -2,8 +2,8 @@ package com.lighthouse.domain.usecase
 
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.repository.BoardRepository
-import com.lighthouse.domain.request.UpdateLikeVO
-import com.lighthouse.domain.request.UploadQuestionVO
+import com.lighthouse.domain.entity.request.UpdateLikeVO
+import com.lighthouse.domain.entity.request.UploadQuestionVO
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package com.lighthouse.domain.response.vo
+package com.lighthouse.domain.entity.response.vo
 
 data class ProfileVO(
     val id: Int,

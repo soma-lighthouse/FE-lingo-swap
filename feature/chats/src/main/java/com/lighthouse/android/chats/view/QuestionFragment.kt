@@ -23,7 +23,7 @@ import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.toast
-import com.lighthouse.domain.response.vo.BoardQuestionVO
+import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

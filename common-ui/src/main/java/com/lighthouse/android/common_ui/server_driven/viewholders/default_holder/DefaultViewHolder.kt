@@ -3,7 +3,7 @@ package com.lighthouse.android.common_ui.server_driven.viewholders.default_holde
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.domain.constriant.ViewType
-import com.lighthouse.domain.response.server_driven.ContentVO
+import com.lighthouse.domain.entity.response.server_driven.ContentVO
 
 abstract class DefaultViewHolder(
     private val binding: ViewDataBinding,

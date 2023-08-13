@@ -1,4 +1,4 @@
-package com.lighthouse.domain.response.server_driven
+package com.lighthouse.domain.entity.response.server_driven
 
 import com.lighthouse.domain.constriant.ViewType
 

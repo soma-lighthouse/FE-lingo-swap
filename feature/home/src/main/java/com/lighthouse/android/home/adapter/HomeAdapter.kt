@@ -10,7 +10,7 @@ import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.calSize
-import com.lighthouse.domain.response.vo.ProfileVO
+import com.lighthouse.domain.entity.response.vo.ProfileVO
 
 fun makeAdapter(
     navigateToProfile: (userId: Int) -> Unit,

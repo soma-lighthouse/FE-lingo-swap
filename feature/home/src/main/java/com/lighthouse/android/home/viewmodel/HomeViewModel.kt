@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.response.vo.ProfileVO
+import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.usecase.GetMatchedUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

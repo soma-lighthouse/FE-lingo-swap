@@ -21,8 +21,8 @@ import com.lighthouse.board.R
 import com.lighthouse.board.adapter.makeAdapter
 import com.lighthouse.board.databinding.FragmentTabContentBinding
 import com.lighthouse.board.viewmodel.BoardViewModel
-import com.lighthouse.domain.request.UpdateLikeVO
-import com.lighthouse.domain.response.vo.BoardQuestionVO
+import com.lighthouse.domain.entity.request.UpdateLikeVO
+import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -40,7 +40,6 @@ class TabContentFragment :
         initRefresh()
 
         val curPos = arguments?.getInt("tab_pos") ?: "Default Content"
-//        val order = arguments?.getString("order") ?: "date"
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {

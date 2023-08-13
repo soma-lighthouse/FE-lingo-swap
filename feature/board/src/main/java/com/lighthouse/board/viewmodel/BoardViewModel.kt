@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.request.UpdateLikeVO
-import com.lighthouse.domain.request.UploadQuestionVO
+import com.lighthouse.domain.entity.request.UpdateLikeVO
+import com.lighthouse.domain.entity.request.UploadQuestionVO
 import com.lighthouse.domain.usecase.GetQuestionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted

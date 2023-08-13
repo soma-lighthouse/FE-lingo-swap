@@ -5,9 +5,9 @@ import com.lighthouse.android.data.model.request.UploadQuestionDTO
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.repository.BoardRepository
-import com.lighthouse.domain.request.UpdateLikeVO
-import com.lighthouse.domain.request.UploadQuestionVO
-import com.lighthouse.domain.response.vo.BoardVO
+import com.lighthouse.domain.entity.request.UpdateLikeVO
+import com.lighthouse.domain.entity.request.UploadQuestionVO
+import com.lighthouse.domain.entity.response.vo.BoardVO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

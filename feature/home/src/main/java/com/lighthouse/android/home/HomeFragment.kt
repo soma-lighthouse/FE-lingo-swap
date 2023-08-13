@@ -23,7 +23,7 @@ import com.lighthouse.android.home.adapter.makeAdapter
 import com.lighthouse.android.home.databinding.FragmentHomeBinding
 import com.lighthouse.android.home.util.homeTitle
 import com.lighthouse.android.home.viewmodel.HomeViewModel
-import com.lighthouse.domain.response.vo.ProfileVO
+import com.lighthouse.domain.entity.response.vo.ProfileVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject

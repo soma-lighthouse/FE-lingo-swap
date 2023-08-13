@@ -15,7 +15,7 @@ import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
-import com.lighthouse.domain.response.server_driven.ViewTypeVO
+import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
 import com.lighthouse.profile.databinding.FragmentProfileBinding
 import com.lighthouse.profile.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint

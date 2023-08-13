@@ -22,8 +22,8 @@ import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
-import com.lighthouse.domain.response.vo.InterestVO
-import com.lighthouse.domain.response.vo.ProfileVO
+import com.lighthouse.domain.entity.response.vo.InterestVO
+import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.profile.R
 import com.lighthouse.profile.adapter.makeAdapter
 import com.lighthouse.profile.databinding.ActivityDetailProfileBinding
@@ -87,7 +87,6 @@ class DetailProfileActivity :
                 binding.btnInterest.animate().rotation(180f).start()
             }
         }
-
     }
 
     private fun render(uiState: UiState) {

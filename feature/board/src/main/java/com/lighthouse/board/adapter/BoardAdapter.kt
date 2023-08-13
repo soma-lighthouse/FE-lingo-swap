@@ -9,7 +9,7 @@ import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.QuestionTileBinding
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.calSize
-import com.lighthouse.domain.response.vo.BoardQuestionVO
+import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 
 fun makeAdapter(
     likeListener: (questionId: Int, memberId: Int) -> Unit,

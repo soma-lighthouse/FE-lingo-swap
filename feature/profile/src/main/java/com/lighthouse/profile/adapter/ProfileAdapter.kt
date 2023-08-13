@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
-import com.lighthouse.domain.response.vo.InterestVO
+import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.profile.R
 import com.lighthouse.profile.databinding.InterestTileBinding
 

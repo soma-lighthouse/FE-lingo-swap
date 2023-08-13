@@ -4,7 +4,7 @@ import com.lighthouse.android.chats.R
 import com.lighthouse.android.chats.databinding.ChatQuestionTileBinding
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
-import com.lighthouse.domain.response.vo.BoardQuestionVO
+import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 
 fun makeAdapter(
     sendMessage: (String) -> Unit,

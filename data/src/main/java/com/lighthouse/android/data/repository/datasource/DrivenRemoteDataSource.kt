@@ -1,6 +1,6 @@
 package com.lighthouse.android.data.repository.datasource
 
-import com.lighthouse.domain.response.server_driven.ViewTypeVO
+import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
 import kotlinx.coroutines.flow.Flow
 
 fun interface DrivenRemoteDataSource {

@@ -17,7 +17,7 @@ import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.board.R
 import com.lighthouse.board.databinding.FragmentAddBinding
 import com.lighthouse.board.viewmodel.BoardViewModel
-import com.lighthouse.domain.request.UploadQuestionVO
+import com.lighthouse.domain.entity.request.UploadQuestionVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
