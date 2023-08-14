@@ -57,9 +57,15 @@ class CountryAdapter(
                 listener.onItemClick(currentItem.name)
                 notifyItemChanged(position)
             } else {
-                clearSelection()
-                currentItem.select = !currentItem.select
+                if (currentItem.select) {
+                    clearSelection()
+                    currentItem.select = false
+                } else {
+                    clearSelection()
+                    currentItem.select = true
+                }
                 listener.onItemClick(currentItem.name)
+                notifyItemChanged(position)
             }
         }
     }

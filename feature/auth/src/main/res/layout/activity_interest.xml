@@ -49,6 +49,7 @@
             tools:itemCount="3"
             tools:listitem="@layout/interest_list_tile" />
 
+
         <View
             android:id="@+id/bottom_rectangle"
             android:layout_width="match_parent"
@@ -59,8 +60,10 @@
 
         <HorizontalScrollView
             android:id="@+id/sv_category"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_apply"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/bottom_rectangle">

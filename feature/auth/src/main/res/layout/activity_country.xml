@@ -57,7 +57,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tb_info"
             tools:itemCount="3"
-            tools:listitem="@layout/country_tile" />
+            tools:listitem="@layout/language_tile" />
 
 
         <View

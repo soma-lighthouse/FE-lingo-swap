@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
+import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.auth.R
 import com.lighthouse.auth.adapter.CountryAdapter
 import com.lighthouse.auth.databinding.ActivityCountryBinding
@@ -28,18 +29,26 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
         CountryVO(name = "Japan", code = "jp"),
         CountryVO(name = "China", code = "cn"),
     )
-    private val multiSelection = true
+    private var multiSelection = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        multiSelection = intent.getBooleanExtra("multiSelect", false)
+
+
         initBack()
         initAdapter()
         initApply()
         initSearch()
 
-        resultList.observe(this) {
-            initChip()
-            Log.d("CHECKING", it.toString())
+        if (multiSelection) {
+            resultList.observe(this) {
+                initChip()
+                Log.d("CHECKING", it.toString())
+            }
+        } else {
+            binding.chipResult.setGone()
         }
         adapter.submitList(countryList)
     }
@@ -97,7 +106,12 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
     }
 
     private fun initApply() {
-        // TODO()
+        binding.btnApply.setOnClickListener {
+            intent.putStringArrayListExtra("CountryList",
+                resultList.value?.let { it1 -> ArrayList(it1) })
+            setResult(RESULT_OK, intent)
+            finish()
+        }
     }
 
     private fun initBack() {

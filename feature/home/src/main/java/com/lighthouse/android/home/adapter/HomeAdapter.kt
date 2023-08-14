@@ -47,7 +47,7 @@ fun makeAdapter(
 
 
             val languages = item.languages.map {
-                "${it.code}/Lv.${it.level}"
+                "${it.name}/Lv.${it.level}"
             }
 
             binding.ivProfileImg.setOnClickListener {

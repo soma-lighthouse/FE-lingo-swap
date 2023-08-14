@@ -107,7 +107,7 @@ class DetailProfileActivity :
                 initView(result)
                 initChip(binding.chipLanguage, result.countries)
                 initChip(binding.chipCountry, result.languages.flatMap {
-                    listOf("${it.code}/LV${it.level}")
+                    listOf("${it.name}/LV${it.level}")
                 })
                 adapter.submitList(result.interests)
                 binding.pbDetailLoading.setGone()

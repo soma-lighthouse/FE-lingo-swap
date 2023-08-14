@@ -26,7 +26,7 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         navController = navHostFragment.navController
 
         checkRegister()
-        login()
+//        login()
 
     }
 
@@ -47,8 +47,6 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
                         if (loginState == LoginState.LOGIN_SUCCESS) {
                             mainNavigator.navigateToMain(this@AuthActivity)
                             finish()
-                        } else {
-//                        navController.navigate(R.id.action_info_fragment_to_interestFragment)
                         }
                         content.viewTreeObserver.removeOnPreDrawListener(this)
                         true
