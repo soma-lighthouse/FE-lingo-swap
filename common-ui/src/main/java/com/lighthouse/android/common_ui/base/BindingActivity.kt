@@ -48,4 +48,5 @@ abstract class BindingActivity<T : ViewDataBinding>(
         ).sharedPreferences()
     }
 
+
 }

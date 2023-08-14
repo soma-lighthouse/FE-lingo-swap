@@ -5,6 +5,7 @@ import com.lighthouse.android.common_ui.util.buildIntent
 import com.lighthouse.android.common_ui.util.navigateActivity
 import com.lighthouse.auth.view.CountryListActivity
 import com.lighthouse.auth.view.InterestListActivity
+import com.lighthouse.auth.view.LanguageListActivity
 import com.lighthouse.navigation.MainNavigator
 import com.lighthouse.profile.view.DetailProfileActivity
 
@@ -23,5 +24,8 @@ class MainNavigatorImpl : MainNavigator {
 
     override fun navigateToInterest(context: Context) = context.buildIntent<InterestListActivity>()
 
-    override fun navigateToCountry(context: Context) = context.buildIntent<CountryListActivity>()
+    override fun navigateToCountry(context: Context, multiSelect: Pair<String, Boolean>) =
+        context.buildIntent<CountryListActivity>(multiSelect)
+
+    override fun navigateToLanguage(context: Context) = context.buildIntent<LanguageListActivity>()
 }
