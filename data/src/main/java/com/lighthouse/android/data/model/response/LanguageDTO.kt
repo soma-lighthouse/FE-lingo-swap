@@ -5,12 +5,12 @@ import com.lighthouse.domain.entity.response.vo.LanguageVO
 
 data class LanguageDTO(
     @SerializedName("code")
-    val code: String?,
+    val name: String?,
     @SerializedName("level")
     val level: Int?,
 ) {
     fun toVO() = LanguageVO(
-        code ?: "kr",
+        name ?: "kr",
         level ?: -1
     )
 }

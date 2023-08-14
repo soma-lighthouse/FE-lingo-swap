@@ -8,6 +8,10 @@
         <activity
             android:name=".view.InterestListActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".view.LanguageListActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

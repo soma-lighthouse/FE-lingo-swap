@@ -24,10 +24,10 @@ open class CustomChannelList : ChannelListFragment() {
     ) {
         super.onBeforeReady(status, module, viewModel)
         module.channelListComponent.setAdapter(CustomChannelListAdapter())
-        module.channelListComponent.setOnItemClickListener { View, Int, channel ->
-            GroupChannel.getChannel(channel.url) { c, e ->
+        module.channelListComponent.setOnItemClickListener { _, _, channel ->
+            GroupChannel.getChannel(channel.url) { _, e ->
                 if (e != null) {
-
+                    // TODO("error handling")
                 } else {
                     val intent = ChannelActivity.newIntentFromCustomActivity(
                         requireContext(),

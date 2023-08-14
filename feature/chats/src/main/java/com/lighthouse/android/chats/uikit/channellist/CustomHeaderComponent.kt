@@ -18,6 +18,7 @@ class CustomHeaderComponent : HeaderComponent() {
         args: Bundle?,
     ): View {
         binding = CustomHeaderBinding.inflate(inflater, null, false)
+
         return binding.root
     }
 }
