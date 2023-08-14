@@ -17,5 +17,10 @@ interface MainNavigator {
 
     fun navigateToCountry(
         context: Context,
+        multiSelect: Pair<String, Boolean>,
+    ): Intent
+
+    fun navigateToLanguage(
+        context: Context,
     ): Intent
 }
