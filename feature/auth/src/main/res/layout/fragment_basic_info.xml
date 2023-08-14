@@ -12,12 +12,14 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clickable="true"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 tools:context=".view.BasicInfoFragment">
@@ -131,6 +133,8 @@
                     android:background="@drawable/edit_box"
                     android:hint="@string/enter_name"
                     android:inputType="text"
+                    android:lines="2"
+                    android:maxLength="50"
                     android:padding="14dp"
                     android:textColorHint="@color/brown_grey"
                     android:textSize="14sp"
@@ -158,13 +162,23 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/edit_box"
                     android:hint="@string/enter_birthday"
-                    android:inputType="date"
+                    android:inputType="text"
                     android:padding="14dp"
                     android:textColorHint="@color/brown_grey"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_date_title" />
+
+                <ImageView
+                    android:id="@+id/btn_calendar"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="40dp"
+                    android:background="@drawable/calendar"
+                    app:layout_constraintBottom_toBottomOf="@id/et_birthday"
+                    app:layout_constraintEnd_toEndOf="@id/et_birthday"
+                    app:layout_constraintTop_toTopOf="@id/et_birthday" />
 
                 <TextView
                     android:id="@+id/tv_email_title"
@@ -307,6 +321,7 @@
                         app:layout_constraintTop_toTopOf="@id/tv_interest" />
 
                     <TextView
+                        android:id="@+id/tv_interest_null"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
@@ -340,9 +355,10 @@
                                 android:id="@+id/rv_interest"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:visibility="gone"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent" />
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:itemCount="3"
+                                tools:listitem="@layout/interest_list_tile" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -373,6 +389,7 @@
                     app:layout_constraintTop_toBottomOf="@id/bottom_line" />
 
                 <EditText
+                    android:id="@+id/et_introduction"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"

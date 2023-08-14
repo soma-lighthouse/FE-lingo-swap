@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.usecase.GetAuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val useCase: GetAuthUseCase,
 ) : ViewModel() {
+    val registerInfo = RegisterInfoVO()
     fun getUUID() = useCase.getUserId()
 
     fun getInterestList() = useCase.getInterestList()
