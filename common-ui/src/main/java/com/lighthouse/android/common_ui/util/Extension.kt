@@ -14,6 +14,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -116,4 +119,19 @@ fun EditText.onCloseKeyBoard(context: Context) {
             inputMethodManager!!.hideSoftInputFromWindow(this.windowToken, 0)
         }
     }
+}
+
+fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, observer: (T) -> Unit) {
+    var firstObservation = true
+
+    observe(owner, object : Observer<T> {
+        override fun onChanged(value: T) {
+            if (firstObservation) {
+                firstObservation = false
+            } else {
+                removeObserver(this)
+                observer(value)
+            }
+        }
+    })
 }

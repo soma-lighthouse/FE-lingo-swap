@@ -68,6 +68,12 @@
     <string name="invalid_email">잘못된 이메일 형식 입니다</string>
     <string name="invalid_birthday">잘못된 생일 형식 입니다</string>
     <string name="invalid_null">필수 입력 항목 입니다</string>
+    <string name="duplicate_language">이미 선택한 언어입니다</string>
+    <string name="choose">사진 업로드</string>
+
+    <string name="delete_dialog">현재 이미지를 삭제합니까?</string>
+    <string name="delete_title">확인</string>
+    <string name="share_hint">공유</string>
 
     <string name="level1">레벨1</string>
     <string name="level2">레벨2</string>
