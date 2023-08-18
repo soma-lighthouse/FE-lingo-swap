@@ -40,4 +40,5 @@ dependencies {
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.navigation)
     implementation(libs.bundles.image)
+    implementation(libs.bundles.camerax)
 }
