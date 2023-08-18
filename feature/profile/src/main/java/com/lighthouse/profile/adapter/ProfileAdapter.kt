@@ -19,9 +19,9 @@ fun makeAdapter() =
             val binding = viewHolder.binding
             binding.tvInterestTitle.text = item.category
 
-            val inflator = LayoutInflater.from(binding.root.context)
+            val inflater = LayoutInflater.from(binding.root.context)
             item.interest.forEach {
-                val chip = inflator.inflate(
+                val chip = inflater.inflate(
                     com.lighthouse.android.common_ui.R.layout.chip,
                     binding.chipInterest,
                     false

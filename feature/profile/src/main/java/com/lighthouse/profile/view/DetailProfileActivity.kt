@@ -100,13 +100,13 @@ class DetailProfileActivity :
 
             is UiState.Success<*> -> {
                 binding.group1.setVisible()
-//                binding.bottomRectangle.setVisible()
-//                binding.btnSend.setVisible()
+                binding.bottomRectangle.setVisible()
+                binding.btnSend.setVisible()
                 val result = uiState.data as ProfileVO
                 initAdapter()
                 initView(result)
-                initChip(binding.chipLanguage, result.countries)
-                initChip(binding.chipCountry, result.languages.flatMap {
+                initChip(binding.chipCountry, result.countries)
+                initChip(binding.chipLanguage, result.languages.flatMap {
                     listOf("${it.name}/LV${it.level}")
                 })
                 adapter.submitList(result.interests)
