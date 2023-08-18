@@ -4,22 +4,31 @@ import android.content.Intent
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
+import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.setGone
+import com.lighthouse.android.common_ui.util.setVisible
+import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.ActivityInterestBinding
 import com.lighthouse.auth.databinding.InterestListTileBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.activity_interest) {
@@ -27,10 +36,7 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
     private val checkedList = MutableLiveData<HashMap<String, List<String>>>(hashMapOf())
     private lateinit var adapter: SimpleListAdapter<InterestVO, InterestListTileBinding>
 
-    private val interestList = mutableListOf(
-        InterestVO("요리", listOf("한식", "중식")),
-        InterestVO("여행", listOf("자유", "패키지"))
-    )
+    private var interestList = listOf<InterestVO>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +44,41 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
         initBack()
         initApply()
         initChip()
-        adapter.submitList(interestList)
+        getInterestList()
+    }
+
+    private fun getInterestList() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getInterestList().collect {
+                    render(it)
+                }
+            }
+        }
+    }
+
+    private fun render(uiState: UiState) {
+        when (uiState) {
+            is UiState.Loading -> {
+                binding.pbInterest.setVisible()
+                binding.rvInterestList.setGone()
+                binding.btnApply.setGone()
+            }
+
+            is UiState.Success<*> -> {
+                binding.rvInterestList.setVisible()
+                binding.btnApply.setVisible()
+                Log.d("TESTING", uiState.data.toString())
+                interestList = uiState.data as List<InterestVO>
+                adapter.submitList(interestList)
+                binding.pbInterest.setGone()
+            }
+
+            is UiState.Error -> {
+                applicationContext.toast(uiState.message)
+                binding.pbInterest.setGone()
+            }
+        }
     }
 
     private fun initAdapter() {
@@ -62,9 +102,7 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
             val inflater = LayoutInflater.from(applicationContext)
             interests?.forEach {
                 val chip = inflater.inflate(
-                    com.lighthouse.android.common_ui.R.layout.home_chip,
-                    binding.chipResult,
-                    false
+                    com.lighthouse.android.common_ui.R.layout.home_chip, binding.chipResult, false
                 ) as Chip
                 chip.text = it
                 chip.isCloseIconVisible = false
@@ -82,63 +120,57 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
         }
     }
 
-    private fun makeAdapter() = SimpleListAdapter<InterestVO, InterestListTileBinding>(
-        diffCallBack = ItemDiffCallBack(
+    private fun makeAdapter() =
+        SimpleListAdapter<InterestVO, InterestListTileBinding>(diffCallBack = ItemDiffCallBack(
             onItemsTheSame = { old, new -> old.interest == new.interest },
-            onContentsTheSame = { old, new -> old == new }
-        ),
-        layoutId = R.layout.interest_list_tile,
-        onBindCallback = { viewHolder, item ->
-            val binding = viewHolder.binding
+            onContentsTheSame = { old, new -> old == new }),
+            layoutId = R.layout.interest_list_tile,
+            onBindCallback = { viewHolder, item ->
+                val binding = viewHolder.binding
 
-            binding.tvInterestTitle.text = item.category
+                binding.tvInterestTitle.text = item.category
 
-            binding.btnInterest.setOnClickListener { _ ->
-                if (binding.chipInterest.visibility == View.VISIBLE) {
-                    TransitionManager.beginDelayedTransition(
-                        binding.collapseInterest,
-                        AutoTransition()
-                    )
-                    binding.chipInterest.visibility = View.GONE
-                    binding.btnInterest.animate().rotation(0f).start()
-                } else {
-                    TransitionManager.beginDelayedTransition(
-                        binding.collapseInterest,
-                        AutoTransition()
-                    )
-                    binding.chipInterest.visibility = View.VISIBLE
-                    binding.btnInterest.animate().rotation(180f).start()
+                binding.btnInterest.setOnClickListener { _ ->
+                    if (binding.chipInterest.visibility == View.VISIBLE) {
+                        TransitionManager.beginDelayedTransition(
+                            binding.collapseInterest, AutoTransition()
+                        )
+                        binding.chipInterest.visibility = View.GONE
+                        binding.btnInterest.animate().rotation(0f).start()
+                    } else {
+                        TransitionManager.beginDelayedTransition(
+                            binding.collapseInterest, AutoTransition()
+                        )
+                        binding.chipInterest.visibility = View.VISIBLE
+                        binding.btnInterest.animate().rotation(180f).start()
+                    }
                 }
-            }
 
-            val inflater = LayoutInflater.from(binding.root.context)
+                val inflater = LayoutInflater.from(binding.root.context)
 
-            item.interest.forEach {
-                val chip = inflater.inflate(
-                    com.lighthouse.android.common_ui.R.layout.chip,
-                    binding.chipInterest,
-                    false
-                ) as Chip
+                item.interest.forEach {
+                    val chip = inflater.inflate(
+                        com.lighthouse.android.common_ui.R.layout.chip, binding.chipInterest, false
+                    ) as Chip
 
-                chip.text = it
-                chip.isCloseIconVisible = false
-                binding.chipInterest.addView(chip)
-            }
+                    chip.text = it
+                    chip.isCloseIconVisible = false
+                    binding.chipInterest.addView(chip)
+                }
 
-            binding.chipInterest.setOnCheckedStateChangeListener { _, checkedId ->
-                val result = checkedId.map {
-                    findViewById<Chip>(it).text.toString()
-                }.toList()
+                binding.chipInterest.setOnCheckedStateChangeListener { _, checkedId ->
+                    val result = checkedId.map {
+                        findViewById<Chip>(it).text.toString()
+                    }.toList()
 
-                val category = interestList[viewHolder.adapterPosition].category
-                val newMap = checkedList.value?.toMutableMap() ?: mutableMapOf()
-                newMap[category] = result
-                val convert = HashMap(newMap)
-                checkedList.value = convert
-                checkedList.postValue(convert)
-            }
+                    val category = interestList[viewHolder.adapterPosition].category
+                    val newMap = checkedList.value?.toMutableMap() ?: mutableMapOf()
+                    newMap[category] = result
+                    val convert = HashMap(newMap)
+                    checkedList.value = convert
+                    checkedList.postValue(convert)
+                }
 
-        }
-    )
+            })
 }
 

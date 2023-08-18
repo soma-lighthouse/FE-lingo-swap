@@ -54,7 +54,7 @@ class CountryAdapter(
         holder.itemView.setOnClickListener {
             if (multiSelection) {
                 currentItem.select = !currentItem.select
-                listener.onItemClick(currentItem.name)
+                listener.onItemClick(currentItem)
                 notifyItemChanged(position)
             } else {
                 if (currentItem.select) {
@@ -64,7 +64,7 @@ class CountryAdapter(
                     clearSelection()
                     currentItem.select = true
                 }
-                listener.onItemClick(currentItem.name)
+                listener.onItemClick(currentItem)
                 notifyItemChanged(position)
             }
         }
@@ -80,6 +80,6 @@ class CountryAdapter(
     }
 
     fun interface OnItemClickListener {
-        fun onItemClick(item: String)
+        fun onItemClick(item: CountryVO)
     }
 }

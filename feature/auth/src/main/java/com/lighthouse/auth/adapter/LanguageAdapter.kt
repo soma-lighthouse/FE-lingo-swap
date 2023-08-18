@@ -9,7 +9,7 @@ import com.lighthouse.auth.databinding.LanguageTileBinding
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 
 class LanguageAdapter(
-    private val clickResult: (String) -> Unit,
+    private val clickResult: (LanguageVO) -> Unit,
 ) : ListAdapter<LanguageVO, LanguageAdapter.ViewHolder>(
     ItemDiffCallBack(
         onContentsTheSame = { old, new -> old == new },
@@ -34,7 +34,7 @@ class LanguageAdapter(
         val currentItem = getItem(position)
         holder.onBind(currentItem)
         holder.itemView.setOnClickListener {
-            clickResult(currentItem.name)
+            clickResult(currentItem)
         }
     }
 }

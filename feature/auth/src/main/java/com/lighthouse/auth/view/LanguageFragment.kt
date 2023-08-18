@@ -1,7 +1,6 @@
 package com.lighthouse.auth.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -21,21 +20,40 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
     private val viewModel: AuthViewModel by activityViewModels()
     private lateinit var adapter: LanguageLevelAdapter
     private val dataList: MutableList<LanguageVO> =
-        mutableListOf(LanguageVO(name = "English", level = 1))
+        mutableListOf(LanguageVO(name = "English", level = 1, code = "en"))
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("TESTING", "${viewModel.registerInfo}")
         initBack()
         initNext()
         initAdapter()
         initAdd()
+        observeResult()
+    }
+
+    private fun observeResult() {
+        getResult.observe(viewLifecycleOwner) {
+            val result =
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    it.getSerializableExtra("Language", LanguageVO::class.java)
+                } else {
+                    it.getSerializableExtra("Language") as LanguageVO
+                }
+            val pos = it.getIntExtra("position", -1)
+            if (pos != -1 && result != null) {
+                dataList[pos].name = result.name
+                dataList[pos].code = result.code
+                adapter.notifyItemChanged(pos)
+            } else {
+                context.toast(pos.toString())
+            }
+        }
     }
 
     private fun initAdd() {
         binding.btnAdd.setOnClickListener {
             if (dataList.size < 5) {
-                dataList.add(LanguageVO(name = "English", level = 1))
+                dataList.add(LanguageVO(name = "country", level = 1, code = ""))
                 adapter.notifyItemInserted(dataList.size - 1)
             } else {
                 context.toast("Only up to maximum 5 Language")
@@ -51,19 +69,28 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
 
     private fun initNext() {
         binding.btnNext.setOnClickListener {
+            removeExtra()
+            viewModel.registerInfo.languages = dataList.map {
+                mapOf("code" to it.code, "level" to it.level)
+            }
             findNavController().navigate(LanguageFragmentDirections.actionLanguageFragmentToCountryFragment())
+        }
+    }
+
+    private fun removeExtra() {
+        dataList.forEach {
+            if (it.name == "country") {
+                dataList.remove(it)
+            }
         }
     }
 
     private fun initAdapter() {
         adapter = LanguageLevelAdapter(requireContext(), dataList, { pos ->
-            val intent = mainNavigator.navigateToLanguage(requireContext())
+            val intent = mainNavigator.navigateToLanguage(
+                requireContext(), Pair("selected", dataList.map { it.name }), Pair("position", pos)
+            )
             resultLauncher.launch(intent)
-            getResult.observe(viewLifecycleOwner) {
-                val result = it.getStringExtra("Language").toString()
-                dataList[pos].name = result
-                adapter.notifyItemChanged(pos)
-            }
         }, { level, position ->
             dataList[position].level = level + 1
         })
