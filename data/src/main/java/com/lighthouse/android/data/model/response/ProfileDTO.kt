@@ -17,7 +17,7 @@ data class ProfileDTO(
     val name: String?,
     @SerializedName("region")
     val region: String?,
-    @SerializedName("countries")
+    @SerializedName("preferredCountries")
     val countries: List<String>?,
     @SerializedName("preferredInterests")
     val interests: List<InterestDTO>?,
