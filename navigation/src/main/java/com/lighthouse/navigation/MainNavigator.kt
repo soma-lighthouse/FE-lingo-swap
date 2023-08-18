@@ -22,5 +22,11 @@ interface MainNavigator {
 
     fun navigateToLanguage(
         context: Context,
+        selectedList: Pair<String, List<String>>,
+        position: Pair<String, Int>,
+    ): Intent
+
+    fun navigateToCamera(
+        context: Context,
     ): Intent
 }
