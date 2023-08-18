@@ -10,6 +10,7 @@ import com.lighthouse.android.data.api.interceptor.ContentInterceptor
 import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
 import com.lighthouse.lingo_swap.BuildConfig
 import com.lighthouse.lingo_swap.HeaderInterceptor
+import com.lighthouse.lingo_swap.NullOnEmptyConverterFactory
 import com.lighthouse.lingo_swap.ViewTypeDeserializer
 import com.lighthouse.lingo_swap.di.Annotation.Main
 import com.lighthouse.lingo_swap.di.Annotation.Test
@@ -49,6 +50,7 @@ object NetModule {
             .baseUrl(BuildConfig.LIGHTHOUSE_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(NullOnEmptyConverterFactory())
             .build()
     }
 

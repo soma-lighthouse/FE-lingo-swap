@@ -6,11 +6,11 @@ import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.ProfileApiService
 import com.lighthouse.android.data.repository.datasource.AuthRemoteDataSource
-import com.lighthouse.android.data.repository.datasource.AuthRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.DrivenRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.ProfileRemoteDataSource
+import com.lighthouse.android.data.repository.datasourceimpl.AuthRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasourceimpl.BoardRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasourceimpl.DrivenRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasourceimpl.HomeRemoteDataSourceImpl
