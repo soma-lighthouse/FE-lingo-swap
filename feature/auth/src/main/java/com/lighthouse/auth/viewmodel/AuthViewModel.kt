@@ -19,12 +19,93 @@ class AuthViewModel @Inject constructor(
     private val useCase: GetAuthUseCase,
 ) : ViewModel() {
     val registerInfo = RegisterInfoVO()
+    var profilePath: String? = null
     fun getUUID() = useCase.getUserId()
 
     fun getInterestList() = useCase.getInterestList()
         .map {
             when (it) {
-                is Resource.Success -> UiState.Success(it)
+                is Resource.Success -> UiState.Success(it.data!!)
+                else -> UiState.Error(it.message ?: StringSet.error_msg)
+            }
+        }
+        .catch {
+            emit(UiState.Error(it.message ?: StringSet.error_msg))
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = UiState.Loading,
+            started = SharingStarted.WhileSubscribed(5000)
+        )
+
+    fun getLanguageList() = useCase.getLanguageList()
+        .map {
+            when (it) {
+                is Resource.Success -> UiState.Success(it.data!!)
+                else -> UiState.Error(it.message ?: StringSet.error_msg)
+            }
+        }
+        .catch {
+            emit(UiState.Error(it.message ?: StringSet.error_msg))
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = UiState.Loading,
+            started = SharingStarted.WhileSubscribed(5000)
+        )
+
+    fun getCountryList() = useCase.getCountryList()
+        .map {
+            when (it) {
+                is Resource.Success -> UiState.Success(it.data!!)
+                else -> UiState.Error(it.message ?: StringSet.error_msg)
+            }
+        }
+        .catch {
+            emit(UiState.Error(it.message ?: StringSet.error_msg))
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = UiState.Loading,
+            started = SharingStarted.WhileSubscribed(5000)
+        )
+
+    fun registerUser() = useCase.registerUser(registerInfo)
+        .map {
+            when (it) {
+                is Resource.Success -> it
+                else -> it.message ?: StringSet.error_msg
+            }
+        }
+        .catch {
+            emit(it.message ?: StringSet.error_msg)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = UiState.Loading,
+            started = SharingStarted.WhileSubscribed(5000)
+        )
+
+    fun getPreSignedURL(fileName: String) = useCase.getPreSignedURL(fileName)
+        .map {
+            when (it) {
+                is Resource.Success -> UiState.Success(it.data!!)
+                else -> UiState.Error(it.message ?: StringSet.error_msg)
+            }
+        }
+        .catch {
+            emit(UiState.Error(it.message ?: StringSet.error_msg))
+        }
+        .stateIn(
+            scope = viewModelScope,
+            initialValue = UiState.Loading,
+            started = SharingStarted.WhileSubscribed(5000)
+        )
+
+    fun uploadImg(filePath: String) = useCase.uploadImg(registerInfo.profileImage!!, filePath)
+        .map {
+            when (it) {
+                is Resource.Success -> UiState.Success(it.data!!)
                 else -> UiState.Error(it.message ?: StringSet.error_msg)
             }
         }
