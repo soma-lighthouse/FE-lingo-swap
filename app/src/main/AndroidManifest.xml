@@ -26,7 +26,8 @@
         <activity
             android:name="com.lighthouse.auth.AuthActivity"
             android:exported="true"
-            android:theme="@style/Theme.LingoTheme">
+            android:theme="@style/Theme.LingoTheme"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,6 +46,19 @@
 
         <activity
             android:name="com.lighthouse.android.chats.view.CustomChatActivity"
+            android:exported="false" />
+
+        <activity
+            android:name="com.lighthouse.auth.view.CameraActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.lighthouse.auth.view.CountryListActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.lighthouse.auth.view.InterestListActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.lighthouse.auth.view.LanguageListActivity"
             android:exported="false" />
 
         <service

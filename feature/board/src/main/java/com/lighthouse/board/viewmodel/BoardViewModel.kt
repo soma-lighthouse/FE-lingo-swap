@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.entity.request.UpdateLikeVO
 import com.lighthouse.domain.entity.request.UploadQuestionVO
 import com.lighthouse.domain.usecase.GetQuestionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,7 +56,12 @@ class BoardViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5000)
             )
 
-    fun updateLike(questionId: Int, memberId: UpdateLikeVO) =
-        getQuestionUseCase.updateLike(questionId, memberId)
+    fun updateLike(questionId: Int, userId: String) {
+        getQuestionUseCase.updateLike(questionId, userId)
+    }
+
+    fun cancelLike(questionId: Int, userId: String) {
+        getQuestionUseCase.cancelLike(questionId, userId)
+    }
 
 }

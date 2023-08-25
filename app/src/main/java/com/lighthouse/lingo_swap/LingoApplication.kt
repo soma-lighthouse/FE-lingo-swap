@@ -2,8 +2,6 @@ package com.lighthouse.lingo_swap
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import com.google.firebase.messaging.FirebaseMessaging
 import com.lighthouse.android.chats.uikit.CustomFragmentFactory
 import com.sendbird.android.SendbirdChat
 import com.sendbird.android.exception.SendbirdException
@@ -18,10 +16,8 @@ import dagger.hilt.android.HiltAndroidApp
 class LingoApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        FirebaseMessaging.getInstance().isAutoInitEnabled = true
-        initSendBirdChat()
         initSendBirdUI()
-
+        initSendBirdChat()
     }
 
     private fun initSendBirdChat() {
@@ -60,8 +56,6 @@ class LingoApplication : Application() {
                 }
             }
         )
-
-
     }
 
     private fun initSendBirdUI() {
@@ -112,11 +106,6 @@ class LingoApplication : Application() {
         }, this)
 
         SendbirdUIKit.setUIKitFragmentFactory(CustomFragmentFactory())
-    }
-
-    companion object {
-        private val initState: MutableLiveData<InitState> = MutableLiveData()
-        fun initStateChanges() = initState
     }
 }
 
