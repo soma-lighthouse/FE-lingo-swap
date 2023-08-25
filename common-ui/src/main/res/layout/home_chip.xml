@@ -9,6 +9,7 @@
         android:layout_height="wrap_content"
         android:checkable="true"
         android:textColor="@color/main"
+        android:textStyle="bold"
         android:theme="@style/Theme.MaterialComponents.Light"
         app:chipBackgroundColor="#e0f1f0"
         app:chipIconEnabled="true"
@@ -17,8 +18,5 @@
         app:closeIconSize="10dp"
         app:closeIconTint="@color/main"
         app:closeIconVisible="true"
-        tools:text="testing">
-
-
-    </com.google.android.material.chip.Chip>
+        tools:text="testing" />
 </layout>

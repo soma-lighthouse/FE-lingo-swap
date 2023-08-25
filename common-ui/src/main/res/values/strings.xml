@@ -80,6 +80,11 @@
     <string name="level3">레벨3</string>
     <string name="level4">레벨4</string>
     <string name="level5">레벨5</string>
+    <string name="my_info">내 정보</string>
+    <string name="profile">프로필</string>
+    <string name="my_question">내 질문</string>
+    <string name="my_review">내 리뷰</string>
+    <string name="prefer_interest">선호 분야</string>
 
 
 </resources>

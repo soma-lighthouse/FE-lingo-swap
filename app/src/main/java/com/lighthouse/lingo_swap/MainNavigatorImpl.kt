@@ -17,7 +17,7 @@ class MainNavigatorImpl : MainNavigator {
 
     override fun navigateToProfile(
         context: Context,
-        userId: Pair<String, Int>,
+        userId: Pair<String, String>,
         isMe: Pair<String, Boolean>,
     ) {
         context.navigateActivity<DetailProfileActivity>(userId, isMe)

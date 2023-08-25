@@ -42,6 +42,4 @@
         <!-- Customize the size of the overflow menu -->
         <item name="android:maxWidth">300dp</item>
     </style>
-
-
 </resources>

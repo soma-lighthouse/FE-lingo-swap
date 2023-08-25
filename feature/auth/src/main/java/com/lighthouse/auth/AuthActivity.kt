@@ -26,8 +26,8 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         navController = navHostFragment.navController
 
         checkRegister()
-//        login()
-
+//        viewModel.saveUUID()
+        login()
     }
 
     private fun checkRegister() {

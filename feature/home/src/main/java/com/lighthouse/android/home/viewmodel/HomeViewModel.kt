@@ -30,8 +30,8 @@ class HomeViewModel @Inject constructor(
 
 
     fun fetchNextPage(
-        userId: Int,
-        pageSize: Int?,
+        userId: String,
+        pageSize: Int? = null,
     ): Flow<UiState> {
         return getMatchedUserUseCase.invoke(userId, next, pageSize)
             .map {

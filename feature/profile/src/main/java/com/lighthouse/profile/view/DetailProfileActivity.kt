@@ -47,8 +47,10 @@ class DetailProfileActivity :
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getProfileDetail(intent.getIntExtra("userId", -1)).collect {
-                    render(it)
+                intent.getStringExtra("userId")?.let {
+                    viewModel.getProfileDetail(it).collect {
+                        render(it)
+                    }
                 }
             }
         }
@@ -150,7 +152,7 @@ class DetailProfileActivity :
         binding.tvDescription.text = profile.description
 
         Glide.with(binding.ivProfileImg)
-            .load(profile.profileImage)
+            .load(profile.profileImageUri)
             .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
             .override(calSize(200f))
             .into(binding.ivProfileImg)

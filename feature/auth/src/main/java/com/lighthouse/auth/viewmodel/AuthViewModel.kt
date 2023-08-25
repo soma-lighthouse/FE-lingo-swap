@@ -20,7 +20,9 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
     val registerInfo = RegisterInfoVO()
     var profilePath: String? = null
+    var profileUrl: String? = null
     fun getUUID() = useCase.getUserId()
+    fun saveUUID() = useCase.saveUserId()
 
     fun getInterestList() = useCase.getInterestList()
         .map {
@@ -73,7 +75,7 @@ class AuthViewModel @Inject constructor(
     fun registerUser() = useCase.registerUser(registerInfo)
         .map {
             when (it) {
-                is Resource.Success -> it
+                is Resource.Success -> it.data
                 else -> it.message ?: StringSet.error_msg
             }
         }
@@ -102,15 +104,15 @@ class AuthViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000)
         )
 
-    fun uploadImg(filePath: String) = useCase.uploadImg(registerInfo.profileImage!!, filePath)
+    fun uploadImg(filePath: String) = useCase.uploadImg(profileUrl!!, filePath)
         .map {
             when (it) {
-                is Resource.Success -> UiState.Success(it.data!!)
-                else -> UiState.Error(it.message ?: StringSet.error_msg)
+                is Resource.Success -> it.data
+                else -> it.message ?: StringSet.error_msg
             }
         }
         .catch {
-            emit(UiState.Error(it.message ?: StringSet.error_msg))
+            emit(it.message ?: StringSet.error_msg)
         }
         .stateIn(
             scope = viewModelScope,

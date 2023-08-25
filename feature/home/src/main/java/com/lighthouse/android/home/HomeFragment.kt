@@ -47,8 +47,10 @@ class HomeFragment @Inject constructor() :
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.fetchNextPage(1, 200).collect {
-                    render(it)
+                if (profileList.isEmpty()) {
+                    viewModel.fetchNextPage("1").collect {
+                        render(it)
+                    }
                 }
             }
         }
@@ -57,6 +59,12 @@ class HomeFragment @Inject constructor() :
             binding.tvHomeTitle.text =
                 SpannableStringBuilderProvider.getSpannableBuilder(homeTitle, requireContext())
         }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adapter.submitList(profileList)
     }
 
     override fun onStop() {
@@ -70,7 +78,7 @@ class HomeFragment @Inject constructor() :
                 if (profileList.isEmpty()) {
                     binding.pbHomeLoading.setVisible()
                     binding.rvHome.setGone()
-                    binding.fabFilter.setGone()
+//                    binding.fabFilter.setGone()
                 }
             }
 
@@ -125,7 +133,7 @@ class HomeFragment @Inject constructor() :
     private fun loadMoreProfiles() {
         viewModel.loading.value = true
         lifecycleScope.launch {
-            viewModel.fetchNextPage(1, 200).collect {
+            viewModel.fetchNextPage("1").collect {
                 render(it)
                 viewModel.loading.value = false
             }

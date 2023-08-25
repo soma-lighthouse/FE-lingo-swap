@@ -9,8 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.Preview
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -41,6 +39,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -48,16 +49,19 @@ class BasicInfoFragment :
     BindingFragment<FragmentBasicInfoBinding>(com.lighthouse.auth.R.layout.fragment_basic_info),
     ImagePickerDialog.CameraDialogListener {
     private val viewModel: AuthViewModel by activityViewModels()
-    private val interestList = mutableListOf<InterestVO>()
+    private val interestList = mutableListOf<InterestVO>(
+        InterestVO("여행", listOf("해변", "도시 여행"))
+    )
     private lateinit var interestAdapter: SimpleListAdapter<InterestVO, InterestListTileBinding>
-    private var imageCapture: ImageCapture? = null
-    private var selectedCountry: CountryVO? = null
-
-    //    private lateinit var outputDirectory: File
-    private var preview: Preview? = null
-
-    //    private lateinit var cameraExecutor: ExecutorService
+    private var selectedCountry: CountryVO? = CountryVO("kr", "한국")
     private lateinit var imagePicker: ImagePickerDialog
+
+    private val genderMap = mapOf(
+        0 to "TMP",
+        1 to "MALE",
+        2 to "FEMALE",
+        3 to "RATHER_NOT_SAY"
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -111,38 +115,43 @@ class BasicInfoFragment :
 
     private fun observeImage() {
         getResult.observe(viewLifecycleOwner) {
-            val result = Uri.parse(it.data.toString())
-            val fileName = getFileExtensionFromUri(result)
-            val file = File(fileName)
-            try {
-                Glide.with(this).load(result).fitCenter()
-                    .placeholder(R.drawable.placeholder) // Placeholder image while loading
-                    .error(R.drawable.question) // Image to display if loading fails
-                    .override(calSize(200f)).into(binding.ivProfileImg)
+            if (it.data != null) {
+                val result = Uri.parse(it.data.toString())
+                val fileName = getFileExtensionFromUri(result)
+                val file = File(fileName)
 
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.getPreSignedURL(file.name).collect { url ->
-                            when (url) {
-                                is UiState.Success<*> -> {
-                                    viewModel.registerInfo.profileImage = url.data.toString()
-                                    viewModel.profilePath = result.toString()
-                                }
+                val serverFileName = "/${viewModel.getUUID()}/${file.name}"
+                try {
+                    Glide.with(this).load(result).fitCenter()
+                        .placeholder(R.drawable.placeholder) // Placeholder image while loading
+                        .error(R.drawable.question) // Image to display if loading fails
+                        .override(calSize(200f)).into(binding.ivProfileImg)
 
-                                is UiState.Loading -> {
-                                    Log.d("PICTURE", "uploading!")
-                                }
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                            viewModel.getPreSignedURL(serverFileName).collect { url ->
+                                when (url) {
+                                    is UiState.Success<*> -> {
+                                        viewModel.registerInfo.profileImageUri = serverFileName
+                                        viewModel.profileUrl = url.data.toString()
+                                        viewModel.profilePath = result.toString()
+                                    }
 
-                                else -> {
-                                    delay(5000)
-                                    viewModel.getPreSignedURL(file.name)
+                                    is UiState.Loading -> {
+                                        Log.d("PICTURE", "uploading!")
+                                    }
+
+                                    else -> {
+                                        delay(5000)
+                                        viewModel.getPreSignedURL(serverFileName)
+                                    }
                                 }
                             }
                         }
                     }
+                } catch (e: Exception) {
+                    Log.e("CAMERA ERROR", e.message.toString())
                 }
-            } catch (e: Exception) {
-                Log.e("CAMERA ERROR", e.message.toString())
             }
         }
     }
@@ -181,6 +190,14 @@ class BasicInfoFragment :
 
     }
 
+    private fun convertToStandardDateFormat(inputDate: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-M-d", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        val parsedDate: Date = inputFormat.parse(inputDate)
+        return outputFormat.format(parsedDate)
+    }
+
     private fun initAdapter() {
         interestAdapter = makeAdapter()
         val linearLayoutManager = ScrollSpeedLinearLayoutManager(context, 8f)
@@ -189,23 +206,20 @@ class BasicInfoFragment :
         binding.rvInterest.adapter = interestAdapter
     }
 
-    private val genderEng = listOf(
-        "TMP", "MALE", "FEMALE", "RATHER_NOT_SAY"
-    )
-
-
     private fun initNext() {
         binding.btnNext.setOnClickListener {
             if (validateInputs()) {
                 viewModel.registerInfo.apply {
+                    uuid = viewModel.getUUID()
                     name = binding.etName.text.toString()
                     email = binding.etEmail.text.toString()
-                    birthday = binding.etBirthday.text.toString()
-                    gender = genderEng[binding.spinnerGender.selectedItemPosition]
+                    birthday = convertToStandardDateFormat(binding.etBirthday.text.toString())
+                    gender = genderMap[binding.spinnerGender.selectedItemPosition]
                     region = selectedCountry?.code
                     preferredInterests = interestList
                     description = binding.etIntroduction.text.toString()
                 }
+
                 findNavController().navigate(BasicInfoFragmentDirections.actionInfoFragmentToLanguageFragment())
             }
         }

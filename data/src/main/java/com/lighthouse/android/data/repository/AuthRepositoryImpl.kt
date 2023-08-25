@@ -65,18 +65,19 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun registerUser(info: RegisterInfoVO): Flow<Resource<Boolean>> {
         val tmp = RegisterInfoDTO(
+            uuid = info.uuid ?: "null",
             name = info.name ?: "null",
             birthday = info.birthday ?: "null",
             email = info.email ?: "null",
             gender = info.gender ?: "null",
-            nation = info.region ?: "null",
+            region = info.region ?: "null",
             preferredInterests = info.preferredInterests?.map {
                 InterestDTO(it.category, it.interest)
             } ?: listOf(),
             description = info.description ?: "",
-            languages = info.languages ?: listOf(),
+            usedLanguages = info.languages ?: listOf(),
             preferredCountries = info.preferredCountries ?: listOf(),
-            profileImage = info.profileImage ?: ""
+            profileImageUri = info.profileImageUri ?: ""
         )
         return authRemoteDataSource.registerUser(tmp).map {
             when (it) {

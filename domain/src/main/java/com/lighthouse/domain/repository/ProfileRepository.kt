@@ -5,5 +5,7 @@ import com.lighthouse.domain.entity.response.vo.ProfileVO
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
-    fun getProfileDetail(userId: Int): Flow<Resource<ProfileVO>>
+    fun getProfileDetail(userId: String): Flow<Resource<ProfileVO>>
+
+    fun getUUID(): String
 }

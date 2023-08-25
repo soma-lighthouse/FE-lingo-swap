@@ -6,11 +6,11 @@ import com.lighthouse.domain.entity.response.vo.ProfileVO
 
 data class ProfileDTO(
     @SerializedName("id")
-    val id: Int?,
+    val id: String?,
     @SerializedName("description")
     val description: String?,
-    @SerializedName("profileImage")
-    val profileImage: String?,
+    @SerializedName("profileImageUri")
+    val profileImageUri: String?,
     @SerializedName("languages")
     val languages: List<LanguageDTO>?,
     @SerializedName("name")
@@ -24,9 +24,9 @@ data class ProfileDTO(
 ) {
     fun toVO() =
         ProfileVO(
-            id = id ?: -1,
+            id = id ?: "",
             description = description ?: "",
-            profileImage = profileImage ?: "",
+            profileImageUri = profileImageUri ?: "",
             languages = languages?.map { it.toVO() } ?: listOf(),
             name = name ?: "",
             region = region ?: "",

@@ -3,14 +3,15 @@ package com.lighthouse.android.data.model.request
 import com.lighthouse.android.data.model.response.InterestDTO
 
 data class RegisterInfoDTO(
-    var name: String,
-    var birthday: String,
-    var email: String,
-    var gender: String,
-    var nation: String,
-    var preferredInterests: List<InterestDTO>,
-    var description: String,
-    var languages: List<Map<String, Any>>,
-    var preferredCountries: List<String>,
-    val profileImage: String,
+    val uuid: String,
+    val name: String,
+    val birthday: String,
+    val email: String,
+    val gender: String,
+    val region: String,
+    val preferredInterests: List<InterestDTO>,
+    val description: String,
+    val usedLanguages: List<Map<String, Any>>,
+    val preferredCountries: List<String>,
+    val profileImageUri: String,
 )

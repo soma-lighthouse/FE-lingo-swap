@@ -7,7 +7,7 @@ interface MainNavigator {
     fun navigateToMain(context: Context)
     fun navigateToProfile(
         context: Context,
-        userId: Pair<String, Int>,
+        userId: Pair<String, String>,
         isMe: Pair<String, Boolean>,
     )
 

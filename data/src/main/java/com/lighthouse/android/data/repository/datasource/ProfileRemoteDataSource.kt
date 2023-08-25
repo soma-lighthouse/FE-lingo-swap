@@ -5,5 +5,5 @@ import com.lighthouse.domain.constriant.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileRemoteDataSource {
-    fun getProfileDetail(userId: Int): Flow<Resource<ProfileDTO>>
+    fun getProfileDetail(userId: String): Flow<Resource<ProfileDTO>>
 }

@@ -11,7 +11,7 @@ import javax.inject.Inject
 class ProfileRemoteDataSourceImpl @Inject constructor(
     private val api: ProfileApiService,
 ) : ProfileRemoteDataSource, NetworkResponse() {
-    override fun getProfileDetail(userId: Int): Flow<Resource<ProfileDTO>> = flow {
+    override fun getProfileDetail(userId: String): Flow<Resource<ProfileDTO>> = flow {
         emit(changeResult(api.getProfileDetail(userId)))
     }
 }

@@ -286,7 +286,7 @@
                     android:id="@+id/group1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="tv_occupation_title,line1,tv_nation,chip_language,tv_country_title,tv_description,iv_profile_img,line3,line2,iv_flag,chip_country,line4,tv_occupation,tv_profile_name,btn_back,tv_name_title,tb_profile,tv_language_title,cardView" />
+                    app:constraint_referenced_ids="tv_occupation_title,line1,tv_nation,chip_language,tv_country_title,tv_description,iv_profile_img,line3,line2,iv_flag,chip_country,line4,tv_occupation,tv_profile_name,tv_name_title,tv_language_title,cardView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

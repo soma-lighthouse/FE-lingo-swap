@@ -28,7 +28,7 @@ class HomeViewHolder(
 
         CoroutineScope(Dispatchers.Main).launch {
             Glide.with(binding.ivProfileImg)
-                .load(data.profileImage)
+                .load(data.profileImageUri)
                 .override(calSize(Constant.PROFILE_IMAGE_SIZE))
                 .into(binding.ivProfileImg)
 
