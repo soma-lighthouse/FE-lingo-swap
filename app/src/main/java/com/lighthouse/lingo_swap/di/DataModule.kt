@@ -60,8 +60,9 @@ object DataModule {
     @Singleton
     fun provideProfileRepository(
         profileRemoteDataSource: ProfileRemoteDataSource,
+        localPreferenceDataSource: LocalPreferenceDataSource,
     ): ProfileRepository {
-        return ProfileRepositoryImpl(profileRemoteDataSource)
+        return ProfileRepositoryImpl(profileRemoteDataSource, localPreferenceDataSource)
     }
 
     @Provides

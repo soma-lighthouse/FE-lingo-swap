@@ -1,76 +1,106 @@
 package com.lighthouse.profile
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.lighthouse.android.common_ui.server_driven.viewholders.adapter.DrivenAdapter
+import com.bumptech.glide.Glide
+import com.lighthouse.android.common_ui.BR
+import com.lighthouse.android.common_ui.base.BindingFragment
+import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
+import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
+import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
+import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.UiState
-import com.lighthouse.android.common_ui.util.setGone
-import com.lighthouse.android.common_ui.util.setVisible
+import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.android.common_ui.util.toast
-import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
+import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.profile.databinding.FragmentProfileBinding
 import com.lighthouse.profile.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ProfileFragment : Fragment() {
-    private lateinit var binding: FragmentProfileBinding
+class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragment_profile) {
     private val viewModel: ProfileViewModel by activityViewModels()
-    private lateinit var adapter: DrivenAdapter
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
-
-        initAdapter()
-        // Inflate the layout for this fragment
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initProfileDetail()
+        initProfile()
+    }
+
+    private fun initProfile() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.drivenData.collect {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getProfileDetail(viewModel.getUUID()).collect {
                     render(it)
                 }
             }
         }
     }
 
+    private fun initProfileDetail() {
+        binding.cvProfile.setOnClickListener {
+            mainNavigator.navigateToProfile(
+                requireContext(),
+                Pair("userId", viewModel.getUUID()),
+                Pair("isMe", true)
+            )
+        }
+    }
+
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
-                binding.pbProfileLoading.setVisible()
-                binding.rvProfile.setGone()
+                // TODO()
             }
 
             is UiState.Success<*> -> {
-                binding.rvProfile.setVisible()
-                adapter.submitList(uiState.data as List<ViewTypeVO>)
-                binding.pbProfileLoading.setGone()
+                val data = uiState.data as ProfileVO
+                renderProfile(data)
             }
 
             is UiState.Error -> {
-                context.toast(uiState.message)
-                binding.pbProfileLoading.setGone()
+                context.toast(uiState.message.toString())
             }
         }
     }
 
-    private fun initAdapter() {
-        adapter = DrivenAdapter()
-        binding.rvProfile.adapter = adapter
+    private fun renderProfile(data: ProfileVO) {
+        Glide.with(binding.root.context)
+            .load(data.profileImageUri)
+            .into(binding.ivProfileImg)
 
+        val langAdapter =
+            SimpleListAdapter<String, LanguageTabBinding>(diffCallBack = ItemDiffCallBack<String>(
+                onContentsTheSame = { old, new -> old == new },
+                onItemsTheSame = { old, new -> old == new }),
+                layoutId = com.lighthouse.android.common_ui.R.layout.language_tab,
+                onBindCallback = { v, s ->
+                    val binding = v.binding
+                    binding.tvLanguage.text = s
+                })
+
+        val languages = data.languages.map {
+            "${it.name}/Lv.${it.level}"
+        }
+
+        langAdapter.submitList(languages)
+
+        val flag = binding.root.context.resources.getIdentifier(
+            data.region, "drawable", binding.root.context.packageName
+        )
+
+        binding.rvLanguage.adapter = langAdapter
+
+        binding.ivFlag.setImageResource(flag)
+        binding.ivFlag.layoutParams.width = calSize(Constant.PROFILE_FLAG_SIZE)
+        binding.ivFlag.layoutParams.height = calSize(Constant.PROFILE_FLAG_SIZE)
+        binding.ivFlag.requestLayout()
+
+        binding.setVariable(BR.item, data)
     }
 }
