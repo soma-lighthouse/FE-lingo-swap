@@ -6,7 +6,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.lighthouse.android.chats.databinding.QuestionOtherBinding
+import com.lighthouse.android.chats.databinding.MessageOtherBinding
 import com.sendbird.android.channel.BaseChannel
 import com.sendbird.android.message.BaseMessage
 import com.sendbird.android.message.Reaction
@@ -19,14 +19,13 @@ import com.sendbird.uikit.model.MessageListUIParams
 import com.sendbird.uikit.utils.DrawableUtils
 import java.util.concurrent.ConcurrentHashMap
 
-class QuestionMessageOtherViewHolder(
-    private val binding: QuestionOtherBinding,
+class MessageOtherViewHolder(
+    private val binding: MessageOtherBinding,
     private val toProfile: (String, Boolean) -> Unit,
 ) : GroupChannelMessageViewHolder(binding.root) {
     override fun getClickableViewMap(): MutableMap<String, View> {
         val viewMap = ConcurrentHashMap<String, View>()
         viewMap[ClickableViewIdentifier.Chat.name] = binding.tvMessage
-        viewMap[ClickableViewIdentifier.Profile.name] = binding.ivProfileView
         return viewMap
     }
 
@@ -36,7 +35,7 @@ class QuestionMessageOtherViewHolder(
         emojiReactionLongClickListener: OnItemLongClickListener<String>?,
         moreButtonClickListener: View.OnClickListener?,
     ) {
-        binding.rvEmojiReaction
+        // TODO("Not yet implemented")
     }
 
     override fun bind(channel: BaseChannel, message: BaseMessage, params: MessageListUIParams) {

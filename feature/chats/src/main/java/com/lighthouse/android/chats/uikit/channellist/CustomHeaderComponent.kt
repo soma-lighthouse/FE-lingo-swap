@@ -10,6 +10,7 @@ import com.sendbird.uikit.modules.components.HeaderComponent
 
 class CustomHeaderComponent : HeaderComponent() {
     private lateinit var binding: CustomHeaderBinding
+    var search: View.OnClickListener? = null
 
     override fun onCreateView(
         context: Context,
@@ -19,6 +20,13 @@ class CustomHeaderComponent : HeaderComponent() {
     ): View {
         binding = CustomHeaderBinding.inflate(inflater, null, false)
 
+        binding.btnSearch.setOnClickListener {
+            search?.onClick(it)
+        }
+
+        binding.btnSelect.setOnClickListener {
+            onRightButtonClicked(it)
+        }
         return binding.root
     }
 }
