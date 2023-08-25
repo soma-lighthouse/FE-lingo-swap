@@ -2,7 +2,7 @@ package com.lighthouse.android.common_ui.server_driven.rich_text
 
 import android.content.Context
 import android.text.SpannableStringBuilder
-import com.lighthouse.domain.response.server_driven.RichText
+import com.lighthouse.domain.entity.response.server_driven.RichText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

@@ -1,17 +1,17 @@
 package com.lighthouse.android.data.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.lighthouse.domain.response.vo.BoardQuestionVO
+import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 
 data class BoardQuestionDTO(
     @SerializedName("questionId")
     val questionId: Int?,
     @SerializedName("userId")
-    val memberId: Int?,
+    val userId: String?,
     @SerializedName("categoryId")
     val categoryId: Int?,
-    @SerializedName("profileImage")
-    val profileImage: String?,
+    @SerializedName("profileImageUri")
+    val profileImageUri: String?,
     @SerializedName("name")
     val name: String?,
     @SerializedName("region")
@@ -23,10 +23,10 @@ data class BoardQuestionDTO(
 ) {
     fun toVO() = BoardQuestionVO(
         questionId = questionId ?: -1,
-        memberId = memberId ?: -1,
+        userId = userId ?: "",
         categoryId = categoryId ?: -1,
         contents = contents ?: " ",
-        profileImage = profileImage ?: " ",
+        profileImageUri = profileImageUri ?: " ",
         name = name ?: " ",
         region = region ?: " ",
         like = like ?: -1

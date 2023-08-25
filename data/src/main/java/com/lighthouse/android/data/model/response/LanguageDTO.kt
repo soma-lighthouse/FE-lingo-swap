@@ -1,16 +1,19 @@
 package com.lighthouse.android.data.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.lighthouse.domain.response.vo.LanguageVO
+import com.lighthouse.domain.entity.response.vo.LanguageVO
 
 data class LanguageDTO(
-    @SerializedName("code")
-    val code: String?,
+    @SerializedName("name")
+    val name: String?,
     @SerializedName("level")
     val level: Int?,
+    @SerializedName("code")
+    val code: String?,
 ) {
     fun toVO() = LanguageVO(
-        code ?: "kr",
-        level ?: -1
+        name ?: "Korea",
+        level ?: -1,
+        code ?: "kr"
     )
 }

@@ -9,6 +9,6 @@ import retrofit2.http.Path
 interface ProfileApiService {
     @GET("api/v1/user/{userId}/profile")
     suspend fun getProfileDetail(
-        @Path("userId") userId: Int,
+        @Path("userId") userId: String,
     ): Response<BaseResponse<ProfileDTO>>
 }

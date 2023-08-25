@@ -12,7 +12,7 @@ class HomeRemoteDataSourceImpl @Inject constructor(
     private val api: HomeApiService,
 ) : HomeRemoteDataSource, NetworkResponse() {
     override fun getMatchedUser(
-        userId: Int,
+        userId: String,
         next: Int?,
         pageSize: Int?,
     ): Flow<Resource<UserProfileDTO>> = flow {

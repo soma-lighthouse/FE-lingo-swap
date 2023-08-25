@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:background="@drawable/question_message_background"
+            android:backgroundTint="@color/message_click_state"
             android:gravity="center_vertical"
             android:maxWidth="@dimen/sb_message_max_width"
             android:padding="@dimen/sb_size_10"

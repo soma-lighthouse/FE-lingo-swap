@@ -9,11 +9,12 @@ import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.QuestionTileBinding
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.calSize
-import com.lighthouse.domain.response.vo.BoardQuestionVO
+import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 
 fun makeAdapter(
-    likeListener: (questionId: Int, memberId: Int) -> Unit,
-    navigateToProfile: (userId: Int) -> Unit,
+    likeListener: (questionId: Int, userId: String) -> Unit,
+    cancelListener: (questionId: Int, userId: String) -> Unit,
+    navigateToProfile: (userId: String) -> Unit,
 ) =
     SimpleListAdapter<BoardQuestionVO, QuestionTileBinding>(
         diffCallBack = ItemDiffCallBack(
@@ -24,7 +25,7 @@ fun makeAdapter(
         onBindCallback = { viewHolder, item ->
             val binding = viewHolder.binding
 
-            Glide.with(binding.ivProfile).load(item.profileImage)
+            Glide.with(binding.ivProfile).load(item.profileImageUri)
                 .placeholder(R.drawable.placeholder)
                 .skipMemoryCache(false)
                 .format(DecodeFormat.PREFER_RGB_565)
@@ -50,14 +51,16 @@ fun makeAdapter(
                 if (isChecked) {
                     val num = binding.tvLike.text.toString().toInt()
                     binding.tvLike.text = num.plus(1).toString()
-                    likeListener(item.questionId, item.memberId)
+                    likeListener(item.questionId, item.userId)
                 } else {
-                    // TODO decrease by 1 and call server
+                    val num = binding.tvLike.text.toString().toInt()
+                    binding.tvLike.text = num.minus(1).toString()
+                    cancelListener(item.questionId, item.userId)
                 }
             }
 
             binding.ivProfile.setOnClickListener {
-                navigateToProfile(item.memberId)
+                navigateToProfile(item.userId)
             }
 
             binding.setVariable(BR.item, item)

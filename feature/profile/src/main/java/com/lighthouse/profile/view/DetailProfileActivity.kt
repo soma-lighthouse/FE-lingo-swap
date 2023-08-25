@@ -22,8 +22,8 @@ import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
-import com.lighthouse.domain.response.vo.InterestVO
-import com.lighthouse.domain.response.vo.ProfileVO
+import com.lighthouse.domain.entity.response.vo.InterestVO
+import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.profile.R
 import com.lighthouse.profile.adapter.makeAdapter
 import com.lighthouse.profile.databinding.ActivityDetailProfileBinding
@@ -47,8 +47,10 @@ class DetailProfileActivity :
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getProfileDetail(intent.getIntExtra("userId", -1)).collect {
-                    render(it)
+                intent.getStringExtra("userId")?.let {
+                    viewModel.getProfileDetail(it).collect {
+                        render(it)
+                    }
                 }
             }
         }
@@ -87,7 +89,6 @@ class DetailProfileActivity :
                 binding.btnInterest.animate().rotation(180f).start()
             }
         }
-
     }
 
     private fun render(uiState: UiState) {
@@ -101,14 +102,14 @@ class DetailProfileActivity :
 
             is UiState.Success<*> -> {
                 binding.group1.setVisible()
-//                binding.bottomRectangle.setVisible()
-//                binding.btnSend.setVisible()
+                binding.bottomRectangle.setVisible()
+                binding.btnSend.setVisible()
                 val result = uiState.data as ProfileVO
                 initAdapter()
                 initView(result)
-                initChip(binding.chipLanguage, result.countries)
-                initChip(binding.chipCountry, result.languages.flatMap {
-                    listOf("${it.code}/LV${it.level}")
+                initChip(binding.chipCountry, result.countries)
+                initChip(binding.chipLanguage, result.languages.flatMap {
+                    listOf("${it.name}/LV${it.level}")
                 })
                 adapter.submitList(result.interests)
                 binding.pbDetailLoading.setGone()
@@ -151,7 +152,7 @@ class DetailProfileActivity :
         binding.tvDescription.text = profile.description
 
         Glide.with(binding.ivProfileImg)
-            .load(profile.profileImage)
+            .load(profile.profileImageUri)
             .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
             .override(calSize(200f))
             .into(binding.ivProfileImg)

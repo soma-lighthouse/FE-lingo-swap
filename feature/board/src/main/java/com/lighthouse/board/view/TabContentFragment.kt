@@ -1,7 +1,6 @@
 package com.lighthouse.board.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -21,8 +20,7 @@ import com.lighthouse.board.R
 import com.lighthouse.board.adapter.makeAdapter
 import com.lighthouse.board.databinding.FragmentTabContentBinding
 import com.lighthouse.board.viewmodel.BoardViewModel
-import com.lighthouse.domain.request.UpdateLikeVO
-import com.lighthouse.domain.response.vo.BoardQuestionVO
+import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -40,7 +38,6 @@ class TabContentFragment :
         initRefresh()
 
         val curPos = arguments?.getInt("tab_pos") ?: "Default Content"
-//        val order = arguments?.getString("order") ?: "date"
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -59,14 +56,10 @@ class TabContentFragment :
     }
 
     private fun initAdapter() {
-        adapter = makeAdapter({ questionId, memberId ->
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                    viewModel.updateLike(questionId, UpdateLikeVO(memberId)).collect {
-                        Log.d("UPDATE", it.toString())
-                    }
-                }
-            }
+        adapter = makeAdapter({ questionId, userId ->
+            viewModel.updateLike(questionId, userId)
+        }, { questionId, userId ->
+            viewModel.cancelLike(questionId, userId)
         }, { userId ->
             mainNavigator.navigateToProfile(
                 requireContext(),

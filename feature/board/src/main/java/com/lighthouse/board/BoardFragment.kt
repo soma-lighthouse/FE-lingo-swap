@@ -40,7 +40,7 @@ class BoardFragment : Fragment() {
         )
         val arrayAdapter = ArrayAdapter(
             requireContext(),
-            R.layout.spinner_item,
+            com.lighthouse.android.common_ui.R.layout.spinner_item,
             arrayList
         ).apply {
             setDropDownViewResource(com.google.android.material.R.layout.support_simple_spinner_dropdown_item)

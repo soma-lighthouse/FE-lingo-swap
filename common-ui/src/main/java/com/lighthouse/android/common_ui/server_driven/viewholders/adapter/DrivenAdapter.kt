@@ -6,7 +6,7 @@ import com.lighthouse.android.common_ui.server_driven.viewholders.default_holder
 import com.lighthouse.android.common_ui.server_driven.viewholders.getViewHolder
 import com.lighthouse.android.common_ui.server_driven.viewholders.util.ItemDiffCallback
 import com.lighthouse.domain.constriant.ViewType
-import com.lighthouse.domain.response.server_driven.ViewTypeVO
+import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
 
 class DrivenAdapter : ListAdapter<ViewTypeVO, DefaultViewHolder>(
     ItemDiffCallback<ViewTypeVO>(

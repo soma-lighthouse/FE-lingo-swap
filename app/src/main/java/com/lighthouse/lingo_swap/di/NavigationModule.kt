@@ -1,5 +1,7 @@
 package com.lighthouse.lingo_swap.di
 
+import com.lighthouse.lingo_swap.MainNavigatorImpl
+import com.lighthouse.navigation.MainNavigator
 import com.lighthouse.navigation.Navigator
 import dagger.Module
 import dagger.Provides
@@ -14,5 +16,11 @@ object NavigationModule {
     @Singleton
     fun provideNavigation(): Navigator {
         return Navigator()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNavigator(): MainNavigator {
+        return MainNavigatorImpl()
     }
 }

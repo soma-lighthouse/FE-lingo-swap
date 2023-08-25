@@ -10,10 +10,10 @@ import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.calSize
-import com.lighthouse.domain.response.vo.ProfileVO
+import com.lighthouse.domain.entity.response.vo.ProfileVO
 
 fun makeAdapter(
-    navigateToProfile: (userId: Int) -> Unit,
+    navigateToProfile: (userId: String) -> Unit,
 ) =
     SimpleListAdapter<ProfileVO, UserInfoTileBinding>(
         diffCallBack = ItemDiffCallBack(
@@ -22,7 +22,7 @@ fun makeAdapter(
         layoutId = R.layout.user_info_tile,
         onBindCallback = { viewHolder, item ->
             val binding = viewHolder.binding
-            Glide.with(binding.ivProfileImg).load(item.profileImage)
+            Glide.with(binding.ivProfileImg).load(item.profileImageUri)
                 .placeholder(R.drawable.placeholder)
                 .skipMemoryCache(false)
                 .format(DecodeFormat.PREFER_RGB_565)
@@ -47,12 +47,16 @@ fun makeAdapter(
 
 
             val languages = item.languages.map {
-                "${it.code}/Lv.${it.level}"
+                "${it.name}/Lv.${it.level}"
             }
 
-            binding.ivProfileImg.setOnClickListener {
+            viewHolder.itemView.setOnClickListener {
                 navigateToProfile(item.id)
             }
+
+            Glide.with(binding.root.context)
+                .load(item.profileImageUri)
+                .into(binding.ivProfileImg)
 
             adapter.submitList(languages)
 

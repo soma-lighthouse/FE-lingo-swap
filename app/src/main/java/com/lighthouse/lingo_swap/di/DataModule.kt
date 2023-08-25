@@ -6,15 +6,21 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.local.LocalPreferenceDataSourceImpl
+import com.lighthouse.android.data.repository.AuthRepositoryImpl
 import com.lighthouse.android.data.repository.BoardRepositoryImpl
 import com.lighthouse.android.data.repository.DrivenRepositoryImpl
 import com.lighthouse.android.data.repository.HomeRepositoryImpl
+import com.lighthouse.android.data.repository.ProfileRepositoryImpl
+import com.lighthouse.android.data.repository.datasource.AuthRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.DrivenRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
+import com.lighthouse.android.data.repository.datasource.ProfileRemoteDataSource
+import com.lighthouse.domain.repository.AuthRepository
 import com.lighthouse.domain.repository.BoardRepository
 import com.lighthouse.domain.repository.DrivenRepository
 import com.lighthouse.domain.repository.HomeRepository
+import com.lighthouse.domain.repository.ProfileRepository
 import com.lighthouse.lingo_swap.HeaderInterceptor
 import dagger.Module
 import dagger.Provides
@@ -48,6 +54,23 @@ object DataModule {
         boardRemoteDataSource: BoardRemoteDataSource,
     ): BoardRepository {
         return BoardRepositoryImpl(boardRemoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(
+        profileRemoteDataSource: ProfileRemoteDataSource,
+    ): ProfileRepository {
+        return ProfileRepositoryImpl(profileRemoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        localPreferenceDataSource: LocalPreferenceDataSource,
+        authRemoteDataSource: AuthRemoteDataSource,
+    ): AuthRepository {
+        return AuthRepositoryImpl(localPreferenceDataSource, authRemoteDataSource)
     }
 
     @Provides

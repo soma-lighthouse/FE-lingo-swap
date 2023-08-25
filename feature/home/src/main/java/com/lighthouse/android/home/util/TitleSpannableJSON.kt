@@ -1,7 +1,7 @@
 package com.lighthouse.android.home.util
 
-import com.lighthouse.domain.response.server_driven.RichText
-import com.lighthouse.domain.response.server_driven.RichTextType
+import com.lighthouse.domain.entity.response.server_driven.RichText
+import com.lighthouse.domain.entity.response.server_driven.RichTextType
 
 val homeTitle = listOf(
     RichText(

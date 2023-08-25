@@ -1,7 +1,6 @@
 package com.lighthouse.android.data.repository.datasourceimpl
 
 import com.lighthouse.android.data.api.BoardApiService
-import com.lighthouse.android.data.model.request.UpdateLikeDTO
 import com.lighthouse.android.data.model.request.UploadQuestionDTO
 import com.lighthouse.android.data.model.response.BoardDTO
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
@@ -27,8 +26,22 @@ class BoardRemoteDataSourceImpl @Inject constructor(
         emit(changeResult(api.uploadQuestion(info)))
     }
 
-    override fun updateLike(questionId: Int, memberId: UpdateLikeDTO): Flow<Resource<String>> =
+    override fun updateLike(questionId: Int, userId: Map<String, String>): Flow<Resource<Boolean>> =
         flow {
-            emit(changeResult(api.updateLike(questionId, memberId)))
+            if (api.updateLike(questionId, userId).isSuccessful) {
+                emit(Resource.Success(true))
+            } else {
+                emit(Resource.Error("Like failed"))
+            }
         }
+
+    override fun cancelLike(questionId: Int): Flow<Resource<Boolean>> =
+        flow {
+            if (api.cancelLike(questionId).isSuccessful) {
+                emit(Resource.Success(true))
+            } else {
+                emit(Resource.Error("Cancel failed"))
+            }
+        }
+
 }

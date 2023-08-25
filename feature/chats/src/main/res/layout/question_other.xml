@@ -22,6 +22,7 @@
             android:id="@+id/ivProfileView"
             android:layout_width="@dimen/sb_size_26"
             android:layout_height="@dimen/sb_size_26"
+            android:layout_marginBottom="8dp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toTopOf="@id/brBottom"
             app:layout_constraintEnd_toStartOf="@id/tvMessage"
@@ -50,7 +51,7 @@
             android:layout_marginRight="@dimen/sb_size_4"
             android:autoLink="web"
             android:background="@drawable/question_message_background"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/silver"
             android:maxWidth="@dimen/sb_message_max_width"
             android:padding="@dimen/sb_size_10"
             app:layout_constrainedWidth="true"
@@ -72,6 +73,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@id/tvMessage" />
+
+        <com.sendbird.uikit.internal.ui.reactions.EmojiReactionListView
+            android:id="@+id/rv_emoji_reaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/sb_size_7"
+            android:paddingLeft="@dimen/sb_size_7"
+            android:paddingTop="@dimen/sb_size_7"
+            android:paddingEnd="@dimen/sb_size_7"
+            android:paddingRight="@dimen/sb_size_7"
+            android:paddingBottom="@dimen/sb_size_7"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tvMessage"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvMessage" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/brBottom"

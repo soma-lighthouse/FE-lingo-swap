@@ -10,15 +10,14 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
 ) : LocalPreferenceDataSource {
     override fun getUUID(): String {
         val uuid = sharedPreferences.getString(UUID_ACCESS_TOKEN, null)
-        return uuid ?: saveUUID()
+        return uuid ?: ""
     }
 
-    override fun saveUUID(): String {
+    override fun saveUUID(uuid: String) {
         val uuid = UUID.randomUUID().toString()
         sharedPreferences.edit {
             putString(UUID_ACCESS_TOKEN, uuid)
         }
-        return uuid
     }
 
     companion object {

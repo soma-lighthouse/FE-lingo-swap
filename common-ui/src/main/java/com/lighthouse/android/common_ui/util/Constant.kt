@@ -4,4 +4,6 @@ object Constant {
     const val PROFILE_IMAGE_SIZE = 64.0f
     const val PROFILE_FLAG_SIZE = 25.0f
     const val PAGE_SIZE = 10
+    const val Image_Request_Code = 7
+    const val UUID_ACCESS_TOKEN = "com.lighthouse.lingo-swap.UUID"
 }

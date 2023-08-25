@@ -56,4 +56,5 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
     override fun submitList(list: List<T>?) {
         super.submitList(list?.let { ArrayList(it) })
     }
+
 }

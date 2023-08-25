@@ -20,6 +20,7 @@ class HeaderInterceptor @Inject constructor(
             .addHeader("Language", Locale.getDefault().language)
             .addHeader("Region", Locale.getDefault().country)
             .addHeader("Timezone", TimeZone.getDefault().id)
+            .addHeader("User-Id", "1")
             .build()
 
         proceed(newRequest)

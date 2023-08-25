@@ -45,5 +45,46 @@
     <string name="basic_info">기본 정보</string>
     <string name="name">이름</string>
     <string name="enter_name">이름을 입력하세요</string>
+    <string name="email">이메일</string>
+    <string name="birthday">생일</string>
+    <string name="enter_birthday">생일을 입력하세요</string>
+    <string name="enter_email">이메일을 입력하세요</string>
+    <string name="nation">국적</string>
+    <string name="age">나이</string>
+    <string name="gender">성별</string>
+    <string name="male">남성</string>
+    <string name="female">여성</string>
+    <string name="rather_not_tell">선택 안함</string>
+    <string name="unselected">미선택</string>
+    <string name="introduction_optional">자기소개 (선택사항)</string>
+    <string name="introduce_yourself">자신을 소개하세요</string>
+    <string name="next">다음</string>
+    <string name="start">시작하기</string>
+    <string name="apply">적용하기</string>
+    <string name="select_language_level">언어 및 레벨을 선택해주세요 (2/3)</string>
+    <string name="language_n_level">언어 및 레벨</string>
+    <string name="select_prefer_country">선호 국가를 선택해주세요 (3/3)</string>
+
+    <string name="invalid_email">잘못된 이메일 형식 입니다</string>
+    <string name="invalid_birthday">잘못된 생일 형식 입니다</string>
+    <string name="invalid_null">필수 입력 항목 입니다</string>
+    <string name="duplicate_language">이미 선택한 언어입니다</string>
+    <string name="choose">사진 업로드</string>
+
+    <string name="delete_dialog">현재 이미지를 삭제합니까?</string>
+    <string name="delete_title">확인</string>
+    <string name="share_hint">공유</string>
+
+    <string name="level1">레벨1</string>
+    <string name="level2">레벨2</string>
+    <string name="level3">레벨3</string>
+    <string name="level4">레벨4</string>
+    <string name="level5">레벨5</string>
+    <string name="my_info">내 정보</string>
+    <string name="profile">프로필</string>
+    <string name="my_question">내 질문</string>
+    <string name="my_review">내 리뷰</string>
+    <string name="prefer_interest">선호 분야</string>
+
 
 </resources>

@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
-import com.lighthouse.domain.response.vo.InterestVO
+import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.profile.R
 import com.lighthouse.profile.databinding.InterestTileBinding
 
@@ -19,9 +19,9 @@ fun makeAdapter() =
             val binding = viewHolder.binding
             binding.tvInterestTitle.text = item.category
 
-            val inflator = LayoutInflater.from(binding.root.context)
+            val inflater = LayoutInflater.from(binding.root.context)
             item.interest.forEach {
-                val chip = inflator.inflate(
+                val chip = inflater.inflate(
                     com.lighthouse.android.common_ui.R.layout.chip,
                     binding.chipInterest,
                     false

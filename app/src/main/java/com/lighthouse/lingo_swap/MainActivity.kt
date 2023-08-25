@@ -65,7 +65,7 @@ class MainActivity @Inject constructor() : AppCompatActivity(), ToFlowNavigatabl
         binding.bottomNav.visibility = View.GONE
     }
 
-    fun showBottomNavBar() {
+    private fun showBottomNavBar() {
         binding.bottomNav.visibility = View.VISIBLE
     }
 }

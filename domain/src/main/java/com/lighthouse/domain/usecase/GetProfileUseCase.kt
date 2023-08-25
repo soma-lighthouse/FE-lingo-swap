@@ -6,5 +6,7 @@ import javax.inject.Inject
 class GetProfileUseCase @Inject constructor(
     private val repository: ProfileRepository,
 ) {
-    fun invoke(userId: Int) = repository.getProfileDetail(userId)
+    fun getProfileDetail(userId: String) = repository.getProfileDetail(userId)
+
+    fun getUUID() = repository.getUUID()
 }
