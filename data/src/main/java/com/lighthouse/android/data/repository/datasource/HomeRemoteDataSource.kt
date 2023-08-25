@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface HomeRemoteDataSource {
     fun getMatchedUser(
-        userId: Int,
+        userId: String,
         next: Int?,
         pageSize: Int?,
     ): Flow<Resource<UserProfileDTO>>

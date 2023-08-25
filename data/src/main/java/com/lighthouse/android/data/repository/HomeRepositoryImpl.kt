@@ -2,8 +2,8 @@ package com.lighthouse.android.data.repository
 
 import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.domain.entity.response.vo.UserProfileVO
+import com.lighthouse.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class HomeRepositoryImpl @Inject constructor(
     private val datasource: HomeRemoteDataSource,
 ) : HomeRepository {
     override fun getMatchedUser(
-        userId: Int,
+        userId: String,
         next: Int?,
         pageSize: Int?,
     ): Flow<Resource<UserProfileVO>> {

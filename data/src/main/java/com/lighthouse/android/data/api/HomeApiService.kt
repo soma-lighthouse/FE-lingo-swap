@@ -10,7 +10,7 @@ import retrofit2.http.Query
 interface HomeApiService {
     @GET("api/v1/user/{userId}/matches")
     suspend fun getMatchedUser(
-        @Path("userId") userId: Int,
+        @Path("userId") userId: String,
         @Query("next") next: Int?,
         @Query("pageSize") pageSize: Int?,
     ): Response<BaseResponse<UserProfileDTO>>
