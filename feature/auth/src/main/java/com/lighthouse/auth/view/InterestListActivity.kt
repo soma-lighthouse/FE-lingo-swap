@@ -129,20 +129,29 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
                 val binding = viewHolder.binding
 
                 binding.tvInterestTitle.text = item.category
+                if (viewHolder.adapterPosition != 0) {
+                    binding.chipInterest.setGone()
+                    binding.bottomLine.setGone()
+                    binding.btnInterest.rotation = 180f
+                } else {
+                    binding.btnInterest.rotation = 0f
+                }
 
-                binding.btnInterest.setOnClickListener { _ ->
+                binding.btnInterest.setOnClickListener {
                     if (binding.chipInterest.visibility == View.VISIBLE) {
                         TransitionManager.beginDelayedTransition(
                             binding.collapseInterest, AutoTransition()
                         )
-                        binding.chipInterest.visibility = View.GONE
-                        binding.btnInterest.animate().rotation(0f).start()
+                        binding.chipInterest.setGone()
+                        binding.bottomLine.setGone()
+                        binding.btnInterest.animate().rotation(180f).start()
                     } else {
                         TransitionManager.beginDelayedTransition(
                             binding.collapseInterest, AutoTransition()
                         )
-                        binding.chipInterest.visibility = View.VISIBLE
-                        binding.btnInterest.animate().rotation(180f).start()
+                        binding.chipInterest.setVisible()
+                        binding.bottomLine.setVisible()
+                        binding.btnInterest.animate().rotation(0f).start()
                     }
                 }
 

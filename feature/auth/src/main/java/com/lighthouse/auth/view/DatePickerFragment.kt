@@ -26,7 +26,7 @@ class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val year = calender[Calendar.YEAR]
+        val year = calender[Calendar.YEAR] - 20
         val month = calender[Calendar.MONTH]
         val day = calender[Calendar.DAY_OF_MONTH]
 

@@ -3,7 +3,6 @@ package com.lighthouse.auth.view
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -12,13 +11,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.BindingFragment
+import com.lighthouse.android.common_ui.util.setGone
+import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentCountryBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -45,32 +47,44 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
             if (validateInput()) {
                 viewModel.registerInfo.preferredCountries = selectedItem.map { it.code }
                 viewLifecycleOwner.lifecycleScope.launch {
-                    val contentUri = Uri.parse(viewModel.profilePath)
-                    val filePath = getRealPathFromUri(contentUri)
                     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                         if (viewModel.profilePath != null) {
-                            async {
-                                if (filePath != null) {
-                                    viewModel.uploadImg(filePath).collect {
-                                        Log.d("PICTURE", it.toString())
+                            val contentUri = Uri.parse(viewModel.profilePath)
+                            val filePath = getRealPathFromUri(contentUri)
+                            if (filePath != null) {
+                                viewModel.uploadImg(filePath).flatMapLatest { uploadResult ->
+                                    if (uploadResult == true) {
+                                        binding.groupCountry.isClickable = false
+                                        binding.pbStart.setVisible()
+                                        viewModel.registerUser()
+                                    } else {
+                                        flowOf(false)
                                     }
+                                }.collect { result ->
+                                    binding.groupCountry.isClickable = true
+                                    binding.pbStart.setGone()
+                                    registerComplete(result)
                                 }
-                            }.await()
-                        }
-                        viewModel.registerUser().collect {
-                            if (it == true) {
-                                mainNavigator.navigateToMain(requireContext())
-                                requireActivity().finish()
-                            } else {
-                                context.toast(it.toString())
+                            }
+                        } else {
+                            viewModel.registerUser().collect { result ->
+                                registerComplete(result)
                             }
                         }
                     }
                 }
+
             } else {
                 context.toast(resources.getString(com.lighthouse.android.common_ui.R.string.invalid_null))
             }
         }
+    }
+
+    private fun registerComplete(result: Any?) = if (result == true) {
+        mainNavigator.navigateToMain(requireContext())
+        requireActivity().finish()
+    } else {
+        context.toast(result.toString())
     }
 
     private fun getRealPathFromUri(uri: Uri): String? {
