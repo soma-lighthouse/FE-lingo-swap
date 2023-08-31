@@ -25,6 +25,7 @@ import com.lighthouse.android.home.util.homeTitle
 import com.lighthouse.android.home.viewmodel.HomeViewModel
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,18 +42,9 @@ class HomeFragment @Inject constructor() :
         initAdapter()
         initScrollListener()
         initFab()
+        initMatch()
         if (profileList.isEmpty()) {
             profileList.addAll(viewModel.getUserProfiles())
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                if (profileList.isEmpty()) {
-                    viewModel.fetchNextPage("1").collect {
-                        render(it)
-                    }
-                }
-            }
         }
 
         lifecycleScope.launch {
@@ -67,6 +59,19 @@ class HomeFragment @Inject constructor() :
         adapter.submitList(profileList)
     }
 
+    private fun initMatch() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                if (profileList.isEmpty()) {
+                    viewModel.fetchNextPage("1")
+                    viewModel.matchedUserUiState.collect {
+                        render(it)
+                    }
+                }
+            }
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         viewModel.saveUserProfiles(profileList)
@@ -78,14 +83,15 @@ class HomeFragment @Inject constructor() :
                 if (profileList.isEmpty()) {
                     binding.pbHomeLoading.setVisible()
                     binding.rvHome.setGone()
-//                    binding.fabFilter.setGone()
+                    binding.fabFilter.setGone()
                 }
             }
 
             is UiState.Success<*> -> {
                 binding.rvHome.setVisible()
-                Log.d("MYTAG", profileList.toString())
                 profileList.addAll(uiState.data as List<ProfileVO>)
+                Log.d("MATCHING", uiState.data.toString())
+                Log.d("MATCHING", profileList.size.toString())
                 adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
                 binding.fabFilter.setVisible()
@@ -123,7 +129,7 @@ class HomeFragment @Inject constructor() :
 
                 val totalCount = recyclerView.adapter?.itemCount?.minus(1)
 
-                if (rvPosition == totalCount && viewModel.page.value != -1) {
+                if (rvPosition == totalCount && viewModel.page != -1) {
                     loadMoreProfiles()
                 }
             }
@@ -131,11 +137,13 @@ class HomeFragment @Inject constructor() :
     }
 
     private fun loadMoreProfiles() {
-        viewModel.loading.value = true
-        lifecycleScope.launch {
-            viewModel.fetchNextPage("1").collect {
-                render(it)
-                viewModel.loading.value = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                delay(1000)
+                viewModel.fetchNextPage("1")
+                viewModel.matchedUserUiState.collect {
+                    render(it)
+                }
             }
         }
     }

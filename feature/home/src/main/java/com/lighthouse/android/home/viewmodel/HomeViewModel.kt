@@ -1,59 +1,58 @@
 package com.lighthouse.android.home.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.usecase.GetMatchedUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getMatchedUserUseCase: GetMatchedUserUseCase,
 ) : ViewModel() {
-    private val _page: MutableStateFlow<Int> = MutableStateFlow(1)
-    val page: StateFlow<Int>
-        get() = _page
     private var userProfiles = listOf<ProfileVO>()
-    var loading = MutableLiveData<Boolean>()
     private var next: Int? = null
 
+    private val _matchedUserUiState = MutableStateFlow<UiState>(UiState.Loading)
+    val matchedUserUiState: StateFlow<UiState> = _matchedUserUiState.asStateFlow()
 
+    var page = 1
     fun fetchNextPage(
         userId: String,
         pageSize: Int? = null,
-    ): Flow<UiState> {
-        return getMatchedUserUseCase.invoke(userId, next, pageSize)
-            .map {
-                when (it) {
-                    is Resource.Success -> {
-                        if (it.data!!.nextId == -1) {
-                            Log.d("PAGING", "enter")
-                            _page.value = -1
-                        } else {
-                            next = it.data!!.nextId
-                        }
-                        UiState.Success(it.data!!.profile)
-                    }
-
-                    is Resource.Error -> UiState.Error(it.message ?: "Error Occurred")
+    ) {
+        viewModelScope.launch {
+            getMatchedUserUseCase.invoke(userId, next, pageSize)
+                .catch {
+                    _matchedUserUiState.value = UiState.Error(it.message ?: StringSet.error_msg)
                 }
-            }
-            .stateIn(
-                scope = viewModelScope,
-                initialValue = UiState.Loading,
-                started = SharingStarted.WhileSubscribed(5000)
-            )
+                .collect {
+                    when (it) {
+                        is Resource.Success -> {
+                            if (it.data!!.nextId == -1) {
+                                Log.d("PAGING", "enter")
+                                page = -1
+                            } else {
+                                next = it.data!!.nextId
+                            }
+                            _matchedUserUiState.emit(UiState.Success(it.data!!.profile))
+                        }
+
+                        is Resource.Error -> _matchedUserUiState.value =
+                            UiState.Error(it.message ?: StringSet.error_msg)
+                    }
+                }
+        }
     }
 
     fun saveUserProfiles(profiles: List<ProfileVO>) {

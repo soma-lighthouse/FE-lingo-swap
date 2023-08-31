@@ -1,6 +1,7 @@
 package com.lighthouse.board.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
@@ -8,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
@@ -32,17 +34,34 @@ class TabContentFragment :
     )
     private lateinit var adapter: SimpleListAdapter<BoardQuestionVO, QuestionTileBinding>
 
+    private val questionList = mutableListOf<BoardQuestionVO>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
         initRefresh()
+        initBoard()
+        initScrollListener()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        adapter.submitList(questionList)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.saveQuestion(questionList)
+    }
+
+    private fun initBoard() {
         val curPos = arguments?.getInt("tab_pos") ?: "Default Content"
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.fetchState(curPos as Int, null).collect {
-                    render(it)
+                if (questionList.isEmpty()) {
+                    viewModel.fetchState(curPos as Int, null).collect {
+                        render(it)
+                    }
                 }
             }
         }
@@ -74,6 +93,34 @@ class TabContentFragment :
         binding.rvQuestion.adapter = adapter
     }
 
+    private fun initScrollListener() {
+        binding.rvQuestion.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val rvPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+
+                val totalCount = recyclerView.adapter?.itemCount?.minus(1)
+
+                if (rvPosition == totalCount && viewModel.page != -1) {
+                    loadMoreProfiles()
+                }
+            }
+        })
+    }
+
+    private fun loadMoreProfiles() {
+        val curPos = arguments?.getInt("tab_pos") ?: "Default Content"
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.fetchState(curPos as Int, null).collect {
+                    render(it)
+                }
+            }
+        }
+    }
+
 
     private fun render(uiState: UiState) {
         when (uiState) {
@@ -85,7 +132,9 @@ class TabContentFragment :
 
             is UiState.Success<*> -> {
                 binding.srBoard.setVisible()
-                adapter.submitList(uiState.data as List<BoardQuestionVO>)
+                questionList.addAll(uiState.data as List<BoardQuestionVO>)
+                Log.d("QUESTION", questionList.size.toString())
+                adapter.submitList(questionList)
                 binding.pbBoardLoading.setGone()
             }
 

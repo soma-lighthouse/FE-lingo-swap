@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/permissions_fragment"
-        android:name="com.lighthouse.auth.view.PermissionsFragment"
+        android:name="com.lighthouse.auth.fragment.PermissionsFragment"
         android:label="PermissionsFragment">
 
         <action
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="com.lighthouse.auth.view.CameraFragment"
+        android:name="com.lighthouse.auth.fragment.CameraFragment"
         android:label="CameraFragment">
 
         <action
@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/gallery_fragment"
-        android:name="com.lighthouse.auth.view.GalleryFragment"
+        android:name="com.lighthouse.auth.fragment.GalleryFragment"
         android:label="GalleryFragment">
         <argument
             android:name="root_directory"

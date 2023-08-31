@@ -10,7 +10,7 @@ import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import com.lighthouse.auth.view.PERMISSIONS_REQUIRED
+import com.lighthouse.auth.fragment.PERMISSIONS_REQUIRED
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale

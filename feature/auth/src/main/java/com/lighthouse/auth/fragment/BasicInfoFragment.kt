@@ -1,4 +1,4 @@
-package com.lighthouse.auth.view
+package com.lighthouse.auth.fragment
 
 import android.net.Uri
 import android.os.Bundle
@@ -32,6 +32,7 @@ import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.auth.databinding.FragmentBasicInfoBinding
 import com.lighthouse.auth.databinding.InterestListTileBinding
+import com.lighthouse.auth.view.ImagePickerDialog
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO

@@ -1,4 +1,4 @@
-package com.lighthouse.auth.view
+package com.lighthouse.auth.fragment
 
 import android.os.Bundle
 import android.view.View

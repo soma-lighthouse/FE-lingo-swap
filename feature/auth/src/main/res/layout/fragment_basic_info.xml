@@ -22,7 +22,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                tools:context=".view.BasicInfoFragment">
+                tools:context=".fragment.BasicInfoFragment">
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/tb_info"

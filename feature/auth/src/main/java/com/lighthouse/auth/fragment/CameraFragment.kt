@@ -1,4 +1,4 @@
-package com.lighthouse.auth.view
+package com.lighthouse.auth.fragment
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -41,6 +41,7 @@ import com.lighthouse.auth.util.createFile
 import com.lighthouse.auth.util.getOutputDirectory
 import com.lighthouse.auth.util.hasPermissions
 import com.lighthouse.auth.util.simulateClick
+import com.lighthouse.auth.view.KEY_EVENT_ACTION
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -267,8 +268,7 @@ class CameraFragment : BindingFragment<FragmentCameraBinding>(R.layout.fragment_
                 Navigation.findNavController(
                     requireActivity(), R.id.fragment_container
                 ).navigate(
-                    CameraFragmentDirections
-                        .actionCameraToGallery(mOutputDirectory.absolutePath)
+                    CameraFragmentDirections.actionCameraToGallery(mOutputDirectory.absolutePath)
                 )
             }
         }
