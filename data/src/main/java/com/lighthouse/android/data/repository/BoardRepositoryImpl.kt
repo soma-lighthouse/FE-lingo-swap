@@ -20,7 +20,7 @@ class BoardRepositoryImpl @Inject constructor(
     override fun getBoardQuestions(
         category: Int,
         order: String?,
-        page: Int,
+        page: Int?,
     ): Flow<Resource<BoardVO>> =
         datasource.getBoardQuestions(category, order, page).map {
             when (it) {

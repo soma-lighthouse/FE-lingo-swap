@@ -1,7 +1,6 @@
 package com.lighthouse.android.data.api
 
 import com.lighthouse.android.data.model.request.UploadQuestionDTO
-import com.lighthouse.android.data.model.response.BaseResponse
 import com.lighthouse.android.data.model.response.BoardDTO
 import retrofit2.Response
 import retrofit2.http.Body
@@ -16,13 +15,13 @@ interface BoardApiService {
     suspend fun getQuestion(
         @Path("category") category: Int,
         @Query("order") order: String?,
-        @Query("page") page: Int,
-    ): Response<BaseResponse<BoardDTO>>
+        @Query("next") page: Int?,
+    ): Response<BoardDTO>
 
-    @POST("api/v1/question")
+    @POST("api/v1/questions")
     suspend fun uploadQuestion(
         @Body info: UploadQuestionDTO,
-    ): Response<BaseResponse<String>>
+    ): Response<String>
 
     @POST("api/v1/question/{questionId}/like")
     suspend fun updateLike(
