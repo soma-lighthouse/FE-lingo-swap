@@ -7,6 +7,7 @@ import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.ProfileApiService
 import com.lighthouse.android.data.api.interceptor.ContentInterceptor
+import com.lighthouse.android.data.api.interceptor.ErrorInterceptor
 import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
 import com.lighthouse.lingo_swap.BuildConfig
 import com.lighthouse.lingo_swap.HeaderInterceptor
@@ -31,7 +32,9 @@ object NetModule {
     @Provides
     @Singleton
     @Main
-    fun provideLightHouseHttpClient(headerInterceptor: HeaderInterceptor): OkHttpClient =
+    fun provideLightHouseHttpClient(
+        headerInterceptor: HeaderInterceptor,
+    ): OkHttpClient =
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
@@ -40,6 +43,7 @@ object NetModule {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .addInterceptor(headerInterceptor)
+            .addInterceptor(ErrorInterceptor)
             .build()
 
     @Provides
