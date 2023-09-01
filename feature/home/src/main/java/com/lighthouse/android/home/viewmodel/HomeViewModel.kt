@@ -23,7 +23,8 @@ class HomeViewModel @Inject constructor(
     private var userProfiles = listOf<ProfileVO>()
     private var next: Int? = null
 
-    private val _matchedUserUiState = MutableStateFlow<UiState>(UiState.Loading)
+    private val _matchedUserUiState =
+        MutableStateFlow<UiState>(UiState.Loading)
     val matchedUserUiState: StateFlow<UiState> = _matchedUserUiState.asStateFlow()
 
     var page = 1

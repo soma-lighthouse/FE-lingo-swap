@@ -58,6 +58,12 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_prefer_country" />
 
+            <View
+                android:id="@+id/click_country"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                app:layout_constraintTop_toTopOf="@id/tv_prefer_country" />
+
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_prefer_country"
                 android:layout_width="0dp"
@@ -67,7 +73,6 @@
                 app:layout_constraintStart_toStartOf="@+id/tv_prefer_country"
                 app:layout_constraintTop_toBottomOf="@+id/tv_prefer_country"
                 app:singleSelection="true" />
-
 
             <TextView
                 android:id="@+id/tv_prefer_language"
@@ -91,8 +96,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_prefer_language" />
 
+            <View
+                android:id="@+id/click_language"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                app:layout_constraintTop_toTopOf="@id/tv_prefer_language" />
+
             <TextView
-                android:id="@+id/tv_prefer_hobby"
+                android:id="@+id/tv_prefer_interest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
@@ -120,18 +131,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:background="@drawable/next_btn"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_prefer_hobby"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_prefer_interest"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_prefer_hobby" />
+                app:layout_constraintTop_toTopOf="@+id/tv_prefer_interest" />
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_prefer_hobby"
-                android:layout_width="0dp"
+            <View
+                android:id="@+id/click_interest"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                app:layout_constraintTop_toTopOf="@id/tv_prefer_interest" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_interest"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                app:layout_constraintEnd_toEndOf="@+id/btn_select_hobby"
-                app:layout_constraintStart_toStartOf="@+id/tv_prefer_hobby"
-                app:layout_constraintTop_toBottomOf="@+id/tv_prefer_hobby" />
+                android:layout_margin="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_prefer_interest"
+                tools:itemCount="3"
+                tools:listitem="@layout/interest_list_tile" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,6 +16,8 @@ import com.google.android.material.chip.ChipGroup
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
+import com.lighthouse.android.common_ui.base.adapter.makeAdapter
+import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.calSize
@@ -25,9 +27,7 @@ import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.profile.R
-import com.lighthouse.profile.adapter.makeAdapter
 import com.lighthouse.profile.databinding.ActivityDetailProfileBinding
-import com.lighthouse.profile.databinding.InterestTileBinding
 import com.lighthouse.profile.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 class DetailProfileActivity :
     BindingActivity<ActivityDetailProfileBinding>(R.layout.activity_detail_profile) {
     private val viewModel: ProfileViewModel by viewModels()
-    private lateinit var adapter: SimpleListAdapter<InterestVO, InterestTileBinding>
+    private lateinit var adapter: SimpleListAdapter<InterestVO, InterestListTileBinding>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +44,7 @@ class DetailProfileActivity :
         initBack()
         initFold()
         initMenu()
+        initAdapter()
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -105,7 +106,6 @@ class DetailProfileActivity :
                 binding.bottomRectangle.setVisible()
                 binding.btnSend.setVisible()
                 val result = uiState.data as ProfileVO
-                initAdapter()
                 initView(result)
                 initChip(binding.chipCountry, result.countries)
                 initChip(binding.chipLanguage, result.languages.flatMap {

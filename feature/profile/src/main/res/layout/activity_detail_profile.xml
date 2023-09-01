@@ -274,7 +274,7 @@
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     tools:itemCount="2"
-                                    tools:listitem="@layout/interest_tile" />
+                                    tools:listitem="@layout/interest_list_tile" />
                             </androidx.constraintlayout.widget.ConstraintLayout>
 
                         </com.google.android.material.card.MaterialCardView>

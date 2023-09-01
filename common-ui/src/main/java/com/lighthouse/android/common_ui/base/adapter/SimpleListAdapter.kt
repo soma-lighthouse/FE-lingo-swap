@@ -19,6 +19,7 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
     companion object {
         private const val TYPE_ITEM = 0
         private const val TYPE_LOADING = 1
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<B> {

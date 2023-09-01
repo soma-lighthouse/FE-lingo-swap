@@ -23,17 +23,26 @@ class MainNavigatorImpl : MainNavigator {
         context.navigateActivity<DetailProfileActivity>(userId, isMe)
     }
 
-    override fun navigateToInterest(context: Context) = context.buildIntent<InterestListActivity>()
+    override fun navigateToInterest(
+        context: Context,
+        selectedList: Pair<String, HashMap<String, List<String>>>,
+    ) =
+        context.buildIntent<InterestListActivity>(selectedList)
 
-    override fun navigateToCountry(context: Context, multiSelect: Pair<String, Boolean>) =
-        context.buildIntent<CountryListActivity>(multiSelect)
+    override fun navigateToCountry(
+        context: Context,
+        multiSelect: Pair<String, Boolean>,
+        selectedList: Pair<String, List<String>>,
+    ) =
+        context.buildIntent<CountryListActivity>(multiSelect, selectedList)
 
     override fun navigateToLanguage(
         context: Context,
         selectedList: Pair<String, List<String>>,
         position: Pair<String, Int>,
+        multiSelect: Pair<String, Boolean>,
     ) =
-        context.buildIntent<LanguageListActivity>(selectedList, position)
+        context.buildIntent<LanguageListActivity>(selectedList, position, multiSelect)
 
     override fun navigateToCamera(context: Context) = context.buildIntent<CameraActivity>()
 }

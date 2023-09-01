@@ -2,10 +2,7 @@ package com.lighthouse.auth.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.transition.AutoTransition
-import android.transition.TransitionManager
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.EditText
@@ -16,12 +13,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.base.BindingFragment
-import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
+import com.lighthouse.android.common_ui.base.adapter.makeAdapter
+import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
 import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.calSize
@@ -31,7 +28,6 @@ import com.lighthouse.android.common_ui.util.isValidEmail
 import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.auth.databinding.FragmentBasicInfoBinding
-import com.lighthouse.auth.databinding.InterestListTileBinding
 import com.lighthouse.auth.view.ImagePickerDialog
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.CountryVO
@@ -157,7 +153,7 @@ class BasicInfoFragment :
         }
     }
 
-    private fun getFileExtensionFromUri(uri: Uri): String? {
+    private fun getFileExtensionFromUri(uri: Uri): String {
         return if (uri.scheme == "content") {
             val mimeType = requireContext().contentResolver.getType(uri)
             "$uri.${mimeType?.substringAfterLast('/')}"
@@ -195,7 +191,7 @@ class BasicInfoFragment :
         val inputFormat = SimpleDateFormat("yyyy-M-d", Locale.getDefault())
         val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-        val parsedDate: Date = inputFormat.parse(inputDate)
+        val parsedDate: Date = inputFormat.parse(inputDate) as Date
         return outputFormat.format(parsedDate)
     }
 
@@ -305,7 +301,15 @@ class BasicInfoFragment :
 
     private fun initInterest() {
         binding.btnInterest.setOnClickListener {
-            val intent = mainNavigator.navigateToInterest(requireContext())
+            val hash = hashMapOf<String, List<String>>()
+
+            interestList.forEach {
+                hash[it.category] = it.interest
+            }
+            val intent = mainNavigator.navigateToInterest(
+                requireContext(),
+                Pair("SelectedList", hash),
+            )
             resultLauncher.launch(intent)
         }
     }
@@ -313,19 +317,24 @@ class BasicInfoFragment :
     private fun initCountry() {
         binding.btnNation.setOnClickListener {
             val intent =
-                mainNavigator.navigateToCountry(requireContext(), Pair("multiSelect", false))
+                mainNavigator.navigateToCountry(
+                    requireContext(),
+                    Pair("multiSelect", false),
+                    Pair("SelectedList", listOf(selectedCountry?.name ?: ""))
+                )
             resultLauncher.launch(intent)
         }
     }
 
     private fun observeCountry() {
         getResult.observe(viewLifecycleOwner) {
-            var result = it.getSerializableExtra("CountryList") as? List<CountryVO>
+            var result = it.getStringArrayListExtra("CountryNameList")?.toList() ?: listOf()
 
-            if (result != null) {
-                selectedCountry = result.first()
+            if (result.isNotEmpty()) {
+                val code = it.getStringArrayListExtra("CountryCodeList")?.toList() ?: listOf()
+                selectedCountry = CountryVO(code = code.first(), name = result.first())
                 binding.btnNation.text =
-                    result.first().name
+                    result.first()
             }
         }
     }
@@ -344,43 +353,6 @@ class BasicInfoFragment :
             }
         }
     }
-
-    private fun makeAdapter() =
-        SimpleListAdapter<InterestVO, InterestListTileBinding>(diffCallBack = ItemDiffCallBack(
-            onContentsTheSame = { old, new -> old == new },
-            onItemsTheSame = { old, new -> old.category == new.category }),
-            layoutId = com.lighthouse.auth.R.layout.interest_list_tile,
-            onBindCallback = { viewHolder, item ->
-                val binding = viewHolder.binding
-                binding.tvInterestTitle.text = item.category
-                binding.btnInterest.setOnClickListener { _ ->
-                    if (binding.chipInterest.visibility == View.VISIBLE) {
-                        TransitionManager.beginDelayedTransition(
-                            binding.collapseInterest, AutoTransition()
-                        )
-                        binding.chipInterest.visibility = View.GONE
-                        binding.btnInterest.animate().rotation(0f).start()
-                    } else {
-                        TransitionManager.beginDelayedTransition(
-                            binding.collapseInterest, AutoTransition()
-                        )
-                        binding.chipInterest.visibility = View.VISIBLE
-                        binding.btnInterest.animate().rotation(180f).start()
-                    }
-                }
-                val inflater = LayoutInflater.from(binding.root.context)
-
-                item.interest.forEach {
-                    val chip = inflater.inflate(
-                        R.layout.home_chip, binding.chipInterest, false
-                    ) as Chip
-
-                    chip.text = it
-                    chip.isCloseIconVisible = false
-                    chip.isCheckable = false
-                    binding.chipInterest.addView(chip)
-                }
-            })
 
     override fun onDestroy() {
         super.onDestroy()

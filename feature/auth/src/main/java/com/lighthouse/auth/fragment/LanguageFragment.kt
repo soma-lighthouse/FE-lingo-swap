@@ -9,16 +9,18 @@ import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
-import com.lighthouse.auth.adapter.LanguageLevelAdapter
+import com.lighthouse.auth.adapter.SelectionAdapter
 import com.lighthouse.auth.databinding.FragmentLanguageBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.entity.response.vo.Selection
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragment_language) {
+class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragment_language),
+    SelectionAdapter.OnItemClickListenerLang {
     private val viewModel: AuthViewModel by activityViewModels()
-    private lateinit var adapter: LanguageLevelAdapter
+    private lateinit var adapter: SelectionAdapter
     private val dataList: MutableList<LanguageVO> =
         mutableListOf(LanguageVO(name = "English", level = 1, code = "en"))
 
@@ -33,16 +35,12 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
 
     private fun observeResult() {
         getResult.observe(viewLifecycleOwner) {
-            val result =
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                    it.getSerializableExtra("Language", LanguageVO::class.java)
-                } else {
-                    it.getSerializableExtra("Language") as LanguageVO
-                }
+            val result = it.getStringArrayListExtra("LanguageNameList")?.first()
             val pos = it.getIntExtra("position", -1)
             if (pos != -1 && result != null) {
-                dataList[pos].name = result.name
-                dataList[pos].code = result.code
+                val code = it.getStringArrayListExtra("LanguageCodeList")?.first() ?: "language"
+                dataList[pos].name = result
+                dataList[pos].code = code
                 adapter.notifyItemChanged(pos)
             } else {
                 context.toast(pos.toString())
@@ -86,18 +84,39 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
     }
 
     private fun initAdapter() {
-        adapter = LanguageLevelAdapter(requireContext(), dataList, { pos ->
-            val intent = mainNavigator.navigateToLanguage(
-                requireContext(), Pair("selected", dataList.map { it.name }), Pair("position", pos)
-            )
-            resultLauncher.launch(intent)
-        }, { level, position ->
-            dataList[position].level = level + 1
-        })
-
+        adapter = SelectionAdapter(
+            multiSelection = false,
+            context = requireContext(),
+            type = SelectionAdapter.LEVEL,
+            langListener = this
+        )
+        adapter.submitList(dataList as List<Selection>?)
         val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.rvLanguageLevel.layoutManager = linearLayoutManager
         binding.rvLanguageLevel.adapter = adapter
+    }
+
+    override fun countrySelect(position: Int) {
+        val intent = mainNavigator.navigateToLanguage(
+            requireContext(),
+            Pair("selected", dataList.map { it.name }),
+            Pair("position", position),
+            Pair("multiSelect", false)
+        )
+
+        resultLauncher.launch(intent)
+    }
+
+    override fun levelSelect(level: Int, position: Int) {
+        dataList[position].level = level + 1
+    }
+
+    override fun deleteSelect(position: Int) {
+        dataList.removeAt(position)
+        adapter.notifyItemRemoved(position)
+        for (i in position until dataList.size) {
+            adapter.notifyItemChanged(i)
+        }
     }
 }

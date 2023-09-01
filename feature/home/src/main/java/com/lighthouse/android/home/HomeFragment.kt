@@ -25,7 +25,6 @@ import com.lighthouse.android.home.util.homeTitle
 import com.lighthouse.android.home.viewmodel.HomeViewModel
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -127,7 +126,7 @@ class HomeFragment @Inject constructor() :
                 val rvPosition =
                     (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
 
-                val totalCount = recyclerView.adapter?.itemCount?.minus(1)
+                val totalCount = recyclerView.adapter?.itemCount?.minus(3)
 
                 if (rvPosition == totalCount && viewModel.page != -1) {
                     loadMoreProfiles()
@@ -139,7 +138,6 @@ class HomeFragment @Inject constructor() :
     private fun loadMoreProfiles() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                delay(1000)
                 viewModel.fetchNextPage("1")
                 viewModel.matchedUserUiState.collect {
                     render(it)
