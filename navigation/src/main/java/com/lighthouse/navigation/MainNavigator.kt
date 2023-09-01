@@ -13,17 +13,20 @@ interface MainNavigator {
 
     fun navigateToInterest(
         context: Context,
+        selectedList: Pair<String, HashMap<String, List<String>>>,
     ): Intent
 
     fun navigateToCountry(
         context: Context,
         multiSelect: Pair<String, Boolean>,
+        selectedList: Pair<String, List<String>>,
     ): Intent
 
     fun navigateToLanguage(
         context: Context,
         selectedList: Pair<String, List<String>>,
         position: Pair<String, Int>,
+        multiSelect: Pair<String, Boolean>,
     ): Intent
 
     fun navigateToCamera(

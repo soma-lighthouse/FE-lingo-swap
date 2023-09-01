@@ -6,4 +6,4 @@ data class LanguageVO(
     var name: String,
     var level: Int,
     var code: String,
-) : Serializable
+) : Serializable, Selection()

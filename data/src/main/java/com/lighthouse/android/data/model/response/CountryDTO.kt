@@ -12,6 +12,5 @@ data class CountryDTO(
     fun toVO() = CountryVO(
         code = code ?: "question",
         name = name ?: "unknown",
-        select = false
     )
 }
