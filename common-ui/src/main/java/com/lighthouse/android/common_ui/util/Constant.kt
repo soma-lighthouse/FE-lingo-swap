@@ -6,4 +6,5 @@ object Constant {
     const val PAGE_SIZE = 10
     const val Image_Request_Code = 7
     const val UUID_ACCESS_TOKEN = "com.lighthouse.lingo-swap.UUID"
+    const val MAX_SELECTION = 5
 }
