@@ -6,7 +6,13 @@ import com.lighthouse.domain.entity.response.vo.BoardVO
 import kotlinx.coroutines.flow.Flow
 
 interface BoardRepository {
-    fun getBoardQuestions(category: Int, order: String?, page: Int?): Flow<Resource<BoardVO>>
+    fun getBoardQuestions(
+        category: Int,
+        order: String?,
+        page: Int?,
+        pageSize: Int?,
+    ): Flow<Resource<BoardVO>>
+
     fun uploadQuestion(info: UploadQuestionVO): Flow<Resource<String>>
     fun updateLike(questionId: Int, userId: String)
 

@@ -18,12 +18,22 @@ class ChatViewModel @Inject constructor(
     private val useCase: GetQuestionUseCase,
 ) : ViewModel() {
     val question: MutableLiveData<String> = MutableLiveData()
+    var next: MutableList<Int?> = MutableList(7) { null }
+    var page = 1
 
-    fun getQuestion(category: Int, order: String?, page: Int) =
-        useCase.invoke(category, order, page)
+    fun getQuestion(category: Int, order: String?, pageSize: Int? = null) =
+        useCase.invoke(category, order, next[category], pageSize)
             .map {
                 when (it) {
-                    is Resource.Success -> UiState.Success(it.data!!.questions)
+                    is Resource.Success -> {
+                        if (it.data!!.nextId == -1) {
+                            page = -1
+                        } else {
+                            next[category] = it.data!!.nextId
+                        }
+                        UiState.Success(it.data!!.questions)
+                    }
+
                     is Resource.Error -> UiState.Error(it.message ?: "Error found")
                 }
             }

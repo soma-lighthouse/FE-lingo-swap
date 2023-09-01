@@ -16,6 +16,7 @@ interface BoardApiService {
         @Path("category") category: Int,
         @Query("order") order: String?,
         @Query("next") page: Int?,
+        @Query("pageSize") pageSize: Int?,
     ): Response<BoardDTO>
 
     @POST("api/v1/questions")

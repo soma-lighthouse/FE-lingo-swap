@@ -1,5 +1,7 @@
 package com.lighthouse.board.viewmodel
 
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lighthouse.android.common_ui.util.StringSet
@@ -20,19 +22,26 @@ import javax.inject.Inject
 class BoardViewModel @Inject constructor(
     private val getQuestionUseCase: GetQuestionUseCase,
 ) : ViewModel() {
-    private var next: Int? = null
+    var next: MutableList<Int?> = MutableList(7) { null }
     private var questions = listOf<BoardQuestionVO>()
     var page = 1
+    val tabPosition = MutableLiveData(0)
 
     fun fetchState(category: Int, order: String?, pageSize: Int? = null): Flow<UiState> {
-        return getQuestionUseCase.invoke(category + 1, order, next)
+        Log.d("TABPOS", tabPosition.value.toString())
+        return getQuestionUseCase.invoke(
+            category + 1,
+            order,
+            next[category],
+            pageSize
+        )
             .map {
                 when (it) {
                     is Resource.Success -> {
                         if (it.data!!.nextId == -1) {
                             page = -1
                         } else {
-                            next = it.data!!.nextId
+                            next[category] = it.data!!.nextId
                         }
                         UiState.Success(it.data!!.questions)
                     }
@@ -78,5 +87,7 @@ class BoardViewModel @Inject constructor(
     fun saveQuestion(questions: List<BoardQuestionVO>) {
         this.questions = questions
     }
+
+    fun getQuestions() = questions
 
 }
