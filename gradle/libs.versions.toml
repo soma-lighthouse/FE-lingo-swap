@@ -65,6 +65,8 @@ crashlytics = "2.9.5"
 firebase = "32.1.0"
 messaging = "16.0.1"
 
+google-login = "20.7.0"
+
 
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "gradleplugin" }
@@ -121,6 +123,8 @@ firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebas
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
+
+google-login = { module = "com.google.android.gms:play-services-auth", version.ref = "google-login" }
 
 circle-image = { module = "de.hdodenhof:circleimageview", version.ref = "circle-image" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
