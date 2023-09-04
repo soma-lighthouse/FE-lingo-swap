@@ -10,9 +10,12 @@ class GetAuthUseCase @Inject constructor(
 ) {
     fun getUserId() = repository.getUserId()
 
-    fun saveUserId() {
-        val uuid = UUID.randomUUID()
-        repository.saveUserId(uuid.toString())
+    fun saveUserId(uid: String?) {
+        var uuid = uid
+        if (uuid == null) {
+            uuid = UUID.randomUUID().toString()
+        }
+        repository.saveUserId(uuid)
     }
 
     fun getInterestList() = repository.getInterestList()

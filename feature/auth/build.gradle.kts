@@ -1,3 +1,9 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+
+val lighthouseFile = rootProject.file("lighthouse.properties")
+val properties = Properties()
+properties.load(lighthouseFile.inputStream())
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -19,8 +25,17 @@ android {
         }
     }
 
+    defaultConfig {
+        buildConfigField(
+            "String",
+            "GOOGLE_CLIENT_ID",
+            properties.getProperty("GOOGLE_CLIENT_ID")
+        )
+    }
+
     buildFeatures {
         dataBinding = true
+        buildConfig = true
     }
 }
 
@@ -32,10 +47,11 @@ dependencies {
     implementation(libs.bundles.android.basic.ui)
     implementation(libs.kotlin.coroutines)
     implementation(libs.hilt)
-    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.core:core-splashscreen:1.0.0-beta02")
-    implementation("com.google.android.material:material:1.5.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation("com.google.firebase:firebase-auth:22.1.1")
+    implementation(libs.google.login)
+
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.navigation)

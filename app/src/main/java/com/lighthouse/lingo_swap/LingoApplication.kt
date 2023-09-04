@@ -23,7 +23,7 @@ class LingoApplication : Application() {
     private fun initSendBirdChat() {
         SendbirdChat.init(
             InitParams(
-                "DC52A85B-A985-4651-AF95-737C9A26CEDD",
+                BuildConfig.SENDBIRD_APPLICATION_ID,
                 applicationContext,
                 useCaching = true
             ),
@@ -61,7 +61,7 @@ class LingoApplication : Application() {
     private fun initSendBirdUI() {
         SendbirdUIKit.init(object : SendbirdUIKitAdapter {
             override fun getAppId(): String {
-                return "DC52A85B-A985-4651-AF95-737C9A26CEDD"
+                return BuildConfig.SENDBIRD_APPLICATION_ID
             }
 
             override fun getAccessToken(): String {

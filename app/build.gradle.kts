@@ -33,6 +33,12 @@ android {
             "TEST_BASE_URL",
             properties.getProperty("TEST_BASE_URL")
         )
+
+        buildConfigField(
+            "String",
+            "SENDBIRD_APPLICATION_ID",
+            properties.getProperty("SENDBIRD_APPLICATION_ID")
+        )
     }
 
     buildTypes {
@@ -83,5 +89,7 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.shared.preference.security)
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation("com.google.firebase:firebase-auth:22.1.1")
+    implementation(libs.google.login)
     implementation(libs.bundles.firebase)
 }
