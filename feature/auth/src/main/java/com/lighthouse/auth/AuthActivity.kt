@@ -8,7 +8,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.lighthouse.android.common_ui.base.BindingActivity
+import com.lighthouse.android.common_ui.util.replace
 import com.lighthouse.auth.databinding.ActivityAuthBinding
+import com.lighthouse.auth.fragment.LoginFragment
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,6 +49,8 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
                         if (loginState == LoginState.LOGIN_SUCCESS) {
                             mainNavigator.navigateToMain(this@AuthActivity)
                             finish()
+                        } else {
+                            replace<LoginFragment>(R.id.nav_host_fragment_auth)
                         }
                         content.viewTreeObserver.removeOnPreDrawListener(this)
                         true

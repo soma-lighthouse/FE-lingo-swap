@@ -123,7 +123,8 @@ class LanguageListActivity : BindingActivity<ActivityCountryBinding>(R.layout.ac
     private fun getLanguageList() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getLanguageList().collect {
+                viewModel.getLanguageList()
+                viewModel.result.collect {
                     render(it)
                 }
             }

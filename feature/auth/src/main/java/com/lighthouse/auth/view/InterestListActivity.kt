@@ -60,7 +60,7 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.getInterestList()
-                viewModel.interests.collect {
+                viewModel.result.collect {
                     render(it)
                 }
             }

@@ -126,7 +126,8 @@ class BasicInfoFragment :
 
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                            viewModel.getPreSignedURL(serverFileName).collect { url ->
+                            viewModel.getPreSignedURL(serverFileName)
+                            viewModel.result.collect { url ->
                                 when (url) {
                                     is UiState.Success<*> -> {
                                         viewModel.registerInfo.profileImageUri = serverFileName

@@ -81,7 +81,8 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
     private fun getCountryList() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getCountryList().collect {
+                viewModel.getCountryList()
+                viewModel.result.collect {
                     render(it)
                 }
             }
