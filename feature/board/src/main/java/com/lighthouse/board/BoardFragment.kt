@@ -150,8 +150,8 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                 binding.pbBoardLoading.setGone()
             }
 
-            is UiState.Error -> {
-                context.toast(uiState.message)
+            is UiState.Error<*> -> {
+                context.toast(uiState.message.toString())
                 binding.pbBoardLoading.setGone()
             }
         }

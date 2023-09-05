@@ -1,6 +1,7 @@
 package com.lighthouse.android.data.api
 
 import com.lighthouse.android.data.model.request.RegisterInfoDTO
+import com.lighthouse.android.data.model.response.BaseResponse
 import com.lighthouse.android.data.model.response.CountryForm
 import com.lighthouse.android.data.model.response.InterestForm
 import com.lighthouse.android.data.model.response.LanguageForm
@@ -15,23 +16,23 @@ import retrofit2.http.Url
 
 interface AuthApiService {
     @GET("api/v1/user/form/interests")
-    suspend fun getInterestList(): Response<InterestForm>
+    suspend fun getInterestList(): Response<BaseResponse<InterestForm>>
 
     @GET("api/v1/user/form/country")
-    suspend fun getCountryList(): Response<CountryForm>
+    suspend fun getCountryList(): Response<BaseResponse<CountryForm>>
 
     @GET("api/v1/user/form/language")
-    suspend fun getLanguageList(): Response<LanguageForm>
+    suspend fun getLanguageList(): Response<BaseResponse<LanguageForm>>
 
     @POST("api/v1/user/upload/profile")
     suspend fun getPreSignedURL(
         @Body imageName: Map<String, String>,
-    ): Response<PreSignedURL>
+    ): Response<BaseResponse<PreSignedURL>>
 
     @POST("api/v1/user")
     suspend fun registerUser(
         @Body info: RegisterInfoDTO,
-    ): Response<String?>
+    ): Response<Void>
 
     @PUT
     suspend fun uploadImg(

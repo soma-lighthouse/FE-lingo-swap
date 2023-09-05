@@ -105,8 +105,8 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
                 binding.pbCountry.setGone()
             }
 
-            is UiState.Error -> {
-                applicationContext.toast(uiState.message)
+            is UiState.Error<*> -> {
+                applicationContext.toast(uiState.message.toString())
                 binding.pbCountry.setGone()
             }
         }

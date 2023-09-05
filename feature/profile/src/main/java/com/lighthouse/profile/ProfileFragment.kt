@@ -63,7 +63,7 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
                 renderProfile(data)
             }
 
-            is UiState.Error -> {
+            is UiState.Error<*> -> {
                 context.toast(uiState.message.toString())
             }
         }

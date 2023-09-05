@@ -28,9 +28,15 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         emit(changeResult(api.getCountryList()))
     }
 
-    override fun registerUser(info: RegisterInfoDTO): Flow<Resource<String?>> = flow {
-        emit(changeResult(api.registerUser(info)))
-    }
+    override fun registerUser(info: RegisterInfoDTO): Flow<Resource<Boolean>> =
+        flow {
+            if (api.registerUser(info).isSuccessful) {
+                emit(Resource.Success(true))
+            } else {
+                emit(Resource.Error("Image Upload failed"))
+            }
+        }
+
 
     override fun getPreSigned(fileName: String): Flow<Resource<PreSignedURL>> = flow {
         emit(changeResult(api.getPreSignedURL(mapOf("key" to fileName))))

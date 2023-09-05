@@ -147,8 +147,8 @@ class LanguageListActivity : BindingActivity<ActivityCountryBinding>(R.layout.ac
                 binding.pbCountry.setGone()
             }
 
-            is UiState.Error -> {
-                applicationContext.toast(uiState.message)
+            is UiState.Error<*> -> {
+                applicationContext.toast(uiState.message.toString())
                 binding.pbCountry.setGone()
             }
         }

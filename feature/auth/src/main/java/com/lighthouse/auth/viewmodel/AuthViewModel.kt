@@ -7,7 +7,9 @@ import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.usecase.GetAuthUseCase
+import com.lighthouse.domain.usecase.TestUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val useCase: GetAuthUseCase,
+    private val testUseCase: TestUseCase,
 ) : ViewModel() {
     val registerInfo = RegisterInfoVO()
     var profilePath: String? = null
@@ -124,4 +127,24 @@ class AuthViewModel @Inject constructor(
             initialValue = UiState.Loading,
             started = SharingStarted.WhileSubscribed(5000)
         )
+
+    fun testing(): Flow<UiState> {
+        return testUseCase.invoke()
+            .map {
+                when (it) {
+                    is Resource.Success -> UiState.Success(it.data!!.msg)
+                    is Resource.Error -> UiState.Error(StringSet.error_msg)
+                }
+            }
+            .catch {
+                emit(UiState.Error(it))
+            }
+            .stateIn(
+                scope = viewModelScope,
+                initialValue = UiState.Loading,
+                started = SharingStarted.WhileSubscribed(5000)
+            )
+    }
+
+
 }

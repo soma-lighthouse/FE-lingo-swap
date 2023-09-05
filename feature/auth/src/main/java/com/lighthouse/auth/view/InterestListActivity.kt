@@ -84,8 +84,8 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
                 binding.pbInterest.setGone()
             }
 
-            is UiState.Error -> {
-                applicationContext.toast(uiState.message)
+            is UiState.Error<*> -> {
+                applicationContext.toast(uiState.message.toString())
                 binding.pbInterest.setGone()
             }
         }

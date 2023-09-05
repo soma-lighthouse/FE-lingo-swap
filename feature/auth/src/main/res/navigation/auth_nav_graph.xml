@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/auth_nav_graph"
-    app:startDestination="@id/info_fragment">
+    app:startDestination="@id/loginFragment">
 
     <fragment
         android:id="@+id/info_fragment"
@@ -31,5 +31,14 @@
         android:id="@+id/countryFragment"
         android:name="com.lighthouse.auth.fragment.CountryFragment"
         tools:layout="@layout/fragment_country" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.lighthouse.auth.fragment.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_info_fragment"
+            app:destination="@id/info_fragment" />
+    </fragment>
 
 </navigation>

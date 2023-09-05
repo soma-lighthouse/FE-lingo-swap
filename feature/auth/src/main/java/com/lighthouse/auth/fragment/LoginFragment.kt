@@ -3,16 +3,21 @@ package com.lighthouse.auth.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.lighthouse.android.common_ui.base.BindingFragment
+import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentLoginBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_login) {
@@ -23,6 +28,7 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
         super.onViewCreated(view, savedInstanceState)
         signInListener()
         observeSignInResult()
+        testing()
     }
 
     private fun observeSignInResult() {
@@ -63,5 +69,31 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
     private fun loginSuccess(userName: String?, id: String?) {
         viewModel.saveUUID(id)
 //        viewModel.postLogin(id, )
+    }
+
+    private fun testing() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.testing().collect {
+                    render(it)
+                }
+            }
+        }
+    }
+
+    private fun render(uiState: UiState) {
+        when (uiState) {
+            UiState.Loading -> {
+                context.toast(uiState.toString())
+            }
+
+            is UiState.Success<*> -> {
+                context.toast(uiState.toString())
+            }
+
+            is UiState.Error<*> -> {
+                handleException(uiState)
+            }
+        }
     }
 }

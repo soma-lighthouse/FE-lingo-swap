@@ -29,7 +29,7 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
 
         checkRegister()
 //        viewModel.saveUUID()
-        login()
+//        login()
     }
 
     private fun checkRegister() {

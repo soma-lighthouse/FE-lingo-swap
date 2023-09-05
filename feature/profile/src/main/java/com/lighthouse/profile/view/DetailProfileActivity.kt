@@ -115,8 +115,8 @@ class DetailProfileActivity :
                 binding.pbDetailLoading.setGone()
             }
 
-            is UiState.Error -> {
-                applicationContext.toast(uiState.message)
+            is UiState.Error<*> -> {
+                applicationContext.toast(uiState.message.toString())
                 binding.pbDetailLoading.setGone()
             }
         }
