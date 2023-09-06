@@ -35,7 +35,8 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
     private fun initProfile() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getProfileDetail(viewModel.getUUID()).collect {
+                viewModel.getProfileDetail(viewModel.getUUID())
+                viewModel.detail.collect {
                     render(it)
                 }
             }
