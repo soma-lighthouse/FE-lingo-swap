@@ -1,4 +1,4 @@
-package com.lighthouse.auth.adapter
+package com.lighthouse.android.common_ui.base.selection_adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,13 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
+import com.lighthouse.android.common_ui.databinding.CountryTileBinding
+import com.lighthouse.android.common_ui.databinding.LanguageLevelTileBinding
+import com.lighthouse.android.common_ui.databinding.LanguageTileBinding
 import com.lighthouse.android.common_ui.util.Constant
-import com.lighthouse.auth.adapter.viewholder.CountryViewHolder
-import com.lighthouse.auth.adapter.viewholder.LanguageLevelViewHolder
-import com.lighthouse.auth.adapter.viewholder.LanguageViewHolder
-import com.lighthouse.auth.databinding.CountryTileBinding
-import com.lighthouse.auth.databinding.LanguageLevelTileBinding
-import com.lighthouse.auth.databinding.LanguageTileBinding
+
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.Selection

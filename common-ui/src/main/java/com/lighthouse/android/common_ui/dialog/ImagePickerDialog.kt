@@ -1,11 +1,11 @@
-package com.lighthouse.auth.view
+package com.lighthouse.android.common_ui.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.lighthouse.auth.databinding.ImagePickerDialogBinding
+import com.lighthouse.android.common_ui.databinding.ImagePickerDialogBinding
 
 class ImagePickerDialog : DialogFragment() {
     private lateinit var binding: ImagePickerDialogBinding

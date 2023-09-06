@@ -19,6 +19,7 @@ import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutMana
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.base.adapter.makeAdapter
 import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
+import com.lighthouse.android.common_ui.dialog.ImagePickerDialog
 import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.calSize
@@ -28,7 +29,6 @@ import com.lighthouse.android.common_ui.util.isValidEmail
 import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.auth.databinding.FragmentBasicInfoBinding
-import com.lighthouse.auth.view.ImagePickerDialog
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
@@ -245,17 +245,17 @@ class BasicInfoFragment :
             binding.spinnerGender, !genderIsEmpty, getString(R.string.invalid_null)
         )
 
-        val nationIsEmpty = binding.btnNation.text.toString().isEmpty()
-        setErrorAndBackground(
-            binding.btnNation, !nationIsEmpty, getString(R.string.invalid_null)
-        )
+//        val nationIsEmpty = binding.btnNation.text.toString().isEmpty()
+//        setErrorAndBackground(
+//            binding.btnNation, !nationIsEmpty, getString(R.string.invalid_null)
+//        )
 
         val interestIsEmpty = interestList.isEmpty()
         setErrorAndBackground(
             binding.collapseInterest, !interestIsEmpty, getString(R.string.invalid_null)
         )
 
-        return emailIsValid && birthdayIsValid && !nameIsEmpty && !genderIsEmpty && !nationIsEmpty && !interestIsEmpty
+        return emailIsValid && birthdayIsValid && !nameIsEmpty && !genderIsEmpty && !interestIsEmpty
     }
 
     private fun setErrorAndBackground(

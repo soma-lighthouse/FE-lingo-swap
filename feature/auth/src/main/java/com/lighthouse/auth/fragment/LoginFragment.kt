@@ -29,6 +29,7 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
         signInListener()
         observeSignInResult()
         testing()
+        test2()
     }
 
     private fun observeSignInResult() {
@@ -81,6 +82,12 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
         }
     }
 
+    private fun test2() {
+        binding.button.setOnClickListener {
+            // TODO()
+        }
+    }
+
     private fun render(uiState: UiState) {
         when (uiState) {
             UiState.Loading -> {
@@ -92,7 +99,7 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
             }
 
             is UiState.Error<*> -> {
-                handleException(uiState)
+//                handleException(uiState)
             }
         }
     }

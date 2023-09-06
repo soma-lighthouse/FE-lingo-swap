@@ -1,4 +1,4 @@
-package com.lighthouse.auth.adapter.viewholder
+package com.lighthouse.android.common_ui.base.selection_adapter
 
 import android.content.Context
 import android.util.Log
@@ -7,9 +7,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.R
+import com.lighthouse.android.common_ui.databinding.LanguageLevelTileBinding
 import com.lighthouse.android.common_ui.util.setGone
-import com.lighthouse.auth.adapter.SelectionAdapter
-import com.lighthouse.auth.databinding.LanguageLevelTileBinding
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 
 class LanguageLevelViewHolder(

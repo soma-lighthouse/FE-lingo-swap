@@ -85,6 +85,8 @@
     <string name="my_question">내 질문</string>
     <string name="my_review">내 리뷰</string>
     <string name="prefer_interest">관심 분야</string>
+    <string name="send_msg">메시지 보내기</string>
+    <string name="edit">편집</string>
 
 
 </resources>
