@@ -10,6 +10,7 @@ import com.sendbird.android.params.InitParams
 import com.sendbird.uikit.SendbirdUIKit
 import com.sendbird.uikit.adapter.SendbirdUIKitAdapter
 import com.sendbird.uikit.interfaces.UserInfo
+import com.sendbird.uikit.model.configurations.UIKitConfig
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -104,7 +105,8 @@ class LingoApplication : Application() {
                 }
             }
         }, this)
-
+        UIKitConfig.groupChannelConfig.enableTypingIndicator = true
+        UIKitConfig.groupChannelConfig.enableReactions = false
         SendbirdUIKit.setUIKitFragmentFactory(CustomFragmentFactory())
     }
 }

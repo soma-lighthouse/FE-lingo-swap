@@ -44,6 +44,7 @@ class CustomChannelHeader : ChannelHeaderComponent() {
         }
         binding.tbProfile.setBackgroundColor(Color.WHITE)
 
+
         return binding.root
     }
 

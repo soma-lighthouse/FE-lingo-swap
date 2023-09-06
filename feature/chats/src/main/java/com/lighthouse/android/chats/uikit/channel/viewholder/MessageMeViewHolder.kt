@@ -2,7 +2,7 @@ package com.lighthouse.android.chats.uikit.channel.viewholder
 
 import android.text.format.DateUtils
 import android.view.View
-import com.lighthouse.android.chats.databinding.QuestionMeBinding
+import com.lighthouse.android.chats.databinding.MessageMeBinding
 import com.lighthouse.android.chats.uikit.util.drawStatus
 import com.sendbird.android.channel.BaseChannel
 import com.sendbird.android.message.BaseMessage
@@ -16,8 +16,8 @@ import com.sendbird.uikit.model.MessageListUIParams
 import java.util.concurrent.ConcurrentHashMap
 
 
-class QuestionMessageMeViewHolder(
-    private val binding: QuestionMeBinding,
+class MessageMeViewHolder(
+    private val binding: MessageMeBinding,
 ) : GroupChannelMessageViewHolder(binding.root) {
     override fun getClickableViewMap(): MutableMap<String, View> {
         val viewMap = ConcurrentHashMap<String, View>()
@@ -43,7 +43,7 @@ class QuestionMessageMeViewHolder(
             DateUtils.formatDateTime(context, message.createdAt, DateUtils.FORMAT_SHOW_TIME)
         binding.tvSentAt.text = sentAt
         binding.tvMessage.text = message.message
-        drawStatus(binding.ivStatus, message, channel)
+        binding.ivStatus.visibility = drawStatus(binding.ivStatus, message, channel)
 
         val padding = context.resources.getDimensionPixelSize(com.sendbird.uikit.R.dimen.sb_size_8)
         binding.root.setPadding(
@@ -53,6 +53,4 @@ class QuestionMessageMeViewHolder(
             padding
         )
     }
-
-
 }

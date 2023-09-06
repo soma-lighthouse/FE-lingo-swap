@@ -7,8 +7,5 @@
         android:bottomRightRadius="@dimen/sb_size_15"/>
 
     <solid
-        android:color="@color/question"/>
-    <stroke
-        android:width="0.5dp"
-        android:color="@color/black"/>
+        android:color="@color/message_me"/>
 </shape>

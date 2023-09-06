@@ -29,14 +29,14 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
 
         checkRegister()
 //        viewModel.saveUUID()
-//        login()
+        login()
     }
 
     private fun checkRegister() {
         loginState = if (viewModel.getUUID() != "") {
-            LoginState.LOGIN_SUCCESS
-        } else {
             LoginState.LOGIN_FAILURE
+        } else {
+            LoginState.LOGIN_SUCCESS
         }
     }
 
