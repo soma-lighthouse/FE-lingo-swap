@@ -6,6 +6,7 @@ import com.lighthouse.android.data.model.response.CountryForm
 import com.lighthouse.android.data.model.response.InterestForm
 import com.lighthouse.android.data.model.response.LanguageForm
 import com.lighthouse.android.data.model.response.PreSignedURL
+import com.lighthouse.android.data.model.response.UserTokenDTO
 import com.lighthouse.android.data.repository.datasource.AuthRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
 import kotlinx.coroutines.flow.Flow
@@ -49,5 +50,10 @@ class AuthRemoteDataSourceImpl @Inject constructor(
             } else {
                 emit(Resource.Error("Image Upload failed"))
             }
+        }
+
+    override fun postGoogleLogin(): Flow<Resource<UserTokenDTO>> =
+        flow {
+            emit(changeResult(api.postGoogleLogin()))
         }
 }

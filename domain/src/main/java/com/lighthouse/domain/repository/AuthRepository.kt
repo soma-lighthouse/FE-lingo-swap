@@ -5,12 +5,11 @@ import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.entity.response.vo.UserTokenVO
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
-    fun getUserId(): String
-
-    fun saveUserId(uuid: String)
+    fun getUserId(): String?
 
     fun getInterestList(): Flow<Resource<List<InterestVO>>>
 
@@ -23,4 +22,8 @@ interface AuthRepository {
     fun getPreSignedURL(fileName: String): Flow<Resource<String>>
 
     fun uploadImg(url: String, profilePath: String): Flow<Resource<Boolean>>
+
+    fun postGoogleLogin(): Flow<Resource<UserTokenVO>>
+
+    fun saveIdToken(idToken: String)
 }

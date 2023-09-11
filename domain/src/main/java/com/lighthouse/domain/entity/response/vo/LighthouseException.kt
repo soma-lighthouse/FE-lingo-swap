@@ -4,9 +4,9 @@ import com.lighthouse.domain.constriant.APIErrorType
 import com.lighthouse.domain.constriant.ErrorTypeHandling
 
 class LighthouseException(
-    val code: Int,
+    val code: Int?,
+    override var message: String?,
     var errorType: ErrorTypeHandling = ErrorTypeHandling.TOAST,
-    override var message: String,
 ) : Exception() {
 
     fun addErrorMsg(): LighthouseException {
@@ -17,7 +17,7 @@ class LighthouseException(
     }
 
     private fun findAPIErrorType(): APIErrorType {
-        return APIErrorType.values().find { it.code == code && it.errorMsg == message }
+        return APIErrorType.values().find { it.code == code }
             ?: APIErrorType.UNKNOWN
     }
 

@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface ProfileRepository {
     fun getProfileDetail(userId: String): Flow<Resource<ProfileVO>>
 
-    fun getUUID(): String
+    fun getUID(): String?
 }

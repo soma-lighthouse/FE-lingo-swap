@@ -117,7 +117,7 @@ class BasicInfoFragment :
                 val fileName = getFileExtensionFromUri(result)
                 val file = File(fileName)
 
-                val serverFileName = "/${viewModel.getUUID()}/${file.name}"
+                val serverFileName = "/${viewModel.getUID()}/${file.name}"
                 try {
                     Glide.with(this).load(result).fitCenter()
                         .placeholder(R.drawable.placeholder) // Placeholder image while loading
@@ -208,7 +208,7 @@ class BasicInfoFragment :
         binding.btnNext.setOnClickListener {
             if (validateInputs()) {
                 viewModel.registerInfo.apply {
-                    uuid = viewModel.getUUID()
+                    uid = viewModel.getUID()
                     name = binding.etName.text.toString()
                     email = binding.etEmail.text.toString()
                     birthday = convertToStandardDateFormat(binding.etBirthday.text.toString())

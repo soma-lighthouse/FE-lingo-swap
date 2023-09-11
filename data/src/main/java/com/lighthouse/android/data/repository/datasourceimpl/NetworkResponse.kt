@@ -1,6 +1,5 @@
 package com.lighthouse.android.data.repository.datasourceimpl
 
-import android.util.Log
 import com.google.gson.Gson
 import com.lighthouse.android.data.model.response.BaseResponse
 import com.lighthouse.android.data.model.response.TestDTO
@@ -19,7 +18,6 @@ abstract class NetworkResponse {
 
             val errorMsg = errorResponse.data.toString()
 
-            Log.d("TESTING", errorMsg)
             throw if (errorMsg == "{}") {
                 LighthouseException(
                     code = errorResponse.code,

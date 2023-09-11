@@ -8,5 +8,5 @@ class GetProfileUseCase @Inject constructor(
 ) {
     fun getProfileDetail(userId: String) = repository.getProfileDetail(userId)
 
-    fun getUUID() = repository.getUUID()
+    fun getUID() = repository.getUID() ?: ""
 }

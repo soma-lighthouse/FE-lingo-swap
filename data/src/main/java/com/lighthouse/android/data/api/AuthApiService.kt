@@ -6,6 +6,7 @@ import com.lighthouse.android.data.model.response.CountryForm
 import com.lighthouse.android.data.model.response.InterestForm
 import com.lighthouse.android.data.model.response.LanguageForm
 import com.lighthouse.android.data.model.response.PreSignedURL
+import com.lighthouse.android.data.model.response.UserTokenDTO
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -39,4 +40,7 @@ interface AuthApiService {
         @Url url: String,
         @Body profilePath: RequestBody,
     ): Response<Void>
+
+    @POST("api/v1/auth/login/google")
+    suspend fun postGoogleLogin(): Response<BaseResponse<UserTokenDTO>>
 }
