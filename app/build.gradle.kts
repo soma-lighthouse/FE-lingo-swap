@@ -10,8 +10,8 @@ plugins {
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
     id("androidx.navigation.safeargs.kotlin")
-    id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.shared.preference.security)
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
     implementation("com.google.firebase:firebase-auth:22.1.1")
+    implementation(libs.google.services)
     implementation(libs.google.login)
     implementation(libs.bundles.firebase)
 }

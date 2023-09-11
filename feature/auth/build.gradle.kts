@@ -48,8 +48,6 @@ dependencies {
     implementation(libs.kotlin.coroutines)
     implementation(libs.hilt)
     implementation("androidx.core:core-splashscreen:1.0.0-beta02")
-    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
-    implementation("com.google.firebase:firebase-auth:22.1.1")
     implementation(libs.google.login)
 
     kapt(libs.hilt.kapt)
