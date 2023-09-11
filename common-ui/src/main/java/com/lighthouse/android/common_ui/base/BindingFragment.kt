@@ -68,15 +68,19 @@ abstract class BindingFragment<T : ViewDataBinding>(
         if (exception is LighthouseException) {
             when (exception.errorType) {
                 ErrorTypeHandling.TOAST -> {
-                    context.toast(exception.message)
+                    context.toast(exception.message.toString())
                 }
 
                 ErrorTypeHandling.DIALOG -> {
-                    showOKDialog(requireContext(), "로그인 에러", exception.message)
+                    showOKDialog(requireContext(), "로그인 에러", exception.message.toString())
                 }
 
                 ErrorTypeHandling.DIRECT -> {
                     mainNavigator.navigateToMain(requireContext())
+                }
+
+                ErrorTypeHandling.NONE -> {
+                    // do nothing
                 }
             }
         }

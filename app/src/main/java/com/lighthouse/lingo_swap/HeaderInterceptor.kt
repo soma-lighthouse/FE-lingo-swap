@@ -14,13 +14,12 @@ class HeaderInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response = with(chain) {
         val newRequest = request().newBuilder()
             .addHeader("Accept", "application/json")
-            .addHeader("Device-Id", localPreferenceDataSource.getUUID())
+            .addHeader("User-Id", localPreferenceDataSource.getUID() ?: "1")
             .addHeader("App-Version", BuildConfig.VERSION_NAME)
             .addHeader("Device-OS", Build.VERSION.SDK_INT.toString())
             .addHeader("Language", Locale.getDefault().language)
             .addHeader("Region", Locale.getDefault().country)
             .addHeader("Timezone", TimeZone.getDefault().id)
-            .addHeader("User-Id", "1")
             .build()
 
         proceed(newRequest)
