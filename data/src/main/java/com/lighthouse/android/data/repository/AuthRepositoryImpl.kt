@@ -10,24 +10,25 @@ import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.entity.response.vo.LighthouseException
+import com.lighthouse.domain.entity.response.vo.UserTokenVO
 import com.lighthouse.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.util.Calendar
+import java.util.Date
+import java.util.TimeZone
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val localPreferenceDataSource: LocalPreferenceDataSource,
     private val authRemoteDataSource: AuthRemoteDataSource,
 ) : AuthRepository {
-    override fun getUserId(): String {
-        return localPreferenceDataSource.getUUID()
-    }
-
-    override fun saveUserId(uuid: String) {
-        localPreferenceDataSource.saveUUID(uuid)
+    override fun getUserId(): String? {
+        return localPreferenceDataSource.getUID()
     }
 
     override fun getInterestList(): Flow<Resource<List<InterestVO>>> =
@@ -65,7 +66,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun registerUser(info: RegisterInfoVO): Flow<Resource<Boolean>> {
         val tmp = RegisterInfoDTO(
-            uuid = info.uuid ?: "null",
+            uid = info.uid ?: "null",
             name = info.name ?: "null",
             birthday = info.birthday ?: "null",
             email = info.email ?: "null",
@@ -112,5 +113,32 @@ class AuthRepositoryImpl @Inject constructor(
                 else -> Resource.Error(it.message ?: "PreSigned URL Failed")
             }
         }
+
+    override fun postGoogleLogin(): Flow<Resource<UserTokenVO>> =
+        authRemoteDataSource.postGoogleLogin().map {
+            when (it) {
+                is Resource.Success -> {
+                    val mapping = it.data!!.toVO()
+
+                    val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+                    val currentDate: Date = calendar.time
+                    val currentTimeMillis: Long = currentDate.time
+
+                    localPreferenceDataSource.saveAccessToken(mapping.accessToken)
+                    localPreferenceDataSource.saveExpire(mapping.expiresIn + currentTimeMillis)
+                    localPreferenceDataSource.saveRefreshToken(mapping.refreshToken)
+                    localPreferenceDataSource.saveRefreshExpire(mapping.refreshTokenExpiresIn + currentTimeMillis)
+                    localPreferenceDataSource.saveUID(mapping.id)
+
+                    Resource.Success(it.data!!.toVO())
+                }
+
+                else -> Resource.Error(it.message ?: throw LighthouseException(null, null))
+            }
+        }
+
+    override fun saveIdToken(idToken: String) {
+        localPreferenceDataSource.saveIdToken(idToken)
+    }
 }
 

@@ -113,7 +113,7 @@ class EditFragment : BindingFragment<FragmentEditBinding>(R.layout.fragment_edit
     private fun initProfile() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getProfileDetail(viewModel.getUUID())
+                viewModel.getProfileDetail(viewModel.getUID())
                 viewModel.detail.collect {
                     render(it)
                 }
@@ -161,7 +161,7 @@ class EditFragment : BindingFragment<FragmentEditBinding>(R.layout.fragment_edit
                 val fileName = getFileExtensionFromUri(result)
                 val file = File(fileName)
 
-                val serverFileName = "/${viewModel.getUUID()}/${file.name}"
+                val serverFileName = "/${viewModel.getUID()}/${file.name}"
                 try {
                     Glide.with(this).load(result).fitCenter()
                         .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder) // Placeholder image while loading

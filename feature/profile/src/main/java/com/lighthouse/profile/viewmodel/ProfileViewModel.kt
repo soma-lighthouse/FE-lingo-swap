@@ -61,5 +61,5 @@ class ProfileViewModel @Inject constructor(
         // TODO()
     }
 
-    fun getUUID() = profileUseCase.getUUID()
+    fun getUID() = profileUseCase.getUID()
 }

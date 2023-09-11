@@ -48,7 +48,7 @@ class DetailProfileFragment :
     private fun initProfile() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getProfileDetail(viewModel.getUUID())
+                viewModel.getProfileDetail(viewModel.getUID())
                 viewModel.detail.collect {
                     render(it)
                 }

@@ -35,7 +35,7 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
     private fun initProfile() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getProfileDetail(viewModel.getUUID())
+                viewModel.getProfileDetail(viewModel.getUID())
                 viewModel.detail.collect {
                     render(it)
                 }
@@ -47,7 +47,7 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         binding.cvProfile.setOnClickListener {
             mainNavigator.navigateToProfile(
                 requireContext(),
-                Pair("userId", viewModel.getUUID()),
+                Pair("userId", viewModel.getUID()),
                 Pair("isMe", true)
             )
         }
