@@ -1,55 +1,48 @@
 package com.lighthouse.auth.fragment
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
-import com.lighthouse.auth.R
-import com.lighthouse.auth.util.hasPermissions
-
-private const val PERMISSIONS_REQUEST_CODE = 10
-val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.CAMERA)
+import androidx.navigation.fragment.findNavController
+import com.lighthouse.android.common_ui.util.toast
 
 class PermissionsFragment : Fragment() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (hasPermissions(requireContext())) {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
-        } else {
-            Navigation.findNavController(
-                requireActivity(),
-                R.id.fragment_container
-            ).navigate(
-                PermissionsFragmentDirections.actionPermissionsToCamera()
-            )
-        }
-    }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
-                Toast.makeText(
-                    requireContext(),
-                    "Permission request granted",
-                    Toast.LENGTH_LONG
-                ).show()
-                Navigation.findNavController(
-                    requireActivity(),
-                    R.id.fragment_container
-                ).navigate(
-                    PermissionsFragmentDirections.actionPermissionsToCamera()
-                )
+                navigateToCameraFeature()
             } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Permission request denied",
-                    Toast.LENGTH_LONG
-                ).show()
+                context.toast("Camera permission denied")
             }
         }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
+        if (hasCameraPermission()) {
+            navigateToCameraFeature()
+        } else {
+            requestCameraPermission()
+        }
+    }
+
+    private fun hasCameraPermission(): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+
+    private fun navigateToCameraFeature() {
+        findNavController().navigate(
+            PermissionsFragmentDirections.actionPermissionsToCamera()
+        )
+    }
 }

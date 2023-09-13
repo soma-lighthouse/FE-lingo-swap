@@ -12,7 +12,6 @@ import android.graphics.drawable.ColorDrawable
 import android.hardware.display.DisplayManager
 import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -22,6 +21,9 @@ import android.view.View
 import android.webkit.MimeTypeMap
 import androidx.camera.core.*
 import androidx.camera.core.ImageCapture.Metadata
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.AspectRatioStrategy.FALLBACK_RULE_AUTO
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -125,14 +127,10 @@ class CameraFragment : BindingFragment<FragmentCameraBinding>(R.layout.fragment_
         mContainer = view as ConstraintLayout
         cameraExecutor = Executors.newSingleThreadExecutor()
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(view.context)
-        // Set up the intent filter that will receive events from our main activity
         val filter = IntentFilter().apply { addAction(KEY_EVENT_ACTION) }
         mLocalBroadcastManager.registerReceiver(volumeDownReceiver, filter)
-        // Every time the orientation of device changes, update rotation for use cases
         displayManager.registerDisplayListener(displayListener, null)
-        // Determine the output directory
         mOutputDirectory = getOutputDirectory(requireContext())
-        // Wait for the views to be properly laid out
         binding.viewFinder.post {
             mDisplayId = binding.viewFinder.display.displayId
             updateCameraUi()
@@ -172,7 +170,7 @@ class CameraFragment : BindingFragment<FragmentCameraBinding>(R.layout.fragment_
         }
     }
 
-    val format = "'fn'_yyyyMMddHHmmss"
+    private val format = "'fn'_yyyyMMddHHmmss"
 
     private fun updateCameraUi() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -188,21 +186,15 @@ class CameraFragment : BindingFragment<FragmentCameraBinding>(R.layout.fragment_
                 latestFile?.let { setGalleryThumbnail(Uri.fromFile(it)) }
             }
         }
-        // Listener for button used to capture photo
         binding.cameraCaptureButton.setOnClickListener {
             mImageCapture?.let { imageCapture ->
-                // Create output file to hold the image
                 val photoFile = createFile(mOutputDirectory, format, PHOTO_EXTENSION)
-                // Setup image capture metadata
                 val metadata = Metadata().apply {
-                    // Mirror image when using the front camera
                     isReversedHorizontal = mDefaultLen == CameraSelector.LENS_FACING_FRONT
                 }
-                // Create output options object which contains file + metadata
                 val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
                     .setMetadata(metadata)
                     .build()
-                // Setup image capture listener which is triggered after photo has been taken
                 imageCapture.takePicture(
                     outputOptions,
                     cameraExecutor,
@@ -217,17 +209,7 @@ class CameraFragment : BindingFragment<FragmentCameraBinding>(R.layout.fragment_
                             activity?.intent?.data = savedUri
                             activity?.setResult(Activity.RESULT_OK, activity?.intent)
                             activity?.finish()
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                setGalleryThumbnail(savedUri)
-                            }
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                                requireActivity().sendBroadcast(
-                                    Intent(
-                                        android.hardware.Camera.ACTION_NEW_PICTURE,
-                                        savedUri
-                                    )
-                                )
-                            }
+                            setGalleryThumbnail(savedUri)
                             val mimeType = MimeTypeMap.getSingleton()
                                 .getMimeTypeFromExtension(savedUri.toFile().extension)
                             MediaScannerConnection.scanFile(
@@ -239,19 +221,16 @@ class CameraFragment : BindingFragment<FragmentCameraBinding>(R.layout.fragment_
                             }
                         }
                     })
-                // We can only change the foreground Drawable using API level 23+ API
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    mContainer.postDelayed(
-                        {
-                            mContainer.foreground = ColorDrawable(Color.WHITE)
-                            mContainer.postDelayed(
-                                { mContainer.foreground = null },
-                                ANIMATION_FAST_MILLIS
-                            )
-                        },
-                        ANIMATION_SLOW_MILLIS
-                    )
-                }
+                mContainer.postDelayed(
+                    {
+                        mContainer.foreground = ColorDrawable(Color.WHITE)
+                        mContainer.postDelayed(
+                            { mContainer.foreground = null },
+                            ANIMATION_FAST_MILLIS
+                        )
+                    },
+                    ANIMATION_SLOW_MILLIS
+                )
             }
         }
         binding.cameraSwitchButton.setOnClickListener {
@@ -284,17 +263,18 @@ class CameraFragment : BindingFragment<FragmentCameraBinding>(R.layout.fragment_
 
     private fun bindCameraUseCases() {
         val metrics = DisplayMetrics().also { binding.viewFinder.display.getRealMetrics(it) }
-        Log.d("CAMERA", "Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
         val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
-        Log.d("CAMERA", "Preview aspect ratio: $screenAspectRatio")
         val rotation = binding.viewFinder.display.rotation
         // Bind the CameraProvider to the LifeCycleOwner
         val cameraSelector = CameraSelector.Builder().requireLensFacing(mDefaultLen).build()
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener(Runnable {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            val resolutionSelector = ResolutionSelector.Builder()
+                .setAspectRatioStrategy(AspectRatioStrategy(screenAspectRatio, FALLBACK_RULE_AUTO))
+                .build()
             mCameraPreview = Preview.Builder()
-                .setTargetAspectRatio(screenAspectRatio)
+                .setResolutionSelector(resolutionSelector)
                 .setTargetRotation(rotation)
                 .build()
                 .also {
@@ -303,12 +283,12 @@ class CameraFragment : BindingFragment<FragmentCameraBinding>(R.layout.fragment_
             // ImageCapture
             mImageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                .setTargetAspectRatio(screenAspectRatio)
+                .setResolutionSelector(resolutionSelector)
                 .setTargetRotation(rotation)
                 .build()
             // ImageAnalysis
             mImageAnalyzer = ImageAnalysis.Builder()
-                .setTargetAspectRatio(screenAspectRatio)
+                .setResolutionSelector(resolutionSelector)
                 .setTargetRotation(rotation)
                 .build()
                 .also {

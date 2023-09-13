@@ -1,5 +1,6 @@
 package com.lighthouse.auth.util
 
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -10,7 +11,6 @@ import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import com.lighthouse.auth.fragment.PERMISSIONS_REQUIRED
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -41,9 +41,12 @@ fun ImageButton.simulateClick(delay: Long = ANIMATION_FAST_MILLIS) {
     }, delay)
 }
 
-fun hasPermissions(context: Context) = PERMISSIONS_REQUIRED.all {
-    ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
-}
+fun hasPermissions(context: Context) =
+    ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
+
 
 fun getOutputDirectory(context: Context): File {
     val appContext = context.applicationContext
