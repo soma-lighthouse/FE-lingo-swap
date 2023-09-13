@@ -73,6 +73,14 @@ class BasicInfoFragment :
         initCalender()
         initCamera()
         observeImage()
+        initBack()
+    }
+
+
+    private fun initBack() {
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun initCamera() {
@@ -120,8 +128,8 @@ class BasicInfoFragment :
                 val serverFileName = "/${viewModel.getUID()}/${file.name}"
                 try {
                     Glide.with(this).load(result).fitCenter()
-                        .placeholder(R.drawable.placeholder) // Placeholder image while loading
-                        .error(R.drawable.question) // Image to display if loading fails
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.question)
                         .override(calSize(200f)).into(binding.ivProfileImg)
 
                     viewLifecycleOwner.lifecycleScope.launch {
