@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.lighthouse.android.data.api.interceptor.AuthInterceptor
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.local.LocalPreferenceDataSourceImpl
 import com.lighthouse.android.data.repository.AuthRepositoryImpl
@@ -78,6 +79,12 @@ object DataModule {
     @Singleton
     fun provideHeaderInterceptor(localPreferenceDataSource: LocalPreferenceDataSource): HeaderInterceptor {
         return HeaderInterceptor(localPreferenceDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthInterceptor(localPreferenceDataSource: LocalPreferenceDataSource): AuthInterceptor {
+        return AuthInterceptor(localPreferenceDataSource)
     }
 
     @Provides

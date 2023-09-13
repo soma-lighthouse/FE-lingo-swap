@@ -26,4 +26,6 @@ interface AuthRepository {
     fun postGoogleLogin(): Flow<Resource<UserTokenVO>>
 
     fun saveIdToken(idToken: String)
+
+    fun getAccessToken(): String
 }

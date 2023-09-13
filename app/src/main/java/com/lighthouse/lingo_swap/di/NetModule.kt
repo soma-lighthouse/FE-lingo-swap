@@ -5,11 +5,12 @@ import com.lighthouse.android.data.api.BoardApiService
 import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.ProfileApiService
+import com.lighthouse.android.data.api.interceptor.AuthInterceptor
 import com.lighthouse.lingo_swap.BuildConfig
 import com.lighthouse.lingo_swap.HeaderInterceptor
 import com.lighthouse.lingo_swap.NullOnEmptyConverterFactory
-import com.lighthouse.lingo_swap.di.Annotation.Main
-import com.lighthouse.lingo_swap.di.Annotation.Test
+import com.lighthouse.lingo_swap.di.annotation.Main
+import com.lighthouse.lingo_swap.di.annotation.Test
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,6 +30,7 @@ object NetModule {
     @Main
     fun provideLightHouseHttpClient(
         headerInterceptor: HeaderInterceptor,
+        authInterceptor: AuthInterceptor,
     ): OkHttpClient =
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
@@ -38,6 +40,7 @@ object NetModule {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .addInterceptor(headerInterceptor)
+            .addInterceptor(authInterceptor)
             .build()
 
     @Provides

@@ -6,6 +6,7 @@ import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
+import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.usecase.GetAuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,8 @@ class AuthViewModel @Inject constructor(
     var profilePath: String? = null
     var profileUrl: String? = null
     fun getUID() = useCase.getUserId()
+
+    fun getAccessToken() = useCase.getAccessToken()
 
     private val _result = MutableStateFlow<UiState>(UiState.Loading)
     val result: StateFlow<UiState> = _result.asStateFlow()
@@ -132,7 +135,9 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             useCase.postGoogleLogin()
                 .catch {
-                    _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
+                    it as LighthouseException
+                    _result.emit(UiState.Error(it.message))
+                    _result.emit(UiState.Loading)
                 }
                 .collect {
                     when (it) {

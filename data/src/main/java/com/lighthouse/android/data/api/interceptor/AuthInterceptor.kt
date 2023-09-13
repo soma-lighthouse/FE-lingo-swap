@@ -41,13 +41,12 @@ class AuthInterceptor @Inject constructor(
                 return reRequest(chain)
             }
         }
-
         return response
     }
 
     private fun isLoginRequest(chain: Request): Boolean {
         val path = chain.url.encodedPath.substringAfter(BuildConfig.LIGHTHOUSE_BASE_URL)
-        return path == LOGIN_REQUEST
+        return path == LOGIN_REQUEST || path == SIGNUP_REQUEST
     }
 
     private fun reRequest(chain: Interceptor.Chain): Response {
@@ -84,17 +83,11 @@ class AuthInterceptor @Inject constructor(
     }
 
     private fun getAccessToken(): String {
-        return localPreferenceDataSource.getRefreshToken() ?: throw LighthouseException(
-            TOKEN_EMPTY,
-            "Token empty"
-        )
+        return localPreferenceDataSource.getRefreshToken() ?: ""
     }
 
     private fun getIdToken(): String {
-        return localPreferenceDataSource.getIdToken() ?: throw LighthouseException(
-            ID_TOKEN_EMPTY,
-            "Id Token empty"
-        )
+        return localPreferenceDataSource.getIdToken() ?: ""
     }
 
     private fun requestRefresh(request: Request): UserTokenVO {
@@ -120,6 +113,7 @@ class AuthInterceptor @Inject constructor(
     companion object {
         private const val TOKEN_REQUEST = "/api/v1/auth/token"
         private const val LOGIN_REQUEST = "/api/v1/auth/login/google"
+        private const val SIGNUP_REQUEST = "/api/v1/user"
 
         private const val TOKEN_EXPIRED = 401
 

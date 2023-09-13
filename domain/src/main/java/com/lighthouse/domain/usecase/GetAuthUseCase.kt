@@ -24,4 +24,6 @@ class GetAuthUseCase @Inject constructor(
     fun postGoogleLogin() = repository.postGoogleLogin()
 
     fun saveIdToken(idToken: String) = repository.saveIdToken(idToken)
+
+    fun getAccessToken() = repository.getAccessToken()
 }

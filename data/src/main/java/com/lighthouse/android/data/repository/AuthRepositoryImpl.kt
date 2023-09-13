@@ -31,6 +31,10 @@ class AuthRepositoryImpl @Inject constructor(
         return localPreferenceDataSource.getUID()
     }
 
+    override fun getAccessToken(): String {
+        return localPreferenceDataSource.getAccessToken() ?: ""
+    }
+
     override fun getInterestList(): Flow<Resource<List<InterestVO>>> =
         authRemoteDataSource.getInterestList().map {
             when (it) {
@@ -123,6 +127,8 @@ class AuthRepositoryImpl @Inject constructor(
                     val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
                     val currentDate: Date = calendar.time
                     val currentTimeMillis: Long = currentDate.time
+
+                    Log.d("TESTING", mapping.toString())
 
                     localPreferenceDataSource.saveAccessToken(mapping.accessToken)
                     localPreferenceDataSource.saveExpire(mapping.expiresIn + currentTimeMillis)

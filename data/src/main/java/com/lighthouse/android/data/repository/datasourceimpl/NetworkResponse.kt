@@ -16,7 +16,7 @@ abstract class NetworkResponse {
             val errorResponse: BaseResponse<*> =
                 Gson().fromJson(errorBody, BaseResponse::class.java)
 
-            val errorMsg = errorResponse.data.toString()
+            val errorMsg = errorResponse.data?.toString() ?: "{}"
 
             throw if (errorMsg == "{}") {
                 LighthouseException(
