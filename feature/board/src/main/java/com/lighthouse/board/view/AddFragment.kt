@@ -44,14 +44,15 @@ class AddFragment : BindingFragment<FragmentAddBinding>(R.layout.fragment_add) {
 
     private fun addChipToGroup(chipGroup: ChipGroup, interestList: List<String>) {
         val inflater = LayoutInflater.from(context)
-        interestList.forEach {
+        interestList.forEachIndexed { index, s ->
             val chip = inflater.inflate(
                 com.lighthouse.android.common_ui.R.layout.chip, binding.chipInterest, false
             ) as Chip
 
-            chip.text = it
+            chip.text = s
             chip.isCloseIconVisible = false
-            if (it == interestList[0]) {
+            chip.id = index
+            if (s == interestList[0]) {
                 chip.isChecked = true
             }
 

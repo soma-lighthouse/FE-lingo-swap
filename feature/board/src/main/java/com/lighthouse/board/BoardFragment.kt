@@ -18,6 +18,8 @@ import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutMana
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.QuestionTileBinding
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.disable
+import com.lighthouse.android.common_ui.util.enable
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
@@ -41,9 +43,13 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         initSpinner()
         initTab()
         initFab()
-        initBoard()
         initScrollListener()
         initAdapter()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initBoard()
     }
 
     private fun initSpinner() {
@@ -138,12 +144,14 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                 if (questionList.isEmpty() && start) {
                     binding.pbBoardLoading.setVisible()
                     binding.rvBoard.setGone()
+                    binding.tabBoard.disable()
                     start = false
                 }
             }
 
             is UiState.Success<*> -> {
                 binding.rvBoard.setVisible()
+                binding.tabBoard.enable()
                 questionList.addAll(uiState.data as List<BoardQuestionVO>)
                 Log.d("QUESTION", questionList.size.toString())
                 adapter.submitList(questionList)
@@ -159,12 +167,11 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
     private fun initBoard() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                if (questionList.isEmpty()) {
-                    viewModel.fetchState(tabPosition, null).collect {
-                        render(it)
-                    }
+            if (questionList.isEmpty()) {
+                viewModel.fetchState(tabPosition, null).collect {
+                    render(it)
                 }
+                
             }
         }
     }

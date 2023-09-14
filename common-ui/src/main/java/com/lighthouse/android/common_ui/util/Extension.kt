@@ -40,6 +40,14 @@ fun View.setGone() {
     this.visibility = View.GONE
 }
 
+fun View.disable() {
+    this.isEnabled = false
+}
+
+fun View.enable() {
+    this.isEnabled = true
+}
+
 fun Context?.toast(text: CharSequence, duration: Int = Toast.LENGTH_LONG) =
     this?.let { Toast.makeText(it, text, duration).show() }
 
