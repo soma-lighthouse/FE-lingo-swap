@@ -15,8 +15,8 @@ import com.lighthouse.android.data.repository.datasourceimpl.BoardRemoteDataSour
 import com.lighthouse.android.data.repository.datasourceimpl.DrivenRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasourceimpl.HomeRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasourceimpl.ProfileRemoteDataSourceImpl
-import com.lighthouse.lingo_swap.di.Annotation.Main
-import com.lighthouse.lingo_swap.di.Annotation.Test
+import com.lighthouse.lingo_swap.di.annotation.Main
+import com.lighthouse.lingo_swap.di.annotation.Test
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,6 +1,5 @@
 package com.lighthouse.android.home.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lighthouse.android.common_ui.util.StringSet
@@ -29,11 +28,10 @@ class HomeViewModel @Inject constructor(
 
     var page = 1
     fun fetchNextPage(
-        userId: String,
         pageSize: Int? = null,
     ) {
         viewModelScope.launch {
-            getMatchedUserUseCase.invoke(userId, next, pageSize)
+            getMatchedUserUseCase.invoke(next, pageSize)
                 .catch {
                     _matchedUserUiState.value = UiState.Error(it.message ?: StringSet.error_msg)
                 }
@@ -41,7 +39,6 @@ class HomeViewModel @Inject constructor(
                     when (it) {
                         is Resource.Success -> {
                             if (it.data!!.nextId == -1) {
-                                Log.d("PAGING", "enter")
                                 page = -1
                             } else {
                                 next = it.data!!.nextId

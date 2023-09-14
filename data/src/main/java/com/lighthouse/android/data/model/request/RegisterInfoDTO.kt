@@ -3,7 +3,7 @@ package com.lighthouse.android.data.model.request
 import com.lighthouse.android.data.model.response.InterestDTO
 
 data class RegisterInfoDTO(
-    val uid: String,
+    val uuid: String,
     val name: String,
     val birthday: String,
     val email: String,

@@ -62,7 +62,7 @@ class HomeFragment @Inject constructor() :
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 if (profileList.isEmpty()) {
-                    viewModel.fetchNextPage("1")
+                    viewModel.fetchNextPage()
                     viewModel.matchedUserUiState.collect {
                         render(it)
                     }
@@ -138,7 +138,7 @@ class HomeFragment @Inject constructor() :
     private fun loadMoreProfiles() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.fetchNextPage("1")
+                viewModel.fetchNextPage()
                 viewModel.matchedUserUiState.collect {
                     render(it)
                 }

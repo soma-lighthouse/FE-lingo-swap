@@ -20,9 +20,9 @@ data class BoardQuestionDTO(
     val contents: String?,
     @SerializedName("likes")
     val like: Int?,
-    val statusCode: Int,
-
-    ) {
+    @SerializedName("createAt")
+    val createAt: String?,
+) {
     fun toVO() = BoardQuestionVO(
         questionId = questionId ?: -1,
         userId = userId ?: "",
@@ -31,7 +31,8 @@ data class BoardQuestionDTO(
         profileImageUri = profileImageUri ?: " ",
         name = name ?: " ",
         region = region ?: " ",
-        like = like ?: -1
+        like = like ?: -1,
+        createAt = createAt ?: " "
     )
 
 }

@@ -20,7 +20,7 @@ interface BoardApiService {
         @Query("pageSize") pageSize: Int?,
     ): Response<BaseResponse<BoardDTO>>
 
-    @POST("api/v1/questions")
+    @POST("api/v1/question")
     suspend fun uploadQuestion(
         @Body info: UploadQuestionDTO,
     ): Response<BaseResponse<String>>
