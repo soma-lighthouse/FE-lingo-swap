@@ -1,8 +1,9 @@
 package com.lighthouse.android.data.repository.datasource
 
-import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
+import com.lighthouse.android.data.model.response.TestDTO
+import com.lighthouse.domain.constriant.Resource
 import kotlinx.coroutines.flow.Flow
 
 fun interface DrivenRemoteDataSource {
-    fun getDriven(): Flow<List<ViewTypeVO>>
+    fun getDriven(): Flow<Resource<TestDTO>>
 }

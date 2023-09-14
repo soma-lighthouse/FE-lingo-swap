@@ -22,5 +22,5 @@ class ProfileRepositoryImpl @Inject constructor(
                 }
             }
 
-    override fun getUUID() = local.getUUID()
+    override fun getUID() = local.getUID()
 }

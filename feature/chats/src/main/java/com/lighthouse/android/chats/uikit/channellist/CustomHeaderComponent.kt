@@ -19,14 +19,6 @@ class CustomHeaderComponent : HeaderComponent() {
         args: Bundle?,
     ): View {
         binding = CustomHeaderBinding.inflate(inflater, null, false)
-
-        binding.btnSearch.setOnClickListener {
-            search?.onClick(it)
-        }
-
-        binding.btnSelect.setOnClickListener {
-            onRightButtonClicked(it)
-        }
         return binding.root
     }
 }

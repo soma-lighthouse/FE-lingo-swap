@@ -96,8 +96,8 @@ class HomeFragment @Inject constructor() :
                 binding.fabFilter.setVisible()
             }
 
-            is UiState.Error -> {
-                context.toast(uiState.message)
+            is UiState.Error<*> -> {
+                context.toast(uiState.message.toString())
                 binding.pbHomeLoading.setGone()
             }
         }

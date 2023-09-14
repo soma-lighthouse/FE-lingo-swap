@@ -3,13 +3,16 @@ package com.lighthouse.auth
 import android.os.Bundle
 import android.view.View
 import android.view.ViewTreeObserver
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.lighthouse.android.common_ui.base.BindingActivity
+import com.lighthouse.android.common_ui.dialog.showOKDialog
 import com.lighthouse.auth.databinding.ActivityAuthBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
+import com.lighthouse.domain.constriant.LoginState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,34 +29,53 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         navController = navHostFragment.navController
 
         checkRegister()
-//        viewModel.saveUUID()
         login()
+        handleBackPressed()
+    }
+
+    private fun handleBackPressed() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                showOKDialog(
+                    this@AuthActivity,
+                    getString(com.lighthouse.android.common_ui.R.string.exit_title),
+                    getString(com.lighthouse.android.common_ui.R.string.exit_body)
+                ) { _, _ ->
+                    if (navController.currentDestination?.id == R.id.loginFragment) {
+                        finish()
+                    } else if (navController.currentDestination?.id == R.id.info_fragment) {
+                        navController.popBackStack()
+                    }
+                }
+            }
+        }
+
+        this.onBackPressedDispatcher.addCallback(this, callback)
     }
 
     private fun checkRegister() {
-        loginState = if (viewModel.getUUID() != "") {
-            LoginState.LOGIN_SUCCESS
-        } else {
-            LoginState.LOGIN_FAILURE
+        viewModel.getLoginStatus()
+        viewModel.loginState.observe(this) {
+            loginState = it
         }
     }
 
+
     private fun login() {
         val content: View = findViewById(android.R.id.content)
-        content.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    return if (::loginState.isInitialized) {
-                        if (loginState == LoginState.LOGIN_SUCCESS) {
-                            mainNavigator.navigateToMain(this@AuthActivity)
-                            finish()
-                        }
-                        content.viewTreeObserver.removeOnPreDrawListener(this)
-                        true
-                    } else {
-                        false
+        content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                return if (::loginState.isInitialized) {
+                    if (loginState == LoginState.LOGIN_SUCCESS) {
+                        mainNavigator.navigateToMain(this@AuthActivity)
+                        finish()
                     }
+                    content.viewTreeObserver.removeOnPreDrawListener(this)
+                    true
+                } else {
+                    false
                 }
-            })
+            }
+        })
     }
 }

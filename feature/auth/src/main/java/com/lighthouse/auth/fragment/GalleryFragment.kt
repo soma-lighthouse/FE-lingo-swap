@@ -1,25 +1,20 @@
 package com.lighthouse.auth.fragment
 
-import android.content.Intent
 import android.media.MediaScannerConnection
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.webkit.MimeTypeMap
 import android.widget.ImageButton
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentGalleryBinding
 import com.lighthouse.auth.util.padWithDisplayCutout
 import com.lighthouse.auth.util.showImmersive
-import de.hdodenhof.circleimageview.BuildConfig
 import java.io.File
 import java.util.Locale
 
@@ -29,16 +24,16 @@ class GalleryFragment internal constructor() :
     private val args: GalleryFragmentArgs by navArgs()
     private lateinit var mediaList: MutableList<File>
 
-    inner class MediaPagerAdapter(fm: FragmentManager) :
-        FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-        override fun getCount(): Int = mediaList.size
-        override fun getItem(position: Int): Fragment = PhotoFragment.create(mediaList[position])
-        override fun getItemPosition(obj: Any): Int = POSITION_NONE
+    inner class MediaPagerAdapter : FragmentStateAdapter(this) {
+        override fun getItemCount(): Int = mediaList.size
+
+        override fun createFragment(position: Int): Fragment {
+            return PhotoFragment.create(mediaList[position])
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        retainInstance = true
         val rootDirectory = File(args.rootDirectory)
         mediaList = rootDirectory.listFiles { file ->
             EXTENSION_WHITELIST.contains(file.extension.uppercase(Locale.ROOT))
@@ -49,11 +44,10 @@ class GalleryFragment internal constructor() :
         super.onViewCreated(view, savedInstanceState)
         if (mediaList.isEmpty()) {
             view.findViewById<ImageButton>(R.id.delete_button).isEnabled = false
-            view.findViewById<ImageButton>(R.id.share_button).isEnabled = false
         }
         binding.photoViewPager.apply {
             offscreenPageLimit = 2
-            adapter = MediaPagerAdapter(childFragmentManager)
+            adapter = MediaPagerAdapter()
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -62,29 +56,6 @@ class GalleryFragment internal constructor() :
 
         binding.backButton.setOnClickListener {
             Navigation.findNavController(requireActivity(), R.id.fragment_container).navigateUp()
-        }
-        binding.shareButton.setOnClickListener {
-            mediaList.getOrNull(binding.photoViewPager.currentItem)?.let { mediaFile ->
-                val intent = Intent().apply {
-                    val mediaType =
-                        MimeTypeMap.getSingleton().getMimeTypeFromExtension(mediaFile.extension)
-                    val uri = FileProvider.getUriForFile(
-                        view.context,
-                        BuildConfig.APPLICATION_ID + ".provider",
-                        mediaFile
-                    )
-                    putExtra(Intent.EXTRA_STREAM, uri)
-                    type = mediaType
-                    action = Intent.ACTION_SEND
-                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                }
-                startActivity(
-                    Intent.createChooser(
-                        intent,
-                        getString(com.lighthouse.android.common_ui.R.string.share_hint)
-                    )
-                )
-            }
         }
 
         binding.deleteButton.setOnClickListener {

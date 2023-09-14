@@ -10,6 +10,9 @@ import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.entity.response.vo.LighthouseException
+import com.lighthouse.domain.entity.response.vo.TokenVO
+import com.lighthouse.domain.entity.response.vo.UserTokenVO
 import com.lighthouse.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,12 +25,25 @@ class AuthRepositoryImpl @Inject constructor(
     private val localPreferenceDataSource: LocalPreferenceDataSource,
     private val authRemoteDataSource: AuthRemoteDataSource,
 ) : AuthRepository {
-    override fun getUserId(): String {
+    override fun getUserId(): String? {
         return localPreferenceDataSource.getUUID()
     }
 
-    override fun saveUserId(uuid: String) {
-        localPreferenceDataSource.saveUUID(uuid)
+    override fun getAccessToken(): String {
+        return localPreferenceDataSource.getAccessToken() ?: ""
+    }
+
+    override fun getExpireTime(): Long {
+        return localPreferenceDataSource.getExpire()
+    }
+
+    override fun getRefreshExpireTime(): Long {
+        return localPreferenceDataSource.getRefreshExpire()
+    }
+
+    override fun saveAccessToken(accessToken: String, expireTime: Long) {
+        localPreferenceDataSource.saveAccessToken(accessToken)
+        localPreferenceDataSource.saveExpire(expireTime)
     }
 
     override fun getInterestList(): Flow<Resource<List<InterestVO>>> =
@@ -81,7 +97,12 @@ class AuthRepositoryImpl @Inject constructor(
         )
         return authRemoteDataSource.registerUser(tmp).map {
             when (it) {
-                is Resource.Success -> Resource.Success(true)
+                is Resource.Success -> {
+                    val mapping = it.data!!.toVO()
+                    saveTokens(mapping.tokens, mapping.uuid)
+                    Resource.Success(true)
+                }
+
                 else -> Resource.Error(it.message ?: "Register failed")
             }
         }
@@ -112,5 +133,41 @@ class AuthRepositoryImpl @Inject constructor(
                 else -> Resource.Error(it.message ?: "PreSigned URL Failed")
             }
         }
+
+    override fun postGoogleLogin(): Flow<Resource<UserTokenVO>> =
+        authRemoteDataSource.postGoogleLogin().map {
+            when (it) {
+                is Resource.Success -> {
+                    Log.d("TESTING before", it.data.toString())
+                    val mapping = it.data!!.toVO()
+                    saveTokens(mapping.tokens, mapping.uuid)
+                    Resource.Success(it.data!!.toVO())
+                }
+
+                else -> {
+                    Log.d("TESTING", it.message ?: "No message Found")
+                    Resource.Error(
+                        it.message ?: throw LighthouseException(
+                            null,
+                            null
+                        ).addErrorMsg()
+                    )
+                }
+            }
+        }
+
+    override fun saveIdToken(idToken: String) {
+        localPreferenceDataSource.saveIdToken(idToken)
+    }
+
+    private fun saveTokens(mapping: TokenVO, uuid: String) {
+        Log.d("TESTING tokens", mapping.toString())
+
+        localPreferenceDataSource.saveAccessToken(mapping.accessToken)
+        localPreferenceDataSource.saveExpire(mapping.expiresIn)
+        localPreferenceDataSource.saveRefreshToken(mapping.refreshToken)
+        localPreferenceDataSource.saveRefreshExpire(mapping.refreshTokenExpiresIn)
+        localPreferenceDataSource.saveUUID(uuid)
+    }
 }
 

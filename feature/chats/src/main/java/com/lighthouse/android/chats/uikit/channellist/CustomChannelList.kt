@@ -1,16 +1,12 @@
 package com.lighthouse.android.chats.uikit.channellist
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import com.lighthouse.android.chats.view.CustomChatActivity
 import com.sendbird.android.channel.GroupChannel
 import com.sendbird.uikit.activities.ChannelActivity
-import com.sendbird.uikit.activities.MessageSearchActivity
 import com.sendbird.uikit.fragments.ChannelListFragment
 import com.sendbird.uikit.model.ReadyStatus
 import com.sendbird.uikit.modules.ChannelListModule
-import com.sendbird.uikit.modules.components.HeaderComponent
 import com.sendbird.uikit.vm.ChannelListViewModel
 
 open class CustomChannelList : ChannelListFragment() {
@@ -42,21 +38,8 @@ open class CustomChannelList : ChannelListFragment() {
                 }
             }
         }
-    }
+        module.headerComponent.setOnRightButtonClickListener {
 
-    override fun onBindHeaderComponent(
-        headerComponent: HeaderComponent,
-        viewModel: ChannelListViewModel,
-    ) {
-        super.onBindHeaderComponent(headerComponent, viewModel)
-
-        if (headerComponent is CustomHeaderComponent) {
-            val header = module.headerComponent as CustomHeaderComponent
-
-            header.search = View.OnClickListener {
-                val intent = Intent(requireContext(), MessageSearchActivity::class.java)
-                startActivity(intent)
-            }
         }
     }
 }

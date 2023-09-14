@@ -1,20 +1,16 @@
 package com.lighthouse.lingo_swap.di
 
-import com.google.gson.GsonBuilder
 import com.lighthouse.android.data.api.AuthApiService
 import com.lighthouse.android.data.api.BoardApiService
 import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.ProfileApiService
-import com.lighthouse.android.data.api.interceptor.ContentInterceptor
-import com.lighthouse.android.data.api.interceptor.ErrorInterceptor
-import com.lighthouse.domain.entity.response.server_driven.ViewTypeVO
+import com.lighthouse.android.data.api.interceptor.AuthInterceptor
 import com.lighthouse.lingo_swap.BuildConfig
 import com.lighthouse.lingo_swap.HeaderInterceptor
 import com.lighthouse.lingo_swap.NullOnEmptyConverterFactory
-import com.lighthouse.lingo_swap.ViewTypeDeserializer
-import com.lighthouse.lingo_swap.di.Annotation.Main
-import com.lighthouse.lingo_swap.di.Annotation.Test
+import com.lighthouse.lingo_swap.di.annotation.Main
+import com.lighthouse.lingo_swap.di.annotation.Test
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,6 +30,7 @@ object NetModule {
     @Main
     fun provideLightHouseHttpClient(
         headerInterceptor: HeaderInterceptor,
+        authInterceptor: AuthInterceptor,
     ): OkHttpClient =
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
@@ -43,7 +40,7 @@ object NetModule {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .addInterceptor(headerInterceptor)
-            .addInterceptor(ErrorInterceptor)
+            .addInterceptor(authInterceptor)
             .build()
 
     @Provides
@@ -67,7 +64,7 @@ object NetModule {
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
-            .addInterceptor(ContentInterceptor)
+//            .addInterceptor(ContentInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
@@ -80,13 +77,13 @@ object NetModule {
         Retrofit.Builder()
             .baseUrl(BuildConfig.TEST_BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(
-                GsonConverterFactory.create(
-                    GsonBuilder()
-                        .registerTypeAdapter(ViewTypeVO::class.java, ViewTypeDeserializer())
-                        .create()
-                )
-            )
+//            .addConverterFactory(
+//                GsonConverterFactory.create(
+//                    GsonBuilder()
+//                        .registerTypeAdapter(ViewTypeVO::class.java, ViewTypeDeserializer())
+//                        .create()
+//                )
+//            )
 
             .addConverterFactory(GsonConverterFactory.create())
             .build()

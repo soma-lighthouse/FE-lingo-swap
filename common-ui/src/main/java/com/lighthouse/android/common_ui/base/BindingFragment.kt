@@ -14,7 +14,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import com.lighthouse.android.common_ui.dialog.showOKDialog
 import com.lighthouse.android.common_ui.util.Injector
+import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.toast
+import com.lighthouse.domain.constriant.ErrorTypeHandling
+import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.navigation.MainNavigator
 import dagger.hilt.android.EntryPointAccessors
 
@@ -56,6 +61,29 @@ abstract class BindingFragment<T : ViewDataBinding>(
             requireActivity(),
             Injector.SharedPreferencesInjector::class.java
         ).sharedPreferences()
+    }
+
+    protected fun handleException(uiState: UiState.Error<*>) {
+        val exception = uiState.message
+        if (exception is LighthouseException) {
+            when (exception.errorType) {
+                ErrorTypeHandling.TOAST -> {
+                    context.toast(exception.message.toString())
+                }
+
+                ErrorTypeHandling.DIALOG -> {
+                    showOKDialog(requireContext(), "로그인 에러", exception.message.toString())
+                }
+
+                ErrorTypeHandling.DIRECT -> {
+                    mainNavigator.navigateToMain(requireContext())
+                }
+
+                ErrorTypeHandling.NONE -> {
+                    // do nothing
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

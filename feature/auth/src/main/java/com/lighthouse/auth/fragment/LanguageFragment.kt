@@ -7,9 +7,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
+import com.lighthouse.android.common_ui.base.selection_adapter.SelectionAdapter
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
-import com.lighthouse.auth.adapter.SelectionAdapter
 import com.lighthouse.auth.databinding.FragmentLanguageBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.LanguageVO
@@ -76,9 +76,11 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
     }
 
     private fun removeExtra() {
-        dataList.forEach {
-            if (it.name == "country") {
-                dataList.remove(it)
+        val iterator = dataList.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            if (item.name == "country") {
+                iterator.remove()
             }
         }
     }

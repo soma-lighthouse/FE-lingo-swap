@@ -43,7 +43,7 @@ class QuestionMessageMeViewHolder(
             DateUtils.formatDateTime(context, message.createdAt, DateUtils.FORMAT_SHOW_TIME)
         binding.tvSentAt.text = sentAt
         binding.tvMessage.text = message.message
-        drawStatus(binding.ivStatus, message)
+        drawStatus(binding.ivStatus, message, channel)
 
         val padding = context.resources.getDimensionPixelSize(com.sendbird.uikit.R.dimen.sb_size_8)
         binding.root.setPadding(

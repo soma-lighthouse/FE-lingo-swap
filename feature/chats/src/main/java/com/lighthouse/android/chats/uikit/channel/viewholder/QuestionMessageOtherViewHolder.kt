@@ -36,7 +36,7 @@ class QuestionMessageOtherViewHolder(
         emojiReactionLongClickListener: OnItemLongClickListener<String>?,
         moreButtonClickListener: View.OnClickListener?,
     ) {
-        binding.rvEmojiReaction
+        // Useless
     }
 
     override fun bind(channel: BaseChannel, message: BaseMessage, params: MessageListUIParams) {
@@ -65,12 +65,8 @@ class QuestionMessageOtherViewHolder(
             com.sendbird.uikit.R.drawable.icon_user,
             com.sendbird.uikit.R.color.ondark_01
         )
-        Glide.with(context)
-            .load(url)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .error(errorIcon)
-            .apply(RequestOptions.circleCropTransform())
-            .into(binding.ivProfileView)
+        Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).error(errorIcon)
+            .apply(RequestOptions.circleCropTransform()).into(binding.ivProfileView)
 
         binding.ivProfileView.setOnClickListener {
             val id = sender?.userId ?: ""

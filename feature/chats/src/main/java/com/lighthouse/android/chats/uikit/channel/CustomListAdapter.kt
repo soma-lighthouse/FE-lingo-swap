@@ -4,9 +4,11 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.lighthouse.android.chats.databinding.MessageMeBinding
 import com.lighthouse.android.chats.databinding.MessageOtherBinding
 import com.lighthouse.android.chats.databinding.QuestionMeBinding
 import com.lighthouse.android.chats.databinding.QuestionOtherBinding
+import com.lighthouse.android.chats.uikit.channel.viewholder.MessageMeViewHolder
 import com.lighthouse.android.chats.uikit.channel.viewholder.MessageOtherViewHolder
 import com.lighthouse.android.chats.uikit.channel.viewholder.QuestionMessageMeViewHolder
 import com.lighthouse.android.chats.uikit.channel.viewholder.QuestionMessageOtherViewHolder
@@ -26,20 +28,32 @@ class CustomListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
 
         val inflater = LayoutInflater.from(parent.context)
-        if (viewType == VIEW_QUESTION_ME) {
-            val meBinding = QuestionMeBinding.inflate(inflater, parent, false)
-            val viewHolder = QuestionMessageMeViewHolder(meBinding)
+        when (viewType) {
+            VIEW_QUESTION_ME -> {
+                val meBinding = QuestionMeBinding.inflate(inflater, parent, false)
+                val viewHolder = QuestionMessageMeViewHolder(meBinding)
 
-            return applyClickListener(viewHolder)
-        } else if (viewType == VIEW_QUESTION_OTHER) {
-            val otherBinding = QuestionOtherBinding.inflate(inflater, parent, false)
-            val viewHolder = QuestionMessageOtherViewHolder(otherBinding, toProfile)
+                return applyClickListener(viewHolder)
+            }
 
-            return applyClickListener(viewHolder)
-        } else if (MessageType.from(viewType) == MessageType.VIEW_TYPE_USER_MESSAGE_OTHER) {
-            val bind = MessageOtherBinding.inflate(inflater, parent, false)
-            val viewHolder = MessageOtherViewHolder(bind, toProfile)
-            return applyClickListener(viewHolder)
+            VIEW_QUESTION_OTHER -> {
+                val otherBinding = QuestionOtherBinding.inflate(inflater, parent, false)
+                val viewHolder = QuestionMessageOtherViewHolder(otherBinding, toProfile)
+
+                return applyClickListener(viewHolder)
+            }
+
+            MessageType.VIEW_TYPE_USER_MESSAGE_OTHER.value -> {
+                val bind = MessageOtherBinding.inflate(inflater, parent, false)
+                val viewHolder = MessageOtherViewHolder(bind, toProfile)
+                return applyClickListener(viewHolder)
+            }
+
+            MessageType.VIEW_TYPE_USER_MESSAGE_ME.value -> {
+                val bind = MessageMeBinding.inflate(inflater, parent, false)
+                val viewHolder = MessageMeViewHolder(bind)
+                return applyClickListener(viewHolder)
+            }
         }
 
         // custom viewHolder here
@@ -90,9 +104,8 @@ class CustomListAdapter(
                         msgPosition,
                         getItem(msgPosition)
                     )
-                    true
                 }
-                false
+                true
             }
         }
         return viewHolder

@@ -14,12 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
+import com.lighthouse.android.common_ui.base.selection_adapter.SelectionAdapter
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
-import com.lighthouse.auth.adapter.SelectionAdapter
 import com.lighthouse.auth.databinding.ActivityCountryBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.CountryVO
@@ -41,7 +41,6 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
         super.onCreate(savedInstanceState)
         selectedList = intent.getStringArrayListExtra("SelectedList")?.toList() ?: listOf()
         multiSelection = intent.getBooleanExtra("multiSelect", false)
-
         observeResult()
         initBack()
         initAdapter()
@@ -81,7 +80,8 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
     private fun getCountryList() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getCountryList().collect {
+                viewModel.getCountryList()
+                viewModel.result.collect {
                     render(it)
                 }
             }
@@ -104,8 +104,8 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
                 binding.pbCountry.setGone()
             }
 
-            is UiState.Error -> {
-                applicationContext.toast(uiState.message)
+            is UiState.Error<*> -> {
+                applicationContext.toast(uiState.message.toString())
                 binding.pbCountry.setGone()
             }
         }

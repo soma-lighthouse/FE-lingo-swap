@@ -19,6 +19,7 @@ import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutMana
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.base.adapter.makeAdapter
 import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
+import com.lighthouse.android.common_ui.dialog.ImagePickerDialog
 import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.calSize
@@ -28,7 +29,6 @@ import com.lighthouse.android.common_ui.util.isValidEmail
 import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.auth.databinding.FragmentBasicInfoBinding
-import com.lighthouse.auth.view.ImagePickerDialog
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
@@ -73,6 +73,14 @@ class BasicInfoFragment :
         initCalender()
         initCamera()
         observeImage()
+        initBack()
+    }
+
+
+    private fun initBack() {
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun initCamera() {
@@ -117,16 +125,17 @@ class BasicInfoFragment :
                 val fileName = getFileExtensionFromUri(result)
                 val file = File(fileName)
 
-                val serverFileName = "/${viewModel.getUUID()}/${file.name}"
+                val serverFileName = "/${viewModel.userId}/${file.name}"
                 try {
                     Glide.with(this).load(result).fitCenter()
-                        .placeholder(R.drawable.placeholder) // Placeholder image while loading
-                        .error(R.drawable.question) // Image to display if loading fails
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.question)
                         .override(calSize(200f)).into(binding.ivProfileImg)
 
                     viewLifecycleOwner.lifecycleScope.launch {
                         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                            viewModel.getPreSignedURL(serverFileName).collect { url ->
+                            viewModel.getPreSignedURL(serverFileName)
+                            viewModel.result.collect { url ->
                                 when (url) {
                                     is UiState.Success<*> -> {
                                         viewModel.registerInfo.profileImageUri = serverFileName
@@ -207,7 +216,7 @@ class BasicInfoFragment :
         binding.btnNext.setOnClickListener {
             if (validateInputs()) {
                 viewModel.registerInfo.apply {
-                    uuid = viewModel.getUUID()
+                    uuid = viewModel.userId.toString()
                     name = binding.etName.text.toString()
                     email = binding.etEmail.text.toString()
                     birthday = convertToStandardDateFormat(binding.etBirthday.text.toString())
@@ -244,17 +253,17 @@ class BasicInfoFragment :
             binding.spinnerGender, !genderIsEmpty, getString(R.string.invalid_null)
         )
 
-        val nationIsEmpty = binding.btnNation.text.toString().isEmpty()
-        setErrorAndBackground(
-            binding.btnNation, !nationIsEmpty, getString(R.string.invalid_null)
-        )
+//        val nationIsEmpty = binding.btnNation.text.toString().isEmpty()
+//        setErrorAndBackground(
+//            binding.btnNation, !nationIsEmpty, getString(R.string.invalid_null)
+//        )
 
         val interestIsEmpty = interestList.isEmpty()
         setErrorAndBackground(
             binding.collapseInterest, !interestIsEmpty, getString(R.string.invalid_null)
         )
 
-        return emailIsValid && birthdayIsValid && !nameIsEmpty && !genderIsEmpty && !nationIsEmpty && !interestIsEmpty
+        return emailIsValid && birthdayIsValid && !nameIsEmpty && !genderIsEmpty && !interestIsEmpty
     }
 
     private fun setErrorAndBackground(

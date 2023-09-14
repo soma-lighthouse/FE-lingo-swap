@@ -74,8 +74,6 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
                     }
                 }
 
-            } else {
-                context.toast(resources.getString(com.lighthouse.android.common_ui.R.string.invalid_null))
             }
         }
     }

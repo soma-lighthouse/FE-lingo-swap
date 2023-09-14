@@ -53,6 +53,7 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
             for ((key, value) in result) {
                 selectedList[key as String] = value as List<String>
             }
+            checkedList.value = result as HashMap<String, List<String>>
         }
     }
 
@@ -60,7 +61,7 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.getInterestList()
-                viewModel.interests.collect {
+                viewModel.result.collect {
                     render(it)
                 }
             }
@@ -84,8 +85,8 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
                 binding.pbInterest.setGone()
             }
 
-            is UiState.Error -> {
-                applicationContext.toast(uiState.message)
+            is UiState.Error<*> -> {
+                applicationContext.toast(uiState.message.toString())
                 binding.pbInterest.setGone()
             }
         }

@@ -155,8 +155,8 @@ class QuestionFragment : Fragment() {
                 binding.pbQuestionLoading.setGone()
             }
 
-            is UiState.Error -> {
-                context.toast(uiState.message)
+            is UiState.Error<*> -> {
+                context.toast(uiState.message.toString())
                 binding.pbQuestionLoading.setGone()
             }
         }
