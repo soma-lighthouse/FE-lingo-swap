@@ -11,6 +11,7 @@ import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.LighthouseException
+import com.lighthouse.domain.entity.response.vo.TokenVO
 import com.lighthouse.domain.entity.response.vo.UserTokenVO
 import com.lighthouse.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
@@ -18,9 +19,6 @@ import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.util.Calendar
-import java.util.Date
-import java.util.TimeZone
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -28,11 +26,24 @@ class AuthRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource,
 ) : AuthRepository {
     override fun getUserId(): String? {
-        return localPreferenceDataSource.getUID()
+        return localPreferenceDataSource.getUUID()
     }
 
     override fun getAccessToken(): String {
         return localPreferenceDataSource.getAccessToken() ?: ""
+    }
+
+    override fun getExpireTime(): Long {
+        return localPreferenceDataSource.getExpire()
+    }
+
+    override fun getRefreshExpireTime(): Long {
+        return localPreferenceDataSource.getRefreshExpire()
+    }
+
+    override fun saveAccessToken(accessToken: String, expireTime: Long) {
+        localPreferenceDataSource.saveAccessToken(accessToken)
+        localPreferenceDataSource.saveExpire(expireTime)
     }
 
     override fun getInterestList(): Flow<Resource<List<InterestVO>>> =
@@ -70,7 +81,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun registerUser(info: RegisterInfoVO): Flow<Resource<Boolean>> {
         val tmp = RegisterInfoDTO(
-            uid = info.uid ?: "null",
+            uuid = info.uuid ?: "null",
             name = info.name ?: "null",
             birthday = info.birthday ?: "null",
             email = info.email ?: "null",
@@ -86,7 +97,12 @@ class AuthRepositoryImpl @Inject constructor(
         )
         return authRemoteDataSource.registerUser(tmp).map {
             when (it) {
-                is Resource.Success -> Resource.Success(true)
+                is Resource.Success -> {
+                    val mapping = it.data!!.toVO()
+                    saveTokens(mapping.tokens, mapping.uuid)
+                    Resource.Success(true)
+                }
+
                 else -> Resource.Error(it.message ?: "Register failed")
             }
         }
@@ -122,29 +138,36 @@ class AuthRepositoryImpl @Inject constructor(
         authRemoteDataSource.postGoogleLogin().map {
             when (it) {
                 is Resource.Success -> {
+                    Log.d("TESTING before", it.data.toString())
                     val mapping = it.data!!.toVO()
-
-                    val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-                    val currentDate: Date = calendar.time
-                    val currentTimeMillis: Long = currentDate.time
-
-                    Log.d("TESTING", mapping.toString())
-
-                    localPreferenceDataSource.saveAccessToken(mapping.accessToken)
-                    localPreferenceDataSource.saveExpire(mapping.expiresIn + currentTimeMillis)
-                    localPreferenceDataSource.saveRefreshToken(mapping.refreshToken)
-                    localPreferenceDataSource.saveRefreshExpire(mapping.refreshTokenExpiresIn + currentTimeMillis)
-                    localPreferenceDataSource.saveUID(mapping.id)
-
+                    saveTokens(mapping.tokens, mapping.uuid)
                     Resource.Success(it.data!!.toVO())
                 }
 
-                else -> Resource.Error(it.message ?: throw LighthouseException(null, null))
+                else -> {
+                    Log.d("TESTING", it.message ?: "No message Found")
+                    Resource.Error(
+                        it.message ?: throw LighthouseException(
+                            null,
+                            null
+                        ).addErrorMsg()
+                    )
+                }
             }
         }
 
     override fun saveIdToken(idToken: String) {
         localPreferenceDataSource.saveIdToken(idToken)
+    }
+
+    private fun saveTokens(mapping: TokenVO, uuid: String) {
+        Log.d("TESTING tokens", mapping.toString())
+
+        localPreferenceDataSource.saveAccessToken(mapping.accessToken)
+        localPreferenceDataSource.saveExpire(mapping.expiresIn)
+        localPreferenceDataSource.saveRefreshToken(mapping.refreshToken)
+        localPreferenceDataSource.saveRefreshExpire(mapping.refreshTokenExpiresIn)
+        localPreferenceDataSource.saveUUID(uuid)
     }
 }
 

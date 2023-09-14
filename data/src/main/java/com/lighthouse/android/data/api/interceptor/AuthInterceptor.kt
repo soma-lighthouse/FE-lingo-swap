@@ -1,10 +1,14 @@
 package com.lighthouse.android.data.api.interceptor
 
+import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.JsonParser
 import com.lighthouse.android.data.BuildConfig
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
+import com.lighthouse.android.data.model.response.BaseResponse
 import com.lighthouse.android.data.util.getDto
 import com.lighthouse.domain.entity.response.vo.LighthouseException
-import com.lighthouse.domain.entity.response.vo.UserTokenVO
+import com.lighthouse.domain.entity.response.vo.TokenVO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -30,16 +34,24 @@ class AuthInterceptor @Inject constructor(
             return chain.proceed(addHeader)
         }
 
+        Log.d("TESTING ACCESS_TOKEN", getAccessToken())
         val addHeader = chain.request().newBuilder().addHeader(
             AUTH_KEY, AUTH_VALUE.format(getAccessToken())
         ).build()
         val response = chain.proceed(addHeader)
 
+        Log.d("TESTING CODE", response.code.toString())
         when (response.code) {
             TOKEN_EXPIRED -> {
                 response.close()
                 return reRequest(chain)
             }
+
+            REFRESH_TOKEN_EXPIRED ->
+                throw LighthouseException(
+                    REFRESH_TOKEN_EXPIRED,
+                    "Refresh token expired"
+                ).addErrorMsg()
         }
         return response
     }
@@ -57,23 +69,31 @@ class AuthInterceptor @Inject constructor(
         return chain.proceed(request)
     }
 
-    private fun getRefreshedToken() {
+    private fun getRefreshedToken(): String {
         val body = JSONObject()
             .put(REFRESH, getRefreshToken())
             .toString()
             .toRequestBody(contentType = "application/json".toMediaType())
 
-
+        Log.d("TESTING REFRESH_TOKEN", getRefreshToken())
         val request = Request.Builder()
             .url(BuildConfig.LIGHTHOUSE_BASE_URL + TOKEN_REQUEST)
             .post(body)
-            .addHeader(AUTH_KEY, getAccessToken())
             .build()
 
+        Log.d("TESTING URL", request.url.toString())
+
         val auth = requestRefresh(request)
-        storeToken(auth.accessToken, auth.refreshToken)
-        storeExpire(auth.expiresIn, auth.refreshTokenExpiresIn)
+        val dataJson = Gson().toJson(auth.data)
+        val responseObject = JsonParser.parseString(dataJson).asJsonObject
+        val token = Gson().fromJson(responseObject, TokenVO::class.java)
+
+        Log.d("TESTING", token.toString())
+        storeToken(token.accessToken, token.refreshToken)
+        storeExpire(token.expiresIn, token.refreshTokenExpiresIn)
+        return token.accessToken
     }
+
 
     private fun getRefreshToken(): String {
         return localPreferenceDataSource.getRefreshToken() ?: throw LighthouseException(
@@ -83,46 +103,52 @@ class AuthInterceptor @Inject constructor(
     }
 
     private fun getAccessToken(): String {
-        return localPreferenceDataSource.getRefreshToken() ?: ""
+        return localPreferenceDataSource.getAccessToken() ?: ""
     }
 
     private fun getIdToken(): String {
         return localPreferenceDataSource.getIdToken() ?: ""
     }
 
-    private fun requestRefresh(request: Request): UserTokenVO {
+    private fun requestRefresh(request: Request): BaseResponse<TokenVO> {
         val response: Response = runBlocking {
             withContext(Dispatchers.IO) { client.newCall(request).execute() }
         }
         if (response.isSuccessful) {
             return response.getDto()
         }
+        Log.d("TESTING", response.message)
         throw IllegalStateException(REFRESH_FAILURE)
     }
 
-    private fun storeToken(accessToken: String, refreshToken: String) {
+    private fun storeToken(accessToken: String, refreshToken: String?) {
         localPreferenceDataSource.saveAccessToken(accessToken)
-        localPreferenceDataSource.saveRefreshToken(refreshToken)
+        refreshToken?.let {
+            localPreferenceDataSource.saveRefreshToken(refreshToken)
+        }
     }
 
-    private fun storeExpire(accessTokenExpire: Long, refreshTokenExpire: Long) {
+    private fun storeExpire(accessTokenExpire: Long, refreshTokenExpire: Long?) {
         localPreferenceDataSource.saveExpire(accessTokenExpire)
-        localPreferenceDataSource.saveRefreshExpire(refreshTokenExpire)
+        refreshTokenExpire?.let {
+            localPreferenceDataSource.saveRefreshExpire(refreshTokenExpire)
+        }
     }
 
     companion object {
-        private const val TOKEN_REQUEST = "/api/v1/auth/token"
-        private const val LOGIN_REQUEST = "/api/v1/auth/login/google"
-        private const val SIGNUP_REQUEST = "/api/v1/user"
+        private const val TOKEN_REQUEST = "api/v1/auth/token"
+        private const val LOGIN_REQUEST = "api/v1/auth/login/google"
+        private const val SIGNUP_REQUEST = "api/v1/user"
 
         private const val TOKEN_EXPIRED = 401
 
         private const val TOKEN_EMPTY = 40101
+        private const val REFRESH_TOKEN_EXPIRED = 40401
         private const val ID_TOKEN_EMPTY = 40102
 
         private const val AUTH_KEY = "Authorization"
         private const val AUTH_VALUE = "Bearer %s"
-        private const val REFRESH = "refresh_token"
+        private const val REFRESH = "refreshToken"
         private const val REFRESH_FAILURE = "Refresh token failure"
     }
 }

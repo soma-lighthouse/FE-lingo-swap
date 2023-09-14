@@ -28,4 +28,7 @@ interface AuthRepository {
     fun saveIdToken(idToken: String)
 
     fun getAccessToken(): String
+    fun getExpireTime(): Long
+    fun getRefreshExpireTime(): Long
+    fun saveAccessToken(accessToken: String, expireTime: Long)
 }

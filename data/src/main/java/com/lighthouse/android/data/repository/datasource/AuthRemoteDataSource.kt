@@ -17,7 +17,7 @@ interface AuthRemoteDataSource {
 
     fun getCountryList(): Flow<Resource<CountryForm>>
 
-    fun registerUser(info: RegisterInfoDTO): Flow<Resource<Boolean>>
+    fun registerUser(info: RegisterInfoDTO): Flow<Resource<UserTokenDTO>>
 
     fun getPreSigned(fileName: String): Flow<Resource<PreSignedURL>>
 

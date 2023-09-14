@@ -6,22 +6,14 @@ import android.view.ViewTreeObserver
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.dialog.showOKDialog
-import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.auth.databinding.ActivityAuthBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
+import com.lighthouse.domain.constriant.LoginState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth) {
@@ -62,45 +54,28 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
     }
 
     private fun checkRegister() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                loginState = if (viewModel.getAccessToken() == "") {
-                    viewModel.postGoogleLogin()
-                    viewModel.result
-                        .drop(1)
-                        .filterIsInstance<UiState>()
-                        .map { loginState ->
-                            when (loginState) {
-                                is UiState.Success<*> -> LoginState.LOGIN_SUCCESS
-                                is UiState.Error<*> -> LoginState.LOGIN_FAILURE
-                                else -> LoginState.LOGIN_FAILURE
-                            }
-                        }
-                        .first()
-                } else {
-                    LoginState.LOGIN_FAILURE
-                }
-            }
+        viewModel.getLoginStatus()
+        viewModel.loginState.observe(this) {
+            loginState = it
         }
     }
 
 
     private fun login() {
         val content: View = findViewById(android.R.id.content)
-        content.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    return if (::loginState.isInitialized) {
-                        if (loginState == LoginState.LOGIN_SUCCESS) {
-                            mainNavigator.navigateToMain(this@AuthActivity)
-                            finish()
-                        }
-                        content.viewTreeObserver.removeOnPreDrawListener(this)
-                        true
-                    } else {
-                        false
+        content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                return if (::loginState.isInitialized) {
+                    if (loginState == LoginState.LOGIN_SUCCESS) {
+                        mainNavigator.navigateToMain(this@AuthActivity)
+                        finish()
                     }
+                    content.viewTreeObserver.removeOnPreDrawListener(this)
+                    true
+                } else {
+                    false
                 }
-            })
+            }
+        })
     }
 }

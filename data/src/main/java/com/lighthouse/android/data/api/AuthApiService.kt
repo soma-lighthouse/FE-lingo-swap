@@ -33,7 +33,7 @@ interface AuthApiService {
     @POST("api/v1/user")
     suspend fun registerUser(
         @Body info: RegisterInfoDTO,
-    ): Response<Void>
+    ): Response<BaseResponse<UserTokenDTO>>
 
     @PUT
     suspend fun uploadImg(

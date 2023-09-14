@@ -9,7 +9,14 @@ enum class APIErrorType(
     FIRST_LOGIN(
         40400,
         "",
-        "화원가입을 먼저 진행해주세요",
+        "회원가입을 먼저 진행해주세요",
+        ErrorTypeHandling.DIRECT
+    ),
+
+    REFRESH_TOKEN_EXPIRED(
+        40101,
+        "",
+        "로그인이 만료되었습니다 다시 로그인 해주세요",
         ErrorTypeHandling.DIRECT
     ),
 
