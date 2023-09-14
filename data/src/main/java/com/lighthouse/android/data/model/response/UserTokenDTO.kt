@@ -1,12 +1,23 @@
 package com.lighthouse.android.data.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.lighthouse.domain.entity.response.vo.LighthouseException
+import com.lighthouse.domain.entity.response.vo.TokenVO
 import com.lighthouse.domain.entity.response.vo.UserTokenVO
 
 data class UserTokenDTO(
-    @SerializedName("id")
-    val id: String?,
+    @SerializedName("uuid")
+    val uuid: String?,
+    @SerializedName("tokens")
+    val tokens: TokenDTO?,
+
+    ) {
+    fun toVO() = UserTokenVO(
+        uuid = uuid ?: "",
+        tokens = tokens?.toVO() ?: TokenVO("", -1, "", -1)
+    )
+}
+
+data class TokenDTO(
     @SerializedName("accessToken")
     val accessToken: String?,
     @SerializedName("expiresIn")
@@ -16,11 +27,10 @@ data class UserTokenDTO(
     @SerializedName("refreshTokenExpiresIn")
     val refreshTokenExpiresIn: Long?,
 ) {
-    fun toVO() = UserTokenVO(
-        id = id ?: "",
-        accessToken = accessToken ?: throw LighthouseException(null, null),
+    fun toVO() = TokenVO(
+        accessToken = accessToken ?: "",
         expiresIn = expiresIn ?: -1,
-        refreshToken = refreshToken ?: throw LighthouseException(null, null),
+        refreshToken = refreshToken ?: "",
         refreshTokenExpiresIn = refreshTokenExpiresIn ?: -1
     )
 }
