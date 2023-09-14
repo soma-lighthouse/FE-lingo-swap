@@ -1,8 +1,8 @@
 package com.lighthouse.android.data.local
 
 interface LocalPreferenceDataSource {
-    fun getUID(): String?
-    fun saveUID(uid: String)
+    fun getUUID(): String?
+    fun saveUUID(uid: String)
 
     fun saveAccessToken(token: String)
     fun getAccessToken(): String?

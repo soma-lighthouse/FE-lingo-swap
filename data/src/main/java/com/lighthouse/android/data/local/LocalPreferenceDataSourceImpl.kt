@@ -7,13 +7,13 @@ import javax.inject.Inject
 class LocalPreferenceDataSourceImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences,
 ) : LocalPreferenceDataSource {
-    override fun getUID(): String? {
+    override fun getUUID(): String? {
         return sharedPreferences.getString(USER_ID, null)
     }
 
-    override fun saveUID(uid: String) {
+    override fun saveUUID(uuid: String) {
         sharedPreferences.edit {
-            putString(USER_ID, uid)
+            putString(USER_ID, uuid)
         }
     }
 
@@ -68,7 +68,7 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
     }
 
     companion object {
-        const val USER_ID = "com.lighthouse.lingo-swap.UID"
+        const val USER_ID = "com.lighthouse.lingo-swap.UUID"
         const val ACCESS_TOKEN = "com.lighthouse.lingo-swap.access-token"
         const val REFRESH_TOKEN = "com.lighthouse.lingo-swap.refresh-token"
         const val ACCESS_TOKEN_EXPIRE = "com.lighthouse.lingo-swap.access-token-expire"

@@ -76,9 +76,11 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
     }
 
     private fun removeExtra() {
-        dataList.forEach {
-            if (it.name == "country") {
-                dataList.remove(it)
+        val iterator = dataList.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            if (item.name == "country") {
+                iterator.remove()
             }
         }
     }

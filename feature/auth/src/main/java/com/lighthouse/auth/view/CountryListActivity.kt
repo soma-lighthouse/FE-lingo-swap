@@ -41,7 +41,6 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
         super.onCreate(savedInstanceState)
         selectedList = intent.getStringArrayListExtra("SelectedList")?.toList() ?: listOf()
         multiSelection = intent.getBooleanExtra("multiSelect", false)
-
         observeResult()
         initBack()
         initAdapter()
@@ -65,7 +64,7 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
         val result = mutableListOf<CountryVO>()
 
         for (c in selectedList) {
-            val select = countryList.find { it.code == c }
+            val select = countryList.find { it.name == c }
             if (select != null) {
                 val index = countryList.indexOf(select)
                 select.select = true

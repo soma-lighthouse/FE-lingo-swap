@@ -53,6 +53,7 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
             for ((key, value) in result) {
                 selectedList[key as String] = value as List<String>
             }
+            checkedList.value = result as HashMap<String, List<String>>
         }
     }
 
