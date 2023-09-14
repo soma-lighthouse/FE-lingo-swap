@@ -1,6 +1,7 @@
 package com.lighthouse.android.data.repository.datasourceimpl
 
 import com.lighthouse.android.data.api.ProfileApiService
+import com.lighthouse.android.data.model.response.MyQuestionResponse
 import com.lighthouse.android.data.model.response.ProfileDTO
 import com.lighthouse.android.data.repository.datasource.ProfileRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
@@ -13,5 +14,9 @@ class ProfileRemoteDataSourceImpl @Inject constructor(
 ) : ProfileRemoteDataSource, NetworkResponse() {
     override fun getProfileDetail(userId: String): Flow<Resource<ProfileDTO>> = flow {
         emit(changeResult(api.getProfileDetail(userId)))
+    }
+
+    override fun getMyQuestions(): Flow<Resource<MyQuestionResponse>> = flow {
+        emit(changeResult(api.getMyQuestions()))
     }
 }

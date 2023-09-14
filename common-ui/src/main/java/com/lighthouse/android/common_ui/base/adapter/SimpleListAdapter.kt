@@ -43,6 +43,7 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
     override fun onBindViewHolder(holder: ViewHolder<B>, position: Int) {
         if (getItemViewType(position) == TYPE_ITEM) {
             onBindCallback(holder, getItem(position))
+            holder.onBind(getItem(position))
         }
     }
 

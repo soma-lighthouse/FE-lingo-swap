@@ -6,6 +6,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.base.BindingFragment
@@ -30,12 +31,13 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         super.onViewCreated(view, savedInstanceState)
         initProfileDetail()
         initProfile()
+        initMyQuestions()
     }
 
     private fun initProfile() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getProfileDetail(viewModel.getUID())
+                viewModel.getProfileDetail(viewModel.getUUID())
                 viewModel.detail.collect {
                     render(it)
                 }
@@ -47,9 +49,15 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         binding.cvProfile.setOnClickListener {
             mainNavigator.navigateToProfile(
                 requireContext(),
-                Pair("userId", viewModel.getUID()),
+                Pair("userId", viewModel.getUUID()),
                 Pair("isMe", true)
             )
+        }
+    }
+
+    private fun initMyQuestions() {
+        binding.clickQuestion.setOnClickListener {
+            findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToMyQuestionsFragment())
         }
     }
 

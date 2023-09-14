@@ -6,6 +6,9 @@
 
     <data>
 
+        <variable
+            name="item"
+            type="com.lighthouse.domain.entity.response.vo.ProfileVO" />
     </data>
 
     <RelativeLayout
@@ -28,7 +31,18 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:menu="@menu/toolbar_menu" />
+                    app:menu="@menu/profile_toolbar_menu" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:background="@drawable/save"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_name_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_name_title" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_back"
@@ -44,6 +58,7 @@
                     android:id="@+id/tv_name_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@{item.name}"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="@id/tb_profile"
                     app:layout_constraintEnd_toEndOf="@id/tb_profile"
@@ -63,12 +78,21 @@
                     app:layout_constraintTop_toTopOf="@+id/tb_profile"
                     tools:src="@drawable/placeholder" />
 
+                <View
+                    android:id="@+id/click_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_profile_img"
+                    app:layout_constraintTop_toTopOf="@id/iv_profile_img" />
+
                 <TextView
                     android:id="@+id/tv_profile_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
+                    android:text="@{item.name}"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -90,17 +114,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
+                    android:text="@{item.region}"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_flag"
                     app:layout_constraintStart_toEndOf="@+id/iv_flag"
                     app:layout_constraintTop_toTopOf="@+id/iv_flag"
                     tools:text="Korea" />
 
-                <TextView
+                <EditText
                     android:id="@+id/tv_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
+                    android:background="@drawable/edit_box"
+                    android:enabled="false"
+                    android:padding="10dp"
+                    android:text="@{item.description}"
                     android:textColor="#7b7b7b"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -162,6 +191,25 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/line2" />
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_edit_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/side_arrow"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_language_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_language_title" />
+
+                <View
+                    android:id="@+id/click_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_language_title"
+                    app:layout_constraintTop_toTopOf="@id/tv_language_title" />
+
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_language"
                     android:layout_width="match_parent"
@@ -191,6 +239,25 @@
                     android:text="@string/interest_country"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/line3" />
+
+                <View
+                    android:id="@+id/click_country"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_country_title"
+                    app:layout_constraintTop_toTopOf="@id/tv_country_title" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_edit_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/side_arrow"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_country_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_country_title" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chip_country"
@@ -239,14 +306,34 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
+                        <View
+                            android:id="@+id/click_interest"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_interest"
+                            app:layout_constraintTop_toTopOf="@id/tv_interest" />
+
                         <ImageButton
                             android:id="@+id/btn_interest"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:background="@drawable/side_arrow"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_interest"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/tv_interest" />
+
+                        <ImageButton
+                            android:id="@+id/btn_fold_interest"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="20dp"
                             android:background="@drawable/up_arrow"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@id/tv_interest" />
+
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/cv_interest"
@@ -317,5 +404,18 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="gone" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/edit_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="btn_save, click_profile, click_country, click_interest, click_language, btn_interest, btn_edit_country, btn_edit_language, tv_description" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/profile_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="btn_fold_interest" />
+
     </RelativeLayout>
 </layout>

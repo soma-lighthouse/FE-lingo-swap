@@ -45,8 +45,9 @@ object DataModule {
     @Singleton
     fun provideHomeRepository(
         homeRemoteDataSource: HomeRemoteDataSource,
+        local: LocalPreferenceDataSource,
     ): HomeRepository {
-        return HomeRepositoryImpl(homeRemoteDataSource)
+        return HomeRepositoryImpl(homeRemoteDataSource, local)
     }
 
     @Provides
