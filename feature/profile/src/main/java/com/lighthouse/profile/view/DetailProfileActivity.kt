@@ -12,8 +12,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class DetailProfileActivity :
     BindingActivity<ActivityDetailProfileBinding>(R.layout.activity_detail_profile) {
     private val viewModel: ProfileViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.userId = intent.getStringExtra("userId") ?: ""
+        viewModel.isMe = intent.getBooleanExtra("isMe", false)
     }
 }

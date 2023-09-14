@@ -8,13 +8,13 @@
         android:id="@+id/detailFragment"
         android:name="com.lighthouse.profile.view.DetailProfileFragment">
         <action
-            android:id="@+id/action_detailFragment_to_editFragment"
-            app:destination="@id/editFragment" />
+            android:id="@+id/action_detailFragment_to_languageFragment"
+            app:destination="@id/languageFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/editFragment"
-        android:name="com.lighthouse.profile.view.EditFragment" />
-    
+        android:id="@+id/languageFragment"
+        android:name="com.lighthouse.profile.view.LanguageFragment" />
+
 
 </navigation>
