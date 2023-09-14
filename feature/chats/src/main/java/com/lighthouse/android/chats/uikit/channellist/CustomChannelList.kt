@@ -11,7 +11,7 @@ import com.sendbird.uikit.vm.ChannelListViewModel
 
 open class CustomChannelList : ChannelListFragment() {
     override fun onCreateModule(args: Bundle): ChannelListModule {
-        var module: ChannelListModule = super.onCreateModule(args)
+        val module: ChannelListModule = super.onCreateModule(args)
 
         module.setHeaderComponent(CustomHeaderComponent())
         return module
@@ -37,6 +37,9 @@ open class CustomChannelList : ChannelListFragment() {
                     startActivity(intent)
                 }
             }
+        }
+        module.headerComponent.setOnRightButtonClickListener {
+
         }
     }
 }

@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.lighthouse.android.chats.R
@@ -22,6 +23,7 @@ import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutMana
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
+import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,6 +35,10 @@ class QuestionFragment : Fragment() {
     private lateinit var binding: FragmentQuestionBinding
     private lateinit var adapter: SimpleListAdapter<BoardQuestionVO, ChatQuestionTileBinding>
 
+    private val questionList = mutableListOf<BoardQuestionVO>()
+    private var start = true
+    private var curPosition = 1
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -41,9 +47,8 @@ class QuestionFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_question, container, false)
         val categories =
             resources.getStringArray(com.lighthouse.android.common_ui.R.array.tab_name).toList()
-        addChipToGroup(
-            binding.chipCategory, categories
-        )
+        addChipToGroup(binding.chipCategory, categories)
+        initScrollListener()
         initChip(categories.size)
 
 
@@ -87,15 +92,45 @@ class QuestionFragment : Fragment() {
 
     private fun initChip(num: Int) {
         binding.chipCategory.setOnCheckedStateChangeListener { group, checkedIds ->
-            val category = (checkedIds.first() - 1) % num + 1
-            fetchQuestion(category)
+            questionList.clear()
+            curPosition = (checkedIds.first() - 1) % num + 1
+
+            viewModel.next[curPosition] = null
+            fetchQuestion(curPosition)
         }
     }
 
     private fun fetchQuestion(category: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.getQuestion(category, null, 1).collect {
+                viewModel.getQuestion(category, null).collect {
+                    render(it)
+                }
+            }
+        }
+    }
+
+    private fun initScrollListener() {
+        binding.rvQuestionPanel.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val rvPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+
+                val totalCount = recyclerView.adapter?.itemCount?.minus(1)
+
+                if (rvPosition == totalCount && viewModel.page != -1) {
+                    loadMoreProfiles()
+                }
+            }
+        })
+    }
+
+    private fun loadMoreProfiles() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getQuestion(curPosition, null).collect {
                     render(it)
                 }
             }
@@ -105,16 +140,23 @@ class QuestionFragment : Fragment() {
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
-                // TODO()
+                if (questionList.isEmpty() && start) {
+                    binding.pbQuestionLoading.setVisible()
+                    binding.rvQuestionPanel.setGone()
+                    start = false
+                }
 
             }
 
             is UiState.Success<*> -> {
-                adapter.submitList(uiState.data as List<BoardQuestionVO>)
+                binding.rvQuestionPanel.setVisible()
+                questionList.addAll(uiState.data as List<BoardQuestionVO>)
+                adapter.submitList(questionList)
+                binding.pbQuestionLoading.setGone()
             }
 
-            is UiState.Error -> {
-                context.toast(uiState.message)
+            is UiState.Error<*> -> {
+                context.toast(uiState.message.toString())
                 binding.pbQuestionLoading.setGone()
             }
         }

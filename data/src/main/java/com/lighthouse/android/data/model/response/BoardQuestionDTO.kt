@@ -20,7 +20,9 @@ data class BoardQuestionDTO(
     val contents: String?,
     @SerializedName("likes")
     val like: Int?,
-) {
+    val statusCode: Int,
+
+    ) {
     fun toVO() = BoardQuestionVO(
         questionId = questionId ?: -1,
         userId = userId ?: "",

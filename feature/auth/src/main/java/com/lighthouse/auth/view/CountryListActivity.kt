@@ -3,6 +3,7 @@ package com.lighthouse.auth.view
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,55 +14,74 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
+import com.lighthouse.android.common_ui.base.selection_adapter.SelectionAdapter
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
-import com.lighthouse.auth.adapter.CountryAdapter
 import com.lighthouse.auth.databinding.ActivityCountryBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.CountryVO
+import com.lighthouse.domain.entity.response.vo.Selection
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.io.Serializable
 
 @AndroidEntryPoint
 class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.activity_country),
-    CountryAdapter.OnItemClickListener {
+    SelectionAdapter.OnItemClickListener {
     private val viewModel: AuthViewModel by viewModels()
-    private lateinit var adapter: CountryAdapter
+    private lateinit var adapter: SelectionAdapter
+    private lateinit var selectedList: List<String>
     private var resultList = MutableLiveData<List<CountryVO>>()
     private var countryList = listOf<CountryVO>()
     private var multiSelection = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        selectedList = intent.getStringArrayListExtra("SelectedList")?.toList() ?: listOf()
         multiSelection = intent.getBooleanExtra("multiSelect", false)
-
-
+        observeResult()
         initBack()
         initAdapter()
         initApply()
         initSearch()
         getCountryList()
-
         adapter.submitList(countryList)
+    }
+
+    private fun observeResult() {
         if (multiSelection) {
             resultList.observe(this) {
                 initChip()
-
             }
         } else {
             binding.chipResult.setGone()
         }
     }
 
+    private fun initSelect() {
+        val result = mutableListOf<CountryVO>()
+
+        for (c in selectedList) {
+            val select = countryList.find { it.name == c }
+            if (select != null) {
+                val index = countryList.indexOf(select)
+                select.select = true
+                result.add(select)
+                adapter.selectCnt += 1
+                adapter.notifyItemChanged(index)
+            }
+        }
+
+        resultList.value = result
+    }
+
     private fun getCountryList() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getCountryList().collect {
+                viewModel.getCountryList()
+                viewModel.result.collect {
                     render(it)
                 }
             }
@@ -80,11 +100,12 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
                 binding.rvCountry.setVisible()
                 countryList = uiState.data as List<CountryVO>
                 adapter.submitList(countryList)
+                initSelect()
                 binding.pbCountry.setGone()
             }
 
-            is UiState.Error -> {
-                applicationContext.toast(uiState.message)
+            is UiState.Error<*> -> {
+                applicationContext.toast(uiState.message.toString())
                 binding.pbCountry.setGone()
             }
         }
@@ -104,8 +125,10 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
                 binding.chipResult.removeView(c)
                 for (i in countryList.indices) {
                     if (countryList[i].name == it.name) {
+                        resultList.value = resultList.value!!.minus(countryList[i])
                         adapter.currentList[i].select = false
                         adapter.notifyItemChanged(i)
+                        adapter.selectCnt -= 1
                         break
                     }
                 }
@@ -135,7 +158,12 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
     }
 
     private fun initAdapter() {
-        adapter = CountryAdapter(this, multiSelection)
+        adapter = SelectionAdapter(
+            multiSelection = multiSelection,
+            listener = this,
+            context = applicationContext,
+            type = SelectionAdapter.COUNTRY
+        )
         val linearLayout = ScrollSpeedLinearLayoutManager(this, 8f)
         linearLayout.orientation = LinearLayoutManager.VERTICAL
         binding.rvCountry.layoutManager = linearLayout
@@ -143,11 +171,20 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
     }
 
     private fun initApply() {
+        Log.d("TESTING", resultList.toString())
         binding.btnApply.setOnClickListener {
-            intent.putExtra("CountryList", resultList.value as Serializable)
+            intent.putStringArrayListExtra(
+                "CountryNameList",
+                ArrayList(resultList.value!!.map { it.name })
+            )
+            intent.putStringArrayListExtra(
+                "CountryCodeList",
+                ArrayList(resultList.value!!.map { it.code })
+            )
             setResult(RESULT_OK, intent)
             finish()
         }
+
     }
 
     private fun initBack() {
@@ -156,7 +193,8 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
         }
     }
 
-    override fun onItemClick(item: CountryVO) {
+    override fun onItemClick(item: Selection) {
+        item as CountryVO
         if (resultList.value != null && resultList.value!!.contains(item)) {
             resultList.value = resultList.value!!.minus(item)
         } else {

@@ -1,39 +1,59 @@
 package com.lighthouse.android.chats.uikit.util
 
 import android.content.Context
+import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.content.res.AppCompatResources
+import com.lighthouse.android.chats.R
+import com.sendbird.android.channel.BaseChannel
+import com.sendbird.android.channel.GroupChannel
 import com.sendbird.android.message.BaseMessage
 import com.sendbird.android.message.SendingStatus
+import com.sendbird.uikit.SendbirdUIKit
 import com.sendbird.uikit.utils.DrawableUtils
 
-fun drawStatus(view: ImageView, message: BaseMessage) {
+fun drawStatus(view: ImageView, message: BaseMessage, channel: BaseChannel): Int {
     val context: Context = view.context
 
-    val drawableResId: Int
-    val tintResId: Int
-
-    when (message.sendingStatus) {
+    return when (message.sendingStatus) {
         SendingStatus.SUCCEEDED -> {
-            drawableResId = com.sendbird.uikit.R.drawable.icon_done
-            tintResId = com.sendbird.uikit.R.color.secondary_300
+            if (channel is GroupChannel) {
+                val unreadMemberCount = channel.getUnreadMemberCount(message)
+                val unDeliveredMemberCount = channel.getUndeliveredMemberCount(message)
+                if (unreadMemberCount == 0) {
+                    drawRead(view, context)
+                } else if (unDeliveredMemberCount == 0) {
+                    drawDelivered(view, context)
+                } else {
+                    drawSent(view, context)
+                }
+            }
+            View.VISIBLE
         }
 
-        SendingStatus.PENDING -> {
-            drawableResId = com.sendbird.uikit.R.drawable.sb_message_progress
-            tintResId = com.sendbird.uikit.R.color.primary_300
-        }
-
-        else -> {
-            drawableResId = com.sendbird.uikit.R.drawable.icon_error
-            tintResId = com.sendbird.uikit.R.color.error_300
-        }
+        else -> View.GONE
     }
+}
 
+fun drawRead(view: ImageView, context: Context) {
+
+    view.setImageDrawable(
+        AppCompatResources.getDrawable(context, R.drawable.read)
+    )
+}
+
+fun drawDelivered(view: ImageView, context: Context) {
+    view.setImageDrawable(
+        AppCompatResources.getDrawable(context, R.drawable.unread)
+    )
+}
+
+fun drawSent(view: ImageView, context: Context) {
     view.setImageDrawable(
         DrawableUtils.setTintList(
             context,
-            drawableResId,
-            tintResId
+            com.sendbird.uikit.R.drawable.icon_done,
+            SendbirdUIKit.getDefaultThemeMode().monoTintResId
         )
     )
 }

@@ -41,18 +41,9 @@ class HomeFragment @Inject constructor() :
         initAdapter()
         initScrollListener()
         initFab()
+        initMatch()
         if (profileList.isEmpty()) {
             profileList.addAll(viewModel.getUserProfiles())
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                if (profileList.isEmpty()) {
-                    viewModel.fetchNextPage("1").collect {
-                        render(it)
-                    }
-                }
-            }
         }
 
         lifecycleScope.launch {
@@ -67,6 +58,19 @@ class HomeFragment @Inject constructor() :
         adapter.submitList(profileList)
     }
 
+    private fun initMatch() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                if (profileList.isEmpty()) {
+                    viewModel.fetchNextPage("1")
+                    viewModel.matchedUserUiState.collect {
+                        render(it)
+                    }
+                }
+            }
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         viewModel.saveUserProfiles(profileList)
@@ -78,21 +82,22 @@ class HomeFragment @Inject constructor() :
                 if (profileList.isEmpty()) {
                     binding.pbHomeLoading.setVisible()
                     binding.rvHome.setGone()
-//                    binding.fabFilter.setGone()
+                    binding.fabFilter.setGone()
                 }
             }
 
             is UiState.Success<*> -> {
                 binding.rvHome.setVisible()
-                Log.d("MYTAG", profileList.toString())
                 profileList.addAll(uiState.data as List<ProfileVO>)
+                Log.d("MATCHING", uiState.data.toString())
+                Log.d("MATCHING", profileList.size.toString())
                 adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
                 binding.fabFilter.setVisible()
             }
 
-            is UiState.Error -> {
-                context.toast(uiState.message)
+            is UiState.Error<*> -> {
+                context.toast(uiState.message.toString())
                 binding.pbHomeLoading.setGone()
             }
         }
@@ -121,9 +126,9 @@ class HomeFragment @Inject constructor() :
                 val rvPosition =
                     (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
 
-                val totalCount = recyclerView.adapter?.itemCount?.minus(1)
+                val totalCount = recyclerView.adapter?.itemCount?.minus(3)
 
-                if (rvPosition == totalCount && viewModel.page.value != -1) {
+                if (rvPosition == totalCount && viewModel.page != -1) {
                     loadMoreProfiles()
                 }
             }
@@ -131,11 +136,12 @@ class HomeFragment @Inject constructor() :
     }
 
     private fun loadMoreProfiles() {
-        viewModel.loading.value = true
-        lifecycleScope.launch {
-            viewModel.fetchNextPage("1").collect {
-                render(it)
-                viewModel.loading.value = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.fetchNextPage("1")
+                viewModel.matchedUserUiState.collect {
+                    render(it)
+                }
             }
         }
     }

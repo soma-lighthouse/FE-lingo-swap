@@ -20,9 +20,10 @@ class BoardRepositoryImpl @Inject constructor(
     override fun getBoardQuestions(
         category: Int,
         order: String?,
-        page: Int,
+        page: Int?,
+        pageSize: Int?,
     ): Flow<Resource<BoardVO>> =
-        datasource.getBoardQuestions(category, order, page).map {
+        datasource.getBoardQuestions(category, order, page, pageSize).map {
             when (it) {
                 is Resource.Success -> Resource.Success(it.data!!.toVO())
                 else -> Resource.Error(it.message ?: "No message found")

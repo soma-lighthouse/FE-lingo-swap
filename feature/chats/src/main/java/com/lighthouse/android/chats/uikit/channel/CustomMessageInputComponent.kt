@@ -26,6 +26,7 @@ class CustomMessageInputComponent : MessageInputComponent() {
     private var mode = MessageInputView.Mode.DEFAULT
     var cameraInput: View.OnClickListener? = null
     var voiceInput: View.OnClickListener? = null
+    var rightClick: ((View, BaseMessage) -> Unit)? = null
 
     override fun onCreateView(
         context: Context,
@@ -38,7 +39,11 @@ class CustomMessageInputComponent : MessageInputComponent() {
         binding.ivSend.setOnClickListener {
             onInputRightButtonClicked(it)
         }
-        binding.ivCamera.setOnClickListener(this::onInputLeftButtonClicked)
+
+        binding.ivCamera.setOnClickListener {
+            onInputLeftButtonClicked(it)
+        }
+
         binding.ivMick.setOnClickListener {
             voiceInput?.onClick(it)
         }
@@ -99,6 +104,7 @@ class CustomMessageInputComponent : MessageInputComponent() {
     override fun getRootView(): View {
         return binding.root
     }
+
 
     override fun notifyDataChanged(
         message: BaseMessage?,

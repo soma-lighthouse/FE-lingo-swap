@@ -10,6 +10,7 @@ import com.sendbird.android.params.InitParams
 import com.sendbird.uikit.SendbirdUIKit
 import com.sendbird.uikit.adapter.SendbirdUIKitAdapter
 import com.sendbird.uikit.interfaces.UserInfo
+import com.sendbird.uikit.model.configurations.UIKitConfig
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -23,7 +24,7 @@ class LingoApplication : Application() {
     private fun initSendBirdChat() {
         SendbirdChat.init(
             InitParams(
-                "DC52A85B-A985-4651-AF95-737C9A26CEDD",
+                BuildConfig.SENDBIRD_APPLICATION_ID,
                 applicationContext,
                 useCaching = true
             ),
@@ -61,7 +62,7 @@ class LingoApplication : Application() {
     private fun initSendBirdUI() {
         SendbirdUIKit.init(object : SendbirdUIKitAdapter {
             override fun getAppId(): String {
-                return "DC52A85B-A985-4651-AF95-737C9A26CEDD"
+                return BuildConfig.SENDBIRD_APPLICATION_ID
             }
 
             override fun getAccessToken(): String {
@@ -104,7 +105,8 @@ class LingoApplication : Application() {
                 }
             }
         }, this)
-
+        UIKitConfig.groupChannelConfig.enableTypingIndicator = true
+        UIKitConfig.groupChannelConfig.enableReactions = false
         SendbirdUIKit.setUIKitFragmentFactory(CustomFragmentFactory())
     }
 }

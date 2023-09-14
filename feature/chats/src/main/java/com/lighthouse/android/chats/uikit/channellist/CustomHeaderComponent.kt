@@ -10,6 +10,7 @@ import com.sendbird.uikit.modules.components.HeaderComponent
 
 class CustomHeaderComponent : HeaderComponent() {
     private lateinit var binding: CustomHeaderBinding
+    var search: View.OnClickListener? = null
 
     override fun onCreateView(
         context: Context,
@@ -18,7 +19,6 @@ class CustomHeaderComponent : HeaderComponent() {
         args: Bundle?,
     ): View {
         binding = CustomHeaderBinding.inflate(inflater, null, false)
-
         return binding.root
     }
 }

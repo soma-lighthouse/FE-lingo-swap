@@ -6,6 +6,7 @@ import androidx.fragment.app.activityViewModels
 import com.lighthouse.android.chats.viewmodel.ChatViewModel
 import com.lighthouse.android.common_ui.util.Injector
 import com.lighthouse.android.common_ui.util.StringSet
+import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.navigation.MainNavigator
 import com.sendbird.android.channel.GroupChannel
 import com.sendbird.android.params.UserMessageCreateParams
@@ -13,6 +14,7 @@ import com.sendbird.uikit.fragments.ChannelFragment
 import com.sendbird.uikit.model.ReadyStatus
 import com.sendbird.uikit.modules.ChannelModule
 import com.sendbird.uikit.modules.components.MessageInputComponent
+import com.sendbird.uikit.modules.components.MessageListComponent
 import com.sendbird.uikit.vm.ChannelViewModel
 import dagger.hilt.android.EntryPointAccessors
 
@@ -30,8 +32,30 @@ open class CustomChannel : ChannelFragment() {
 
         module.setHeaderComponent(CustomChannelHeader())
         module.setInputComponent(CustomMessageInputComponent())
+        module.messageListComponent = CustomMessageList()
         com.sendbird.uikit.R.id.sb_fragment_container
         return module
+    }
+
+    override fun onBindMessageListComponent(
+        messageListComponent: MessageListComponent,
+        viewModel: ChannelViewModel,
+        channel: GroupChannel?,
+    ) {
+        super.onBindMessageListComponent(messageListComponent, viewModel, channel)
+
+        if (messageListComponent is CustomMessageList) {
+            messageListComponent.setOnMessageProfileClickListener { view, position, data ->
+                context.toast("clicked!")
+                mainNavigator.navigateToProfile(
+                    requireContext(),
+                    Pair("userId", data.sender!!.userId),
+                    Pair("isMe", false)
+                )
+
+                onMessageProfileClicked(view, position, data)
+            }
+        }
     }
 
 
@@ -55,7 +79,7 @@ open class CustomChannel : ChannelFragment() {
                 val params = UserMessageCreateParams(it).apply {
                     customType = StringSet.question_type
                 }
-                channel?.sendUserMessage(params) { m, e ->
+                channel?.sendUserMessage(params) { _, e ->
                     if (e != null) {
                         //error handling
                     }
@@ -81,5 +105,4 @@ open class CustomChannel : ChannelFragment() {
             )
         })
     }
-
 }

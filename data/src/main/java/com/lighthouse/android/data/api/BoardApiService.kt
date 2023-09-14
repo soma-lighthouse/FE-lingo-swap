@@ -16,10 +16,11 @@ interface BoardApiService {
     suspend fun getQuestion(
         @Path("category") category: Int,
         @Query("order") order: String?,
-        @Query("page") page: Int,
+        @Query("next") page: Int?,
+        @Query("pageSize") pageSize: Int?,
     ): Response<BaseResponse<BoardDTO>>
 
-    @POST("api/v1/question")
+    @POST("api/v1/questions")
     suspend fun uploadQuestion(
         @Body info: UploadQuestionDTO,
     ): Response<BaseResponse<String>>

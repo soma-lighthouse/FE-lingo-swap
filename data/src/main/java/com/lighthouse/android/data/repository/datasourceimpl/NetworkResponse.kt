@@ -1,24 +1,39 @@
 package com.lighthouse.android.data.repository.datasourceimpl
 
+import com.google.gson.Gson
 import com.lighthouse.android.data.model.response.BaseResponse
-import com.lighthouse.android.data.util.HttpResponseStatus
+import com.lighthouse.android.data.model.response.TestDTO
 import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.domain.entity.response.vo.LighthouseException
 import retrofit2.Response
 
 abstract class NetworkResponse {
     protected fun <T, R : BaseResponse<T>> changeResult(response: Response<R>): Resource<T> {
-        val body = response.body()
-        body?.let {
-            return when (HttpResponseStatus.create(body.code)) {
-                HttpResponseStatus.OK -> {
-                    Resource.Success(body.data)
-                }
+        if (response.isSuccessful) {
+            return Resource.Success(response.body()!!.data)
+        } else {
+            val errorBody = response.errorBody()?.string()
+            val errorResponse: BaseResponse<*> =
+                Gson().fromJson(errorBody, BaseResponse::class.java)
 
-                else -> {
-                    Resource.Error(body.message)
-                }
+            val errorMsg = errorResponse.data?.toString() ?: "{}"
+
+            throw if (errorMsg == "{}") {
+                LighthouseException(
+                    code = errorResponse.code,
+                    message = errorResponse.message
+                ).addErrorMsg()
+            } else {
+                LighthouseException(
+                    code = errorResponse.code,
+                    message = errorMsg.getErrorMsg()
+                )
             }
         }
-        return Resource.Error("No response Found")
+    }
+
+    private fun String.getErrorMsg(): String {
+        val serverMsg = Gson().fromJson(this, TestDTO::class.java)
+        return serverMsg.msg!!
     }
 }

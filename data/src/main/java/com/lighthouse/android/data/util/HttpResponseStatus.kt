@@ -11,7 +11,7 @@ enum class HttpResponseStatus {
     companion object {
         fun create(httpCode: Int): HttpResponseStatus {
             return when (httpCode) {
-                20000, 20100 -> OK
+                20000, 201 -> OK
                 400 -> BAD_REQUEST
                 401 -> UNAUTHORIZED
                 403 -> FORBIDDEN

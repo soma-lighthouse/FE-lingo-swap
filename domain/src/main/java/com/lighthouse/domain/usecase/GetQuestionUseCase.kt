@@ -9,8 +9,8 @@ import javax.inject.Inject
 class GetQuestionUseCase @Inject constructor(
     private val repository: BoardRepository,
 ) {
-    fun invoke(category: Int, order: String?, page: Int) =
-        repository.getBoardQuestions(category, order, page)
+    fun invoke(category: Int, order: String?, next: Int?, pageSize: Int?) =
+        repository.getBoardQuestions(category, order, next, pageSize)
 
 
     fun uploadQuestion(info: UploadQuestionVO): Flow<Resource<String>> =

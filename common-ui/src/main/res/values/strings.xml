@@ -11,7 +11,7 @@
     <!--  Home-filter  -->
     <string name="filter">필터</string>
     <string name="prefer_country">선호 국가</string>
-    <string name="prefer_language">선호 언어</string>
+    <string name="prefer_language">사용 언어</string>
     <string name="board_title">질문게시판</string>
     <string name="empty">empty</string>
     <!--  Board  -->
@@ -84,7 +84,9 @@
     <string name="profile">프로필</string>
     <string name="my_question">내 질문</string>
     <string name="my_review">내 리뷰</string>
-    <string name="prefer_interest">선호 분야</string>
+    <string name="prefer_interest">관심 분야</string>
+    <string name="send_msg">메시지 보내기</string>
+    <string name="edit">편집</string>
 
 
 </resources>

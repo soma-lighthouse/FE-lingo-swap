@@ -21,14 +21,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/sb_size_0"
-            android:layout_marginEnd="@dimen/sb_size_4"
             android:textColor="@color/silver"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/brBottom"
-            app:layout_constraintEnd_toStartOf="@+id/tvMessage"
-            app:layout_constraintHorizontal_bias="1"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvMessage"
             tools:text="1:22pm" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -37,7 +35,6 @@
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:background="@drawable/question_message_background"
-            android:backgroundTint="@color/message_click_state"
             android:gravity="center_vertical"
             android:maxWidth="@dimen/sb_message_max_width"
             android:padding="@dimen/sb_size_10"
@@ -45,7 +42,6 @@
             app:layout_constraintBottom_toTopOf="@+id/brBottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toEndOf="@+id/tvSentAt"
             app:layout_constraintTop_toTopOf="parent" />
 
 

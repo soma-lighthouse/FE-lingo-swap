@@ -15,9 +15,10 @@ class BoardRemoteDataSourceImpl @Inject constructor(
     override fun getBoardQuestions(
         category: Int,
         order: String?,
-        page: Int,
+        page: Int?,
+        pageSize: Int?,
     ): Flow<Resource<BoardDTO>> = flow {
-        emit(changeResult(api.getQuestion(category, order, page)))
+        emit(changeResult(api.getQuestion(category, order, page, pageSize)))
     }
 
     override fun uploadQuestion(

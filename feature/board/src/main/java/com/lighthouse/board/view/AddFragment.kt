@@ -89,7 +89,7 @@ class AddFragment : BindingFragment<FragmentAddBinding>(R.layout.fragment_add) {
                                 }
                             }
 
-                            is UiState.Error -> {
+                            is UiState.Error<*> -> {
                                 binding.apply {
                                     pbAddLoading.setInvisible()
                                     btnAdd.isEnabled = true

@@ -13,7 +13,12 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.IdRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -134,4 +139,11 @@ fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, observer: (T) -> Unit) {
             }
         }
     })
+}
+
+inline fun <reified T : Fragment> AppCompatActivity.replace(@IdRes frameId: Int) {
+    supportFragmentManager.commit {
+        replace<T>(frameId)
+        setReorderingAllowed(true)
+    }
 }

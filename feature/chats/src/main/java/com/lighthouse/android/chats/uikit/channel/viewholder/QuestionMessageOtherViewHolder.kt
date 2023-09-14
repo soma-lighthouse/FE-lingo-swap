@@ -21,11 +21,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 class QuestionMessageOtherViewHolder(
     private val binding: QuestionOtherBinding,
-    private val toProfile: (Int, Boolean) -> Unit,
+    private val toProfile: (String, Boolean) -> Unit,
 ) : GroupChannelMessageViewHolder(binding.root) {
     override fun getClickableViewMap(): MutableMap<String, View> {
         val viewMap = ConcurrentHashMap<String, View>()
         viewMap[ClickableViewIdentifier.Chat.name] = binding.tvMessage
+        viewMap[ClickableViewIdentifier.Profile.name] = binding.ivProfileView
         return viewMap
     }
 
@@ -35,7 +36,7 @@ class QuestionMessageOtherViewHolder(
         emojiReactionLongClickListener: OnItemLongClickListener<String>?,
         moreButtonClickListener: View.OnClickListener?,
     ) {
-        // TODO("Not yet implemented")
+        // Useless
     }
 
     override fun bind(channel: BaseChannel, message: BaseMessage, params: MessageListUIParams) {
@@ -64,15 +65,11 @@ class QuestionMessageOtherViewHolder(
             com.sendbird.uikit.R.drawable.icon_user,
             com.sendbird.uikit.R.color.ondark_01
         )
-        Glide.with(context)
-            .load(url)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .error(errorIcon)
-            .apply(RequestOptions.circleCropTransform())
-            .into(binding.ivProfileView)
+        Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).error(errorIcon)
+            .apply(RequestOptions.circleCropTransform()).into(binding.ivProfileView)
 
         binding.ivProfileView.setOnClickListener {
-            val id = sender?.userId?.toInt() ?: -1
+            val id = sender?.userId ?: ""
             toProfile(id, false)
         }
 
