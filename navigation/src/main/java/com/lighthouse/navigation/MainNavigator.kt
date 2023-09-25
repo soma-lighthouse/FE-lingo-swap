@@ -26,10 +26,13 @@ interface MainNavigator {
         context: Context,
         selectedList: Pair<String, List<String>>,
         position: Pair<String, Int>,
-        multiSelect: Pair<String, Boolean>,
     ): Intent
 
     fun navigateToCamera(
         context: Context,
     ): Intent
+
+    fun navigateToLogin(
+        context: Context,
+    )
 }

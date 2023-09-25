@@ -8,6 +8,7 @@
     <include app:graph="@navigation/chats_flow" />
     <include app:graph="@navigation/board_flow" />
     <include app:graph="@navigation/profile_flow" />
+    <include app:graph="@navigation/profile_detail_flow" />
 
     <action
         android:id="@+id/action_global_home_flow"

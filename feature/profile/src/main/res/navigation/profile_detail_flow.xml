@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/profile_detail_flow"
+    android:id="@id/profile_detail_flow"
     app:startDestination="@id/detailFragment">
 
     <fragment
@@ -9,12 +9,29 @@
         android:name="com.lighthouse.profile.view.DetailProfileFragment">
         <action
             android:id="@+id/action_detailFragment_to_languageFragment"
-            app:destination="@id/languageFragment" />
+            app:destination="@id/languageFragment"
+            app:restoreState="true" />
     </fragment>
 
     <fragment
         android:id="@+id/languageFragment"
-        android:name="com.lighthouse.profile.view.LanguageFragment" />
+        android:name="com.lighthouse.profile.view.EditLanguageFragment">
+
+        <action
+            android:id="@+id/action_languageFragment_to_detailFragment"
+            app:destination="@id/detailFragment"
+            app:popUpTo="@id/detailFragment"
+            app:popUpToInclusive="true"
+            app:restoreState="true" />
+
+        <deepLink
+            android:id="@+id/languageDeepLink"
+            app:uri="lingoSwap://languageLevel/startDestination?start={start}" />
+        <argument
+            android:name="start"
+            app:argType="integer" />
+
+    </fragment>
 
 
 </navigation>
