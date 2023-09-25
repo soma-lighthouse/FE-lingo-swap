@@ -22,6 +22,10 @@ import androidx.fragment.app.replace
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
+import com.lighthouse.android.common_ui.base.BaseViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -154,4 +158,23 @@ inline fun <reified T : Fragment> AppCompatActivity.replace(@IdRes frameId: Int)
         replace<T>(frameId)
         setReorderingAllowed(true)
     }
+}
+
+
+inline fun BaseViewModel.onMain(
+    crossinline body: suspend CoroutineScope.() -> Unit
+) = viewModelScope.launch {
+    body(this)
+}
+
+inline fun BaseViewModel.onIO(
+    crossinline body: suspend CoroutineScope.() -> Unit
+) = viewModelScope.launch(io) {
+    body(this)
+}
+
+inline fun BaseViewModel.onDefault(
+    crossinline body: suspend CoroutineScope.() -> Unit
+) = viewModelScope.launch(default) {
+    body(this)
 }
