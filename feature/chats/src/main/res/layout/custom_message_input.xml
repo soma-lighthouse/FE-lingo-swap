@@ -136,7 +136,7 @@
             android:id="@+id/rv_question_panel"
             android:name="com.lighthouse.android.chats.view.QuestionFragment"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="370dp"
             android:background="@color/white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"

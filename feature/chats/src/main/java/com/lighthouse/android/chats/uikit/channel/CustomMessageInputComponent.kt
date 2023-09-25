@@ -26,7 +26,6 @@ class CustomMessageInputComponent : MessageInputComponent() {
     private var mode = MessageInputView.Mode.DEFAULT
     var cameraInput: View.OnClickListener? = null
     var voiceInput: View.OnClickListener? = null
-    var rightClick: ((View, BaseMessage) -> Unit)? = null
 
     override fun onCreateView(
         context: Context,

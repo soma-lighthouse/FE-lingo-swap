@@ -28,7 +28,7 @@ open class CustomChannel : ChannelFragment() {
     }
 
     override fun onCreateModule(args: Bundle): ChannelModule {
-        var module: ChannelModule = super.onCreateModule(args)
+        val module: ChannelModule = super.onCreateModule(args)
 
         module.setHeaderComponent(CustomChannelHeader())
         module.setInputComponent(CustomMessageInputComponent())
@@ -75,7 +75,7 @@ open class CustomChannel : ChannelFragment() {
                 takeVoiceRecorder()
             }
 
-            viewModels.question.observe(this) {
+            viewModels.sendQuestion.observe(this) {
                 val params = UserMessageCreateParams(it).apply {
                     customType = StringSet.question_type
                 }
