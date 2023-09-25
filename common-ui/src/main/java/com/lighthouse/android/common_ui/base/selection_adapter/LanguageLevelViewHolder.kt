@@ -43,6 +43,7 @@ class LanguageLevelViewHolder(
             }
         }
         binding.spinnerLevel.adapter = initSpinner()
+        binding.spinnerLevel.setSelection(language.level - 1)
         binding.spinnerLevel.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(

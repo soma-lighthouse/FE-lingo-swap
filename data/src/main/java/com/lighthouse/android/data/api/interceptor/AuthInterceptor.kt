@@ -26,19 +26,18 @@ class AuthInterceptor @Inject constructor(
 ) : Interceptor {
     private val client = OkHttpClient.Builder().build()
     override fun intercept(chain: Interceptor.Chain): Response {
-        if (isLoginRequest(chain.request())) {
-            val addHeader = chain.request().newBuilder().addHeader(
-                AUTH_KEY, AUTH_VALUE.format(getIdToken())
-            ).build()
-
-            return chain.proceed(addHeader)
-        }
+        Log.d("TESTING URL", chain.request().url.toString())
 
         Log.d("TESTING ACCESS_TOKEN", getAccessToken())
-        val addHeader = chain.request().newBuilder().addHeader(
-            AUTH_KEY, AUTH_VALUE.format(getAccessToken())
-        ).build()
-        val response = chain.proceed(addHeader)
+
+        val response = if (chain.request().method != "PUT") {
+            val addHeader = chain.request().newBuilder().addHeader(
+                AUTH_KEY, AUTH_VALUE.format(getAccessToken())
+            ).build()
+            chain.proceed(addHeader)
+        } else {
+            chain.proceed(chain.request())
+        }
 
         Log.d("TESTING CODE", response.code.toString())
         when (response.code) {
@@ -56,10 +55,6 @@ class AuthInterceptor @Inject constructor(
         return response
     }
 
-    private fun isLoginRequest(chain: Request): Boolean {
-        val path = chain.url.encodedPath.substringAfter(BuildConfig.LIGHTHOUSE_BASE_URL)
-        return path == LOGIN_REQUEST || path == SIGNUP_REQUEST
-    }
 
     private fun reRequest(chain: Interceptor.Chain): Response {
         val token = getRefreshedToken()
@@ -88,7 +83,7 @@ class AuthInterceptor @Inject constructor(
         val responseObject = JsonParser.parseString(dataJson).asJsonObject
         val token = Gson().fromJson(responseObject, TokenVO::class.java)
 
-        Log.d("TESTING", token.toString())
+        Log.d("TESTING token", token.toString())
         storeToken(token.accessToken, token.refreshToken)
         storeExpire(token.expiresIn, token.refreshTokenExpiresIn)
         return token.accessToken
@@ -106,19 +101,18 @@ class AuthInterceptor @Inject constructor(
         return localPreferenceDataSource.getAccessToken() ?: ""
     }
 
-    private fun getIdToken(): String {
-        return localPreferenceDataSource.getIdToken() ?: ""
-    }
-
     private fun requestRefresh(request: Request): BaseResponse<TokenVO> {
         val response: Response = runBlocking {
             withContext(Dispatchers.IO) { client.newCall(request).execute() }
         }
+        Log.d("TESTING response", response.body.toString())
         if (response.isSuccessful) {
             return response.getDto()
         }
-        Log.d("TESTING", response.message)
-        throw IllegalStateException(REFRESH_FAILURE)
+
+        localPreferenceDataSource.clearToken()
+        Thread.sleep(1000)
+        throw LighthouseException(REFRESH_TOKEN_EXPIRED, REFRESH_FAILURE)
     }
 
     private fun storeToken(accessToken: String, refreshToken: String?) {
@@ -130,13 +124,13 @@ class AuthInterceptor @Inject constructor(
 
     private fun storeExpire(accessTokenExpire: Long, refreshTokenExpire: Long?) {
         localPreferenceDataSource.saveExpire(accessTokenExpire)
-        refreshTokenExpire?.let {
+        if (refreshTokenExpire != null && refreshTokenExpire > 0) {
             localPreferenceDataSource.saveRefreshExpire(refreshTokenExpire)
         }
     }
 
     companion object {
-        private const val TOKEN_REQUEST = "api/v1/auth/token"
+        private const val TOKEN_REQUEST = "/api/v1/auth/token"
         private const val LOGIN_REQUEST = "api/v1/auth/login/google"
         private const val SIGNUP_REQUEST = "api/v1/user"
 
@@ -145,6 +139,7 @@ class AuthInterceptor @Inject constructor(
         private const val TOKEN_EMPTY = 40101
         private const val REFRESH_TOKEN_EXPIRED = 40401
         private const val ID_TOKEN_EMPTY = 40102
+        private const val REFRESH_TOKEN_FAILURE = 40402
 
         private const val AUTH_KEY = "Authorization"
         private const val AUTH_VALUE = "Bearer %s"

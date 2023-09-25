@@ -1,10 +1,7 @@
 package com.lighthouse.android.common_ui.base
 
 import androidx.lifecycle.ViewModel
-import com.lighthouse.domain.constriant.ErrorTypeHandling
+import com.lighthouse.android.common_ui.util.DispatcherProvider
 
-abstract class BaseViewModel : ViewModel() {
-    protected fun ErrorResult(msg: String, errorType: ErrorTypeHandling) {
-        
-    }
-}
+open class BaseViewModel(dispatcherProvider: DispatcherProvider) : ViewModel(),
+    DispatcherProvider by dispatcherProvider
