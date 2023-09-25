@@ -7,11 +7,14 @@ import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.UploadFilterVO
+import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.usecase.GetFilterSettingUseCase
 import com.lighthouse.domain.usecase.GetLanguageFilterUseCase
 import com.lighthouse.domain.usecase.GetMatchedUserUseCase
+import com.lighthouse.domain.usecase.ManageFilterUpdateUseCase
+import com.lighthouse.domain.usecase.SaveLanguageFilterUseCase
 import com.lighthouse.domain.usecase.UploadFilterSettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -27,7 +30,9 @@ class HomeViewModel @Inject constructor(
     private val getMatchedUserUseCase: GetMatchedUserUseCase,
     private val getLanguageFilterUseCase: GetLanguageFilterUseCase,
     private val getFilterSettingUseCase: GetFilterSettingUseCase,
+    private val saveLanguageFilterUseCase: SaveLanguageFilterUseCase,
     private val uploadFilterSettingUseCase: UploadFilterSettingUseCase,
+    manageFilterUpdateUseCase: ManageFilterUpdateUseCase,
     dispatcherProvider: DispatcherProvider
 ) : BaseViewModel(dispatcherProvider) {
     private var userProfiles = listOf<ProfileVO>()
@@ -42,6 +47,14 @@ class HomeViewModel @Inject constructor(
     var page = 1
 
     private lateinit var fetchJob: Job
+
+    init {
+        val key = manageFilterUpdateUseCase.getIfFilterUpdated()
+        if (key) {
+            userProfiles = listOf()
+            manageFilterUpdateUseCase.saveIfFilterUpdated(false)
+        }
+    }
 
     fun fetchNextPage(
         pageSize: Int? = null,
@@ -133,6 +146,9 @@ class HomeViewModel @Inject constructor(
     fun getUserProfiles() = userProfiles
 
     fun getLanguageFilter() = getLanguageFilterUseCase.invoke()
+
+    fun saveLanguageFilter(languages: List<LanguageVO>) =
+        saveLanguageFilterUseCase.invoke(languages)
 
     fun resetUploadState() {
         _upload.value = false

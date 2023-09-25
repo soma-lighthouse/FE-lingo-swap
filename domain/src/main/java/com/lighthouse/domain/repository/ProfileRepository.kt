@@ -11,9 +11,9 @@ interface ProfileRepository {
 
     fun getMyQuestions(): Flow<Resource<List<MyQuestionsVO>>>
 
-    fun updateProfile(newProfile: RegisterInfoVO): Resource<Boolean>
+    fun updateProfile(newProfile: RegisterInfoVO): Flow<Boolean>
 
-    fun updateFilter(newFilter: RegisterInfoVO): Resource<Boolean>
+    fun updateFilter(newFilter: RegisterInfoVO): Flow<Boolean>
 
     fun getUUID(): String?
 

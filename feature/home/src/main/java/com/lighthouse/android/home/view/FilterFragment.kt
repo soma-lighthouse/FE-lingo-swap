@@ -64,6 +64,11 @@ class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_
         initApply()
     }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        updateChip()
+    }
+
     private fun initApply() {
         observeApply()
         binding.btnApply.setOnClickListener {
@@ -133,13 +138,8 @@ class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_
                     selectedCountryName = data.countries.map { it.name }
                     selectedCountryCode = data.countries.map { it.code }
                     selectedLanguages = data.languages
-                    Log.d("TESTING RENDER", selectedLanguages.toString())
                     updateInterestList(data.interests)
-                    addChipToGroup(
-                        binding.chipPreferCountry,
-                        selectedCountryName
-                    )
-                    adapter.submitList(interestList)
+                    updateChip()
                     first = true
                 }
                 binding.pbFilter.setGone()
@@ -150,6 +150,20 @@ class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_
                 handleException(uiState)
             }
         }
+    }
+
+    private fun updateChip() {
+        addChipToGroup(
+            binding.chipPreferCountry,
+            selectedCountryName
+        )
+        addChipToGroup(
+            binding.chipPreferLanguage,
+            selectedLanguages.map { "${it.name}/LV.${it.level}" }
+        )
+
+        adapter.submitList(interestList)
+
     }
 
     private fun updateInterestList(interest: List<InterestVO>) {
@@ -192,6 +206,7 @@ class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_
 
     private fun initLanguage() {
         binding.clickLanguage.setOnClickListener {
+            viewModel.saveLanguageFilter(selectedLanguages)
             findNavController().deepLinkNavigateTo(
                 DeepLinkDestination.FromFilterToLanguageLevel(
                     Constant.FILTER

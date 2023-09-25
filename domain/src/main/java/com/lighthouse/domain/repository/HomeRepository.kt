@@ -18,4 +18,7 @@ interface HomeRepository {
 
     fun getFilterSetting(): Flow<Resource<FilterVO>>
     fun uploadFilterSetting(filter: UploadFilterVO): Flow<Resource<Boolean>>
+
+    fun getIfFilterUpdated(): Boolean
+    fun saveIfFilterUpdated(update: Boolean)
 }

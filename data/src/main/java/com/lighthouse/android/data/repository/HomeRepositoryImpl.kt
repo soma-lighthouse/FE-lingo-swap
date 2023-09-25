@@ -17,6 +17,10 @@ class HomeRepositoryImpl @Inject constructor(
     private val datasource: HomeRemoteDataSource,
     private val local: LocalPreferenceDataSource,
 ) : HomeRepository {
+    override fun getIfFilterUpdated(): Boolean = local.getIfFilterUpdated()
+
+    override fun saveIfFilterUpdated(update: Boolean) = local.saveIfFilterUpdated(update)
+
     override fun getMatchedUser(
         next: Int?,
         pageSize: Int?,

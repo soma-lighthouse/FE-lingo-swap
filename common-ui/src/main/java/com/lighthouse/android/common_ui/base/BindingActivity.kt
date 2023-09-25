@@ -54,6 +54,14 @@ abstract class BindingActivity<T : ViewDataBinding>(
         ).sharedPreferences()
     }
 
+    protected fun getUUID(): String {
+        return sharedPreferences.getString("com.lighthouse.lingo-swap.UUID", null) ?: ""
+    }
+
+    protected fun getUserName(): String {
+        return sharedPreferences.getString("com.lighthouse.lingo-swap.USER_NAME", null) ?: ""
+    }
+
     protected fun handleException(uiState: UiState.Error<*>) {
         val exception = uiState.message
         Log.d("ERROR", "enter handle exception")

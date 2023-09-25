@@ -10,26 +10,40 @@ class UpdateUserProfileUseCase @Inject constructor(
     private lateinit var prev: RegisterInfoVO
     private lateinit var cur: RegisterInfoVO
 
-    fun invoke(prev: RegisterInfoVO, cur: RegisterInfoVO) {
+    suspend fun invoke(prev: RegisterInfoVO, cur: RegisterInfoVO): Boolean {
         this.prev = prev
         this.cur = cur
+
+        var isUpdated = true
         if (checkProfileUpdate()) {
-            profileRepository.updateProfile(cur)
+            profileRepository.updateProfile(prev)
+                .collect {
+                    if (!it) {
+                        isUpdated = false
+                    }
+                }
         }
         if (checkFilterUpdate()) {
-            profileRepository.updateFilter(cur)
+            profileRepository.updateFilter(prev)
+                .collect {
+                    if (!it) {
+                        isUpdated = false
+                    }
+                }
         }
+
+        return isUpdated
     }
 
     private fun checkProfileUpdate(): Boolean {
         var isUpdated = false
 
-        if (cur.description != prev.description) {
-            cur.description = prev.description
+        if (!cur.description.isNullOrEmpty() && prev.description != cur.description) {
+            prev.description = cur.description
             isUpdated = true
         }
-        if (cur.profileImageUri != prev.profileImageUri) {
-            cur.profileImageUri = prev.profileImageUri
+        if (!cur.profileImageUri.isNullOrEmpty() && prev.profileImageUri != cur.profileImageUri) {
+            prev.profileImageUri != cur.profileImageUri
             isUpdated = true
         }
         return isUpdated
@@ -37,20 +51,21 @@ class UpdateUserProfileUseCase @Inject constructor(
 
     private fun checkFilterUpdate(): Boolean {
         var isUpdated = false
-        if (cur.preferredInterests != prev.preferredInterests) {
-            cur.preferredInterests = prev.preferredInterests
+        if (!cur.preferredInterests.isNullOrEmpty() && prev.preferredInterests != cur.preferredInterests) {
+            prev.preferredInterests = cur.preferredInterests
             isUpdated = true
         }
-        if (cur.languages != prev.languages) {
-            cur.languages = prev.languages
+        if (!cur.languages.isNullOrEmpty() && prev.languages != cur.languages) {
+            prev.languages = cur.languages
             isUpdated = true
         }
 
-        if (cur.preferredCountries != prev.preferredCountries) {
-            cur.preferredCountries = prev.preferredCountries
+        if (!cur.preferredCountries.isNullOrEmpty() && prev.preferredCountries != cur.preferredCountries) {
+            prev.preferredCountries = cur.preferredCountries
             isUpdated = true
         }
 
         return isUpdated
     }
+
 }

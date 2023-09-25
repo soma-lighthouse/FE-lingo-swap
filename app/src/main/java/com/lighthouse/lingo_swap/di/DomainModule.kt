@@ -14,6 +14,7 @@ import com.lighthouse.domain.usecase.GetMatchedUserUseCase
 import com.lighthouse.domain.usecase.GetProfileUseCase
 import com.lighthouse.domain.usecase.GetQuestionUseCase
 import com.lighthouse.domain.usecase.ManageChannelUseCase
+import com.lighthouse.domain.usecase.ManageFilterUpdateUseCase
 import com.lighthouse.domain.usecase.SaveLanguageFilterUseCase
 import com.lighthouse.domain.usecase.TestUseCase
 import com.lighthouse.domain.usecase.UploadFilterSettingUseCase
@@ -90,5 +91,11 @@ object DomainModule {
     @Provides
     fun provideManageChannelUseCase(chatRepository: ChatRepository): ManageChannelUseCase {
         return ManageChannelUseCase(chatRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideManageFilterUseCase(homeRepository: HomeRepository): ManageFilterUpdateUseCase {
+        return ManageFilterUpdateUseCase(homeRepository)
     }
 }
