@@ -6,7 +6,7 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import java.lang.reflect.Type
 
-class NullOnEmptyConverterFactory : Converter.Factory() {
+class NullOrEmptyConverter : Converter.Factory() {
     override fun responseBodyConverter(
         type: Type,
         annotations: Array<out Annotation>,

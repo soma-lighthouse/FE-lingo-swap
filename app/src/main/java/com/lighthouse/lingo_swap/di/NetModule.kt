@@ -2,13 +2,14 @@ package com.lighthouse.lingo_swap.di
 
 import com.lighthouse.android.data.api.AuthApiService
 import com.lighthouse.android.data.api.BoardApiService
+import com.lighthouse.android.data.api.ChatApiService
 import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.ProfileApiService
 import com.lighthouse.android.data.api.interceptor.AuthInterceptor
 import com.lighthouse.lingo_swap.BuildConfig
 import com.lighthouse.lingo_swap.HeaderInterceptor
-import com.lighthouse.lingo_swap.NullOnEmptyConverterFactory
+import com.lighthouse.lingo_swap.NullOrEmptyConverter
 import com.lighthouse.lingo_swap.di.annotation.Main
 import com.lighthouse.lingo_swap.di.annotation.Test
 import dagger.Module
@@ -51,7 +52,7 @@ object NetModule {
             .baseUrl(BuildConfig.LIGHTHOUSE_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
-            .addConverterFactory(NullOnEmptyConverterFactory())
+            .addConverterFactory(NullOrEmptyConverter())
             .build()
     }
 
@@ -120,5 +121,12 @@ object NetModule {
     @Main
     fun provideAuthService(@Main retrofit: Retrofit): AuthApiService {
         return retrofit.create(AuthApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Main
+    fun provideChatService(@Main retrofit: Retrofit): ChatApiService {
+        return retrofit.create(ChatApiService::class.java)
     }
 }
