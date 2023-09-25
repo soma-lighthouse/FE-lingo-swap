@@ -7,6 +7,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.lighthouse.android.chats.R
 import com.lighthouse.android.chats.databinding.ChannelListItemBinding
+import com.lighthouse.android.common_ui.util.setGone
+import com.lighthouse.android.common_ui.util.setVisible
 import com.sendbird.android.SendbirdChat
 import com.sendbird.android.channel.GroupChannel
 import com.sendbird.android.user.Member
@@ -37,20 +39,27 @@ class CustomChannelListAdapter(
 
             //set title
             val members = item.members
-            var opponent: Member
+            val opponent: Member
             if (members.size > 1) {
                 val currentUser = SendbirdChat.currentUser?.nickname ?: " "
                 opponent = if (members[0].nickname != currentUser) members[0] else members[1]
                 binding.tvName.text = opponent.nickname
+                // channel cover image
+                Glide.with(binding.ivProfileImg.context).load(opponent.profileUrl).centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
+                    .into(binding.ivProfileImg)
             } else {
                 val channel = item.name
                 binding.tvName.text = channel
             }
 
-//            binding.ivProfileImg.setOnClickListener {
-//                profile(opponent.userId)
-//            }
-
+            // Alarm setting
+            if (item.myPushTriggerOption == GroupChannel.PushTriggerOption.OFF) {
+                binding.ivAlarm.setVisible()
+            } else {
+                binding.ivAlarm.setGone()
+            }
 
             // unread message count
             val unreadCount = item.unreadMessageCount
@@ -59,11 +68,6 @@ class CustomChannelListAdapter(
             binding.tvUnread.visibility = if (unreadCount > 0) View.VISIBLE else View.GONE
             binding.tvUnread.setBackgroundResource(R.drawable.circle_textview)
 
-            // channel cover image
-            Glide.with(binding.ivProfileImg.context).load(item.coverUrl).centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
-                .into(binding.ivProfileImg)
 
             // last message whether user is typing or not
             if (item.isTyping && item.typingUsers.isNotEmpty()) {

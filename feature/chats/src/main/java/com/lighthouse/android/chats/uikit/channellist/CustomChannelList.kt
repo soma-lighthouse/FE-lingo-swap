@@ -1,13 +1,17 @@
 package com.lighthouse.android.chats.uikit.channellist
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.widget.Toast
 import com.lighthouse.android.chats.view.CustomChatActivity
 import com.sendbird.android.channel.GroupChannel
+import com.sendbird.android.exception.SendbirdException
 import com.sendbird.uikit.activities.ChannelActivity
 import com.sendbird.uikit.fragments.ChannelListFragment
 import com.sendbird.uikit.model.ReadyStatus
 import com.sendbird.uikit.modules.ChannelListModule
 import com.sendbird.uikit.vm.ChannelListViewModel
+
 
 open class CustomChannelList : ChannelListFragment() {
     override fun onCreateModule(args: Bundle): ChannelListModule {
@@ -38,8 +42,62 @@ open class CustomChannelList : ChannelListFragment() {
                 }
             }
         }
-        module.headerComponent.setOnRightButtonClickListener {
-
+        module.channelListComponent.setOnItemLongClickListener { _, _, data ->
+            showListContextMenu(data)
         }
     }
+
+//    private fun showTitleChangeDialog(channel: GroupChannel) {
+//        val input = EditText(context)
+//        val builder = AlertDialog.Builder(requireContext())
+//        builder.setView(input)
+//            .setTitle(com.lighthouse.android.common_ui.R.string.error_title)
+//            .setPositiveButton(
+//                com.lighthouse.android.common_ui.R.string.ok
+//            ) { dialog, which ->
+//                val params = GroupChannelUpdateParams()
+//                params.name = input.text.toString()
+//                channel.updateChannel(params, null)
+//            }
+//        builder.show()
+//    }
+
+    private fun showListContextMenu(channel: GroupChannel) {
+        if (context == null) return
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val leaveItem: CharSequence =
+            getString(com.lighthouse.android.common_ui.R.string.leave_channel)
+        val isOff = channel.myPushTriggerOption == GroupChannel.PushTriggerOption.OFF
+        val notificationItem: CharSequence =
+            if (isOff) getString(com.lighthouse.android.common_ui.R.string.turn_on_alarm) else getString(
+                com.lighthouse.android.common_ui.R.string.turn_off_alarm
+            )
+        val items = arrayOf(leaveItem, notificationItem)
+        builder.setItems(items) { dialog, which ->
+            dialog.dismiss()
+            if (which == 0) {
+                viewModel.leaveChannel(channel) { e: SendbirdException? ->
+                    if (e == null) return@leaveChannel
+                    Toast.makeText(
+                        requireContext(),
+                        com.lighthouse.android.common_ui.R.string.leave_channel,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                leaveChannel(channel)
+            } else {
+                viewModel.setPushNotification(
+                    channel, isOff
+                ) { e: SendbirdException? ->
+                    if (e == null) return@setPushNotification
+                    val errorString: Int =
+                        if (isOff) com.lighthouse.android.common_ui.R.string.turn_off_alarm else com.lighthouse.android.common_ui.R.string.turn_on_alarm
+                    Toast.makeText(requireContext(), errorString, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        builder.show()
+    }
+
+
 }
