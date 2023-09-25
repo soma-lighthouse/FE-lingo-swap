@@ -224,6 +224,36 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_review" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_logout"
+            android:layout_width="25dp"
+            android:layout_height="27dp"
+            android:layout_margin="23dp"
+            android:background="@drawable/logout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line3" />
+
+        <TextView
+            android:id="@+id/tv_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:text="@string/logout"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@id/btn_logout"
+            app:layout_constraintStart_toEndOf="@id/btn_logout"
+            app:layout_constraintTop_toTopOf="@id/btn_logout" />
+
+        <View
+            android:id="@+id/click_logout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_logout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_logout" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

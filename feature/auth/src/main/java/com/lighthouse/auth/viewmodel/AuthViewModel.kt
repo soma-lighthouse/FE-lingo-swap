@@ -3,10 +3,11 @@ package com.lighthouse.auth.viewmodel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.lighthouse.android.common_ui.base.BaseViewModel
+import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.constriant.LoginState
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
@@ -16,13 +17,9 @@ import com.lighthouse.domain.usecase.GetAuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
@@ -30,7 +27,8 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val useCase: GetAuthUseCase,
     private val loginStatus: CheckLoginStatusUseCase,
-) : ViewModel() {
+    dispatcherProvider: DispatcherProvider
+) : BaseViewModel(dispatcherProvider) {
     private val _loginState: MutableLiveData<LoginState> = MutableLiveData()
     val loginState: LiveData<LoginState> = _loginState
 
@@ -39,9 +37,20 @@ class AuthViewModel @Inject constructor(
     var profilePath: String? = null
     var profileUrl: String? = null
 
+    private val _result = MutableStateFlow<UiState>(UiState.Loading)
+    val result: StateFlow<UiState> = _result.asStateFlow()
+
+    private val _upload = MutableStateFlow<Boolean>(false)
+    val upload: StateFlow<Boolean> = _upload.asStateFlow()
+
+    private val _register = MutableStateFlow(false)
+    val register: StateFlow<Boolean> = _register.asStateFlow()
+
     fun getAccessToken() = useCase.getAccessToken()
+
+
     fun getLoginStatus() {
-        viewModelScope.launch {
+        onIO {
             val deferred = async {
                 loginStatus.invoke()
             }
@@ -52,12 +61,8 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-
-    private val _result = MutableStateFlow<UiState>(UiState.Loading)
-    val result: StateFlow<UiState> = _result.asStateFlow()
-
     fun getInterestList() {
-        viewModelScope.launch {
+        onIO {
             useCase.getInterestList().catch {
                 _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
             }.collect {
@@ -66,12 +71,11 @@ class AuthViewModel @Inject constructor(
                     else -> _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
                 }
             }
-
         }
     }
 
     fun getLanguageList() {
-        viewModelScope.launch {
+        onIO {
             useCase.getLanguageList().catch {
                 _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
             }.collect {
@@ -85,7 +89,7 @@ class AuthViewModel @Inject constructor(
 
 
     fun getCountryList() {
-        viewModelScope.launch {
+        onIO {
             useCase.getCountryList().catch {
                 _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
             }.collect {
@@ -97,23 +101,25 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun registerUser() = useCase.registerUser(registerInfo).map {
-        when (it) {
-            is Resource.Success -> it.data
-            else -> it.message ?: StringSet.error_msg
+    fun registerUser() {
+        onIO {
+            useCase.registerUser(registerInfo).catch {
+                _register.value = false
+            }.collect {
+                when (it) {
+                    is Resource.Success -> _register.value = true
+                    else -> _register.value = false
+                }
+            }
         }
-    }.catch {
-        emit(it.message ?: StringSet.error_msg)
-    }.stateIn(
-        scope = viewModelScope,
-        initialValue = UiState.Loading,
-        started = SharingStarted.WhileSubscribed(5000)
-    )
+    }
 
-    fun getPreSignedURL(fileName: String) {
-        viewModelScope.launch {
+    fun getPreSignedUrl(fileName: String) {
+        onIO {
             useCase.getPreSignedURL(fileName).catch {
-                _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
+                if (it is LighthouseException) {
+                    _result.value = UiState.Error(it)
+                }
             }.collect {
                 when (it) {
                     is Resource.Success -> _result.emit(UiState.Success(it.data!!))
@@ -123,29 +129,31 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun uploadImg(filePath: String) = useCase.uploadImg(profileUrl!!, filePath).map {
-        when (it) {
-            is Resource.Success -> it.data
-            else -> it.message ?: StringSet.error_msg
+    fun uploadImg(filePath: String) {
+        onIO {
+            useCase.uploadImg(profileUrl!!, filePath)
+                .catch {
+                    _upload.value = false
+                }.collect {
+                    when (it) {
+                        is Resource.Success -> _upload.value = true
+                        else -> _upload.value = false
+                    }
+                }
         }
-    }.catch {
-        emit(it.message ?: StringSet.error_msg)
-    }.stateIn(
-        scope = viewModelScope,
-        initialValue = UiState.Loading,
-        started = SharingStarted.WhileSubscribed(5000)
-    )
+    }
 
     fun saveIdToken(idToken: String) {
         useCase.saveIdToken(idToken)
     }
 
     fun postGoogleLogin() {
-        viewModelScope.launch {
+        onIO {
             useCase.postGoogleLogin().catch {
                 if (it is LighthouseException) {
                     _result.emit(UiState.Error(it.message))
-                    _result.emit(UiState.Loading)
+                } else {
+                    Log.e("TESTING", it.stackTraceToString())
                 }
             }.collect {
                 when (it) {

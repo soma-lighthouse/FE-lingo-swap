@@ -1,8 +1,11 @@
 package com.lighthouse.android.data.repository
 
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
+import com.lighthouse.android.data.model.mapping.toUpdateFilterDTO
+import com.lighthouse.android.data.model.mapping.toUpdateProfileDTO
 import com.lighthouse.android.data.repository.datasource.ProfileRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.MyQuestionsVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.repository.ProfileRepository
@@ -24,7 +27,7 @@ class ProfileRepositoryImpl @Inject constructor(
             }
 
     override fun getMyQuestions(): Flow<Resource<List<MyQuestionsVO>>> =
-        datasource.getMyQuestions()
+        datasource.getMyQuestions(local.getUUID() ?: "")
             .map {
                 when (it) {
                     is Resource.Success -> Resource.Success(it.data!!.myQuestionList.map { questions ->
@@ -34,6 +37,16 @@ class ProfileRepositoryImpl @Inject constructor(
                     else -> Resource.Error(it.message ?: "No Message found")
                 }
             }
+
+    override fun updateProfile(newProfile: RegisterInfoVO): Resource<Boolean> {
+        datasource.updateProfile(local.getUUID() ?: "", newProfile.toUpdateProfileDTO())
+        return Resource.Success(true)
+    }
+
+    override fun updateFilter(newFilter: RegisterInfoVO): Resource<Boolean> {
+        datasource.updateFilter(local.getUUID() ?: "", newFilter.toUpdateFilterDTO())
+        return Resource.Success(true)
+    }
 
     override fun getUUID() = local.getUUID()
 }

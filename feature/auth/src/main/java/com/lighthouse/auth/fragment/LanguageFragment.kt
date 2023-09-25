@@ -35,10 +35,10 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
 
     private fun observeResult() {
         getResult.observe(viewLifecycleOwner) {
-            val result = it.getStringArrayListExtra("LanguageNameList")?.first()
+            val result = it.getStringExtra("language")
             val pos = it.getIntExtra("position", -1)
             if (pos != -1 && result != null) {
-                val code = it.getStringArrayListExtra("LanguageCodeList")?.first() ?: "language"
+                val code = it.getStringExtra("code") ?: ""
                 dataList[pos].name = result
                 dataList[pos].code = code
                 adapter.notifyItemChanged(pos)
@@ -104,7 +104,6 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
             requireContext(),
             Pair("selected", dataList.map { it.name }),
             Pair("position", position),
-            Pair("multiSelect", false)
         )
 
         resultLauncher.launch(intent)

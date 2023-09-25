@@ -1,41 +1,66 @@
 package com.lighthouse.android.home.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.lighthouse.android.common_ui.base.BaseViewModel
+import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.domain.entity.request.UploadFilterVO
+import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.ProfileVO
+import com.lighthouse.domain.usecase.GetFilterSettingUseCase
+import com.lighthouse.domain.usecase.GetLanguageFilterUseCase
 import com.lighthouse.domain.usecase.GetMatchedUserUseCase
+import com.lighthouse.domain.usecase.UploadFilterSettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getMatchedUserUseCase: GetMatchedUserUseCase,
-) : ViewModel() {
+    private val getLanguageFilterUseCase: GetLanguageFilterUseCase,
+    private val getFilterSettingUseCase: GetFilterSettingUseCase,
+    private val uploadFilterSettingUseCase: UploadFilterSettingUseCase,
+    dispatcherProvider: DispatcherProvider
+) : BaseViewModel(dispatcherProvider) {
     private var userProfiles = listOf<ProfileVO>()
-    private var next: Int? = null
+    var next: Int? = null
 
-    private val _matchedUserUiState =
-        MutableStateFlow<UiState>(UiState.Loading)
-    val matchedUserUiState: StateFlow<UiState> = _matchedUserUiState.asStateFlow()
+    private val _filter: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
+    val filter: StateFlow<UiState> = _filter.asStateFlow()
+
+    private var _upload: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val upload: StateFlow<Boolean> = _upload.asStateFlow()
 
     var page = 1
+
+    private lateinit var fetchJob: Job
+
     fun fetchNextPage(
         pageSize: Int? = null,
     ) {
-        viewModelScope.launch {
+        if (::fetchJob.isInitialized) {
+            fetchJob.cancel()
+        }
+        onIO {
             getMatchedUserUseCase.invoke(next, pageSize)
-                .catch {
-                    _matchedUserUiState.value = UiState.Error(it.message ?: StringSet.error_msg)
+                .onStart {
+                    _filter.value = UiState.Loading
                 }
-                .collect {
+                .catch {
+                    if (it is LighthouseException) {
+                        _filter.emit(UiState.Error(it))
+                    } else {
+                        _filter.emit(UiState.Error(StringSet.error_msg))
+                    }
+                }.collect {
                     when (it) {
                         is Resource.Success -> {
                             if (it.data!!.nextId == -1) {
@@ -43,11 +68,59 @@ class HomeViewModel @Inject constructor(
                             } else {
                                 next = it.data!!.nextId
                             }
-                            _matchedUserUiState.emit(UiState.Success(it.data!!.profile))
+                            _filter.value = UiState.Success(it.data!!.profile)
                         }
 
-                        is Resource.Error -> _matchedUserUiState.value =
-                            UiState.Error(it.message ?: StringSet.error_msg)
+                        is Resource.Error ->
+                            _filter.value = UiState.Error(it.message ?: StringSet.error_msg)
+                    }
+                }
+        }
+    }
+
+    fun getFilterFromServer() {
+        onIO {
+            getFilterSettingUseCase.invoke()
+                .catch {
+                    if (it is LighthouseException) {
+                        _filter.value = UiState.Error(it)
+                    } else {
+                        _filter.value = UiState.Error(StringSet.error_msg)
+                    }
+                }
+                .collect {
+                    when (it) {
+                        is Resource.Success -> {
+                            _filter.value = UiState.Success(it.data!!)
+                        }
+
+                        is Resource.Error -> {
+                            _filter.value = UiState.Error(it.message ?: StringSet.error_msg)
+                        }
+                    }
+                }
+        }
+    }
+
+    fun uploadFilterSetting(filter: UploadFilterVO) {
+        onIO {
+            uploadFilterSettingUseCase.invoke(filter)
+                .catch {
+                    if (it is LighthouseException) {
+                        _filter.value = (UiState.Error(it))
+                    } else {
+                        _filter.value = (UiState.Error(StringSet.error_msg))
+                    }
+                }
+                .collect {
+                    when (it) {
+                        is Resource.Success -> {
+                            _upload.value = it.data!!
+                        }
+
+                        is Resource.Error -> {
+                            _filter.value = UiState.Error(it.message ?: StringSet.error_msg)
+                        }
                     }
                 }
         }
@@ -58,5 +131,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getUserProfiles() = userProfiles
+
+    fun getLanguageFilter() = getLanguageFilterUseCase.invoke()
+
+    fun resetUploadState() {
+        _upload.value = false
+    }
 
 }

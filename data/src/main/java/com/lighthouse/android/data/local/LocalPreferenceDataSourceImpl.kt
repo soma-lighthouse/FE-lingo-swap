@@ -2,6 +2,8 @@ package com.lighthouse.android.data.local
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.google.gson.Gson
+import com.lighthouse.domain.entity.response.vo.LanguageVO
 import javax.inject.Inject
 
 class LocalPreferenceDataSourceImpl @Inject constructor(
@@ -67,6 +69,41 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
         return sharedPreferences.getString(ID_TOKEN, null)
     }
 
+    override fun clearToken() {
+        sharedPreferences.edit {
+            remove(ACCESS_TOKEN)
+            remove(ACCESS_TOKEN_EXPIRE)
+            remove(REFRESH_TOKEN)
+            remove(REFRESH_TOKEN_EXPIRE)
+            remove(ID_TOKEN)
+        }
+    }
+
+    override fun saveLanguageSetting(language: List<LanguageVO>) {
+        sharedPreferences.edit {
+            putString(LANGUAGE_SETTING, Gson().toJson(language))
+        }
+    }
+
+    override fun getLanguageSetting(): List<LanguageVO> {
+        val language = sharedPreferences.getString(LANGUAGE_SETTING, null)
+        return if (language != null) {
+            Gson().fromJson(language, Array<LanguageVO>::class.java).toList()
+        } else {
+            emptyList()
+        }
+    }
+
+    override fun saveCurrentRegion(key: String, value: String?) {
+        sharedPreferences.edit {
+            putString(key, value)
+        }
+    }
+
+    override fun getCurrentRegion(key: String): String? {
+        return sharedPreferences.getString(key, null)
+    }
+
     companion object {
         const val USER_ID = "com.lighthouse.lingo-swap.UUID"
         const val ACCESS_TOKEN = "com.lighthouse.lingo-swap.access-token"
@@ -74,5 +111,6 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
         const val ACCESS_TOKEN_EXPIRE = "com.lighthouse.lingo-swap.access-token-expire"
         const val REFRESH_TOKEN_EXPIRE = "com.lighthouse.lingo-swap.refresh-token-expire"
         const val ID_TOKEN = "com.lighthouse.lingo-swap.id-token"
+        const val LANGUAGE_SETTING = "com.lighthouse.lingo-swap.language-setting"
     }
 }

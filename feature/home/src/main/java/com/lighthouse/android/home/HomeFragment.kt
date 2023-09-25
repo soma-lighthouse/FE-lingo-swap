@@ -18,7 +18,6 @@ import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringB
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.android.home.adapter.makeAdapter
 import com.lighthouse.android.home.databinding.FragmentHomeBinding
 import com.lighthouse.android.home.util.homeTitle
@@ -33,8 +32,9 @@ class HomeFragment @Inject constructor() :
     BindingFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var adapter: SimpleListAdapter<ProfileVO, UserInfoTileBinding>
-    private val profileList = mutableListOf<ProfileVO>()
+    private var profileList = mutableListOf<ProfileVO>()
     private var next: Int? = null
+    private var loading = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,9 +42,6 @@ class HomeFragment @Inject constructor() :
         initScrollListener()
         initFab()
         initMatch()
-        if (profileList.isEmpty()) {
-            profileList.addAll(viewModel.getUserProfiles())
-        }
 
         lifecycleScope.launch {
             binding.tvHomeTitle.text =
@@ -53,19 +50,22 @@ class HomeFragment @Inject constructor() :
 
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        profileList = viewModel.getUserProfiles().toMutableList()
         adapter.submitList(profileList)
     }
 
     private fun initMatch() {
+        if (viewModel.getUserProfiles().isEmpty()) {
+            Log.d("TESTING", "EMPTY")
+            viewModel.fetchNextPage()
+            loading = true
+        }
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                if (profileList.isEmpty()) {
-                    viewModel.fetchNextPage()
-                    viewModel.matchedUserUiState.collect {
-                        render(it)
-                    }
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.filter.collect {
+                    render(it)
                 }
             }
         }
@@ -88,16 +88,19 @@ class HomeFragment @Inject constructor() :
 
             is UiState.Success<*> -> {
                 binding.rvHome.setVisible()
-                profileList.addAll(uiState.data as List<ProfileVO>)
+                if (uiState.data is List<*>) {
+                    profileList.addAll(uiState.data as List<ProfileVO>)
+                }
                 Log.d("MATCHING", uiState.data.toString())
                 Log.d("MATCHING", profileList.size.toString())
                 adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
                 binding.fabFilter.setVisible()
+                loading = false
             }
 
             is UiState.Error<*> -> {
-                context.toast(uiState.message.toString())
+                handleException(uiState)
                 binding.pbHomeLoading.setGone()
             }
         }
@@ -105,7 +108,7 @@ class HomeFragment @Inject constructor() :
 
 
     private fun initAdapter() {
-        adapter = makeAdapter() { userId ->
+        adapter = makeAdapter { userId ->
             mainNavigator.navigateToProfile(
                 context = requireContext(),
                 userId = Pair("userId", userId),
@@ -128,28 +131,18 @@ class HomeFragment @Inject constructor() :
 
                 val totalCount = recyclerView.adapter?.itemCount?.minus(3)
 
-                if (rvPosition == totalCount && viewModel.page != -1) {
-                    loadMoreProfiles()
+                if (rvPosition == totalCount && viewModel.page != -1 && !loading) {
+                    viewModel.fetchNextPage()
                 }
             }
         })
     }
 
-    private fun loadMoreProfiles() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.fetchNextPage()
-                viewModel.matchedUserUiState.collect {
-                    render(it)
-                }
-            }
-        }
-    }
-
     private fun initFab() {
         binding.fabFilter.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToFilterFragment())
-
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToFilterFragment()
+            )
         }
     }
 }

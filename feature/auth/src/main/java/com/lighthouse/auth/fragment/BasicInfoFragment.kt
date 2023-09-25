@@ -30,10 +30,11 @@ import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.auth.databinding.FragmentBasicInfoBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
+import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
-import com.lighthouse.domain.entity.response.vo.InterestVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -46,12 +47,14 @@ class BasicInfoFragment :
     BindingFragment<FragmentBasicInfoBinding>(com.lighthouse.auth.R.layout.fragment_basic_info),
     ImagePickerDialog.CameraDialogListener {
     private val viewModel: AuthViewModel by activityViewModels()
-    private val interestList = mutableListOf<InterestVO>(
-        InterestVO("여행", listOf("해변", "도시 여행"))
+    private val interestList = mutableListOf<UploadInterestVO>(
+        UploadInterestVO("여행", listOf("해변", "도시 여행"))
     )
-    private lateinit var interestAdapter: SimpleListAdapter<InterestVO, InterestListTileBinding>
+    private var interestListCode = mutableListOf<UploadInterestVO>()
+    private lateinit var interestAdapter: SimpleListAdapter<UploadInterestVO, InterestListTileBinding>
     private var selectedCountry: CountryVO? = CountryVO("kr", "한국")
     private lateinit var imagePicker: ImagePickerDialog
+    private lateinit var imageUri: Uri
 
     private val genderMap = mapOf(
         0 to "TMP",
@@ -101,62 +104,69 @@ class BasicInfoFragment :
 
 
     private fun getImagePicker() {
-        when (::imagePicker.isInitialized) {
-            false -> imagePicker = ImagePickerDialog.newInstance()
-            else -> {}
+        if (!::imagePicker.isInitialized) {
+            imagePicker = ImagePickerDialog.newInstance()
         }
-        when (!imagePicker.isAdded) {
-            true -> {
-                imagePicker.setListener(this)
-                imagePicker.show(
-                    requireActivity().supportFragmentManager, imagePicker.javaClass.simpleName
+        if (!imagePicker.isAdded) {
+            imagePicker.setListener(this)
+            imagePicker.show(
+                requireActivity().supportFragmentManager, imagePicker.javaClass.simpleName
 
-                )
-            }
-
-            else -> {}
+            )
         }
+
     }
 
     private fun observeImage() {
+        observePresignUrl()
         getResult.observe(viewLifecycleOwner) {
-            if (it.data != null) {
-                val result = Uri.parse(it.data.toString())
-                val fileName = getFileExtensionFromUri(result)
-                val file = File(fileName)
+            if (it.data == null) {
+                return@observe
+            }
+            imageUri = Uri.parse(it.data.toString())
 
-                val serverFileName = "/${viewModel.userId}/${file.name}"
-                try {
-                    Glide.with(this).load(result).fitCenter()
-                        .placeholder(R.drawable.placeholder)
-                        .error(R.drawable.question)
-                        .override(calSize(200f)).into(binding.ivProfileImg)
+            Glide.with(this).load(imageUri).fitCenter()
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.question)
+                .override(calSize(200f)).into(binding.ivProfileImg)
 
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                            viewModel.getPreSignedURL(serverFileName)
-                            viewModel.result.collect { url ->
-                                when (url) {
-                                    is UiState.Success<*> -> {
-                                        viewModel.registerInfo.profileImageUri = serverFileName
-                                        viewModel.profileUrl = url.data.toString()
-                                        viewModel.profilePath = result.toString()
-                                    }
+            viewModel.getPreSignedUrl(getFileName(imageUri))
+        }
+    }
 
-                                    is UiState.Loading -> {
-                                        Log.d("PICTURE", "uploading!")
-                                    }
+    private fun getFileName(uri: Uri): String {
+        val fileName = getFileExtensionFromUri(uri)
+        val file = File(fileName)
+        return "/${viewModel.userId}/${file.name}"
+    }
 
-                                    else -> {
-                                        delay(5000)
-                                        viewModel.getPreSignedURL(serverFileName)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e("CAMERA ERROR", e.message.toString())
+    private fun observePresignUrl() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.result.drop(1).collect {
+                    render(it)
+                }
+            }
+        }
+    }
+
+    private suspend fun render(uiState: UiState) {
+        val serverFileName = getFileName(imageUri)
+        when (uiState) {
+            is UiState.Success<*> -> {
+                viewModel.registerInfo.profileImageUri = serverFileName
+                viewModel.profileUrl = uiState.data.toString()
+                viewModel.profilePath = imageUri.toString()
+            }
+
+            is UiState.Loading -> {
+                Log.d("PICTURE", "uploading!")
+            }
+
+            else -> {
+                repeat(3) {
+                    delay(5000)
+                    viewModel.getPreSignedUrl(serverFileName)
                 }
             }
         }
@@ -222,7 +232,7 @@ class BasicInfoFragment :
                     birthday = convertToStandardDateFormat(binding.etBirthday.text.toString())
                     gender = genderMap[binding.spinnerGender.selectedItemPosition]
                     region = selectedCountry?.code
-                    preferredInterests = interestList
+                    preferredInterests = interestListCode
                     description = binding.etIntroduction.text.toString()
                 }
 
@@ -253,17 +263,17 @@ class BasicInfoFragment :
             binding.spinnerGender, !genderIsEmpty, getString(R.string.invalid_null)
         )
 
-//        val nationIsEmpty = binding.btnNation.text.toString().isEmpty()
-//        setErrorAndBackground(
-//            binding.btnNation, !nationIsEmpty, getString(R.string.invalid_null)
-//        )
+        val nationIsEmpty = binding.btnNation.text.toString().isEmpty()
+        setErrorAndBackground(
+            binding.btnNation, !nationIsEmpty, getString(R.string.invalid_null)
+        )
 
-        val interestIsEmpty = interestList.isEmpty()
+        val interestIsEmpty = interestListCode.isEmpty()
         setErrorAndBackground(
             binding.collapseInterest, !interestIsEmpty, getString(R.string.invalid_null)
         )
 
-        return emailIsValid && birthdayIsValid && !nameIsEmpty && !genderIsEmpty && !interestIsEmpty
+        return emailIsValid && birthdayIsValid && !nameIsEmpty && !genderIsEmpty && !interestIsEmpty && !nationIsEmpty
     }
 
     private fun setErrorAndBackground(
@@ -313,7 +323,7 @@ class BasicInfoFragment :
             val hash = hashMapOf<String, List<String>>()
 
             interestList.forEach {
-                hash[it.category] = it.interest
+                hash[it.category] = it.interests
             }
             val intent = mainNavigator.navigateToInterest(
                 requireContext(),
@@ -352,19 +362,31 @@ class BasicInfoFragment :
         getResult.observe(viewLifecycleOwner) {
             val result = it.intentSerializable("InterestList", HashMap::class.java)
             if (result != null) {
+                val codes = it.intentSerializable("InterestListCode", HashMap::class.java)
                 binding.tvInterestNull.setGone()
                 interestList.clear()
                 for ((key, value) in result) {
-                    interestList.add(InterestVO(key as String, value as List<String>))
+                    value as List<String>
+                    if (value.isNotEmpty()) {
+                        interestList.add(UploadInterestVO(key as String, value))
+                    }
                 }
-
+                uploadInterest(codes as HashMap<String, List<String>>)
                 interestAdapter.submitList(interestList)
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-//        cameraExecutor.shutdown()
+    private fun uploadInterest(codes: HashMap<String, List<String>>?) {
+        val tmp = mutableListOf<UploadInterestVO>()
+        if (codes != null) {
+            for ((key, value) in codes) {
+                value as List<String>
+                if (value.isNotEmpty()) {
+                    tmp.add(UploadInterestVO(key, value))
+                }
+            }
+        }
+        interestListCode = tmp
     }
 }

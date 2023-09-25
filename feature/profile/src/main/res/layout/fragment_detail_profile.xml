@@ -16,12 +16,16 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 tools:context=".view.DetailProfileFragment">
 
                 <com.google.android.material.appbar.MaterialToolbar
@@ -39,7 +43,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_small"
                     android:background="@drawable/save"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/tv_name_title"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tv_name_title" />
@@ -80,10 +83,11 @@
 
                 <View
                     android:id="@+id/click_profile"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/iv_profile_img"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_profile_img" />
 
                 <TextView
@@ -129,7 +133,6 @@
                     android:background="@drawable/edit_box"
                     android:enabled="false"
                     android:padding="10dp"
-                    android:text="@{item.description}"
                     android:textColor="#7b7b7b"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -171,10 +174,9 @@
                 <View
                     android:id="@+id/line2"
                     android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_margin="20dp"
+                    android:layout_height="4dp"
                     android:layout_marginTop="20dp"
-                    android:background="#f5f5f5"
+                    android:background="@color/very_light_pink"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.4"
                     app:layout_constraintStart_toStartOf="parent"
@@ -191,13 +193,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/line2" />
 
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_edit_language"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/side_arrow"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/tv_language_title"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tv_language_title" />
@@ -206,7 +208,6 @@
                     android:id="@+id/click_language"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/tv_language_title"
                     app:layout_constraintTop_toTopOf="@id/tv_language_title" />
 
@@ -230,6 +231,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/chip_language" />
+
 
                 <TextView
                     android:id="@+id/tv_country_title"
@@ -272,9 +274,10 @@
                 <View
                     android:id="@+id/line4"
                     android:layout_width="0dp"
-                    android:layout_height="4dp"
+                    android:layout_height="1dp"
+                    android:layout_margin="20dp"
                     android:layout_marginTop="20dp"
-                    android:background="@color/very_light_pink"
+                    android:background="#f5f5f5"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/chip_country" />
@@ -308,6 +311,14 @@
 
                         <View
                             android:id="@+id/click_interest"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_interest"
+                            app:layout_constraintTop_toTopOf="@id/tv_interest" />
+
+                        <View
+                            android:id="@+id/click_interest2"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:visibility="gone"
@@ -365,6 +376,20 @@
 
                         </com.google.android.material.card.MaterialCardView>
 
+                        <androidx.constraintlayout.widget.Group
+                            android:id="@+id/interest_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            app:constraint_referenced_ids="click_interest2, btn_interest" />
+
+                        <androidx.constraintlayout.widget.Group
+                            android:id="@+id/interest_fold_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:constraint_referenced_ids="click_interest, btn_fold_interest" />
+
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -372,7 +397,15 @@
                     android:id="@+id/group1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="visible"
                     app:constraint_referenced_ids="tv_occupation_title,line1,tv_nation,chip_language,tv_country_title,tv_description,iv_profile_img,line3,line2,iv_flag,chip_country,line4,tv_occupation,tv_profile_name,tv_name_title,tv_language_title,cardView" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/edit_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="btn_save, click_profile, click_country, click_language, btn_edit_country, btn_edit_language" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
@@ -385,7 +418,7 @@
             android:background="@color/white" />
 
         <Button
-            android:id="@+id/btn_send"
+            android:id="@+id/btn_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -405,17 +438,6 @@
             android:layout_centerInParent="true"
             android:visibility="gone" />
 
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/edit_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="btn_save, click_profile, click_country, click_interest, click_language, btn_interest, btn_edit_country, btn_edit_language, tv_description" />
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/profile_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="btn_fold_interest" />
 
     </RelativeLayout>
 </layout>

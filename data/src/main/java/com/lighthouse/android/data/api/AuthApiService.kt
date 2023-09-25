@@ -13,6 +13,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Query
 import retrofit2.http.Url
 
 interface AuthApiService {
@@ -30,8 +31,9 @@ interface AuthApiService {
         @Body imageName: Map<String, String>,
     ): Response<BaseResponse<PreSignedURL>>
 
-    @POST("api/v1/user")
+    @POST("api/v1/auth/signup")
     suspend fun registerUser(
+        @Query("id_token") idToken: String,
         @Body info: RegisterInfoDTO,
     ): Response<BaseResponse<UserTokenDTO>>
 
@@ -41,6 +43,8 @@ interface AuthApiService {
         @Body profilePath: RequestBody,
     ): Response<Void>
 
-    @POST("api/v1/auth/login/google")
-    suspend fun postGoogleLogin(): Response<BaseResponse<UserTokenDTO>>
+    @POST("api/v1/auth/login")
+    suspend fun postGoogleLogin(
+        @Query("id_token") idToken: String
+    ): Response<BaseResponse<UserTokenDTO>>
 }

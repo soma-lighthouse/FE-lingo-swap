@@ -29,9 +29,12 @@ class AuthRemoteDataSourceImpl @Inject constructor(
         emit(changeResult(api.getCountryList()))
     }
 
-    override fun registerUser(info: RegisterInfoDTO): Flow<Resource<UserTokenDTO>> =
+    override fun registerUser(
+        idToken: String?,
+        info: RegisterInfoDTO
+    ): Flow<Resource<UserTokenDTO>> =
         flow {
-            emit(changeResult(api.registerUser(info)))
+            emit(changeResult(api.registerUser(idToken ?: "", info)))
         }
 
 
@@ -41,15 +44,16 @@ class AuthRemoteDataSourceImpl @Inject constructor(
 
     override fun uploadImg(url: String, profilePath: RequestBody): Flow<Resource<Boolean>> =
         flow {
-            if (api.uploadImg(url, profilePath).isSuccessful) {
+            val response = api.uploadImg(url, profilePath)
+            if (response.isSuccessful) {
                 emit(Resource.Success(true))
             } else {
-                emit(Resource.Error("Image Upload failed"))
+                throw errorHandler(response)
             }
         }
 
-    override fun postGoogleLogin(): Flow<Resource<UserTokenDTO>> =
+    override fun postGoogleLogin(idToken: String?): Flow<Resource<UserTokenDTO>> =
         flow {
-            emit(changeResult(api.postGoogleLogin()))
+            emit(changeResult(api.postGoogleLogin(idToken ?: "")))
         }
 }

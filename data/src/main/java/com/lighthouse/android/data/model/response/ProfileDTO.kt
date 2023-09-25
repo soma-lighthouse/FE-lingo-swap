@@ -5,20 +5,20 @@ import com.google.gson.annotations.SerializedName
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 
 data class ProfileDTO(
-    @SerializedName("id")
+    @SerializedName("uuid")
     val id: String?,
     @SerializedName("description")
     val description: String?,
     @SerializedName("profileImageUri")
     val profileImageUri: String?,
-    @SerializedName("languages")
+    @SerializedName("usedLanguages")
     val languages: List<LanguageDTO>?,
     @SerializedName("name")
     val name: String?,
     @SerializedName("region")
     val region: String?,
     @SerializedName("preferredCountries")
-    val countries: List<String>?,
+    val countries: List<CountryDTO>?,
     @SerializedName("preferredInterests")
     val interests: List<InterestDTO>?,
 ) {
@@ -30,7 +30,7 @@ data class ProfileDTO(
             languages = languages?.map { it.toVO() } ?: listOf(),
             name = name ?: "",
             region = region ?: "",
-            countries = countries ?: listOf(),
+            countries = countries?.map { it.toVO() } ?: listOf(),
             interests = interests?.map { it.toVO() } ?: listOf()
         )
 }

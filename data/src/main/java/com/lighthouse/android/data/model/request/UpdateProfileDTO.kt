@@ -1,6 +1,6 @@
 package com.lighthouse.android.data.model.request
 
-data class RegisterInfoDTO(
+data class UpdateProfileDTO(
     val uuid: String,
     val name: String,
     val birthday: String,
@@ -9,7 +9,4 @@ data class RegisterInfoDTO(
     val description: String,
     val region: String,
     val profileImageUri: String,
-    val preferredInterests: List<UploadInterestDTO>,
-    val usedLanguages: List<Map<String, Any>>,
-    val preferredCountries: List<String>,
 )

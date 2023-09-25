@@ -20,10 +20,10 @@ import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.intentSerializable
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.ActivityInterestBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
+import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -31,11 +31,13 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.activity_interest) {
     private val viewModel: AuthViewModel by viewModels()
-    private val checkedList = MutableLiveData<HashMap<String, List<String>>>(hashMapOf())
-    private lateinit var adapter: SimpleListAdapter<InterestVO, InterestListTileBinding>
-    private val selectedList: HashMap<String, List<String>> = hashMapOf()
+    private lateinit var adapter: SimpleListAdapter<UploadInterestVO, InterestListTileBinding>
 
-    private var interestList = listOf<InterestVO>()
+    private val selectedList = MutableLiveData<HashMap<String, List<String>>>(hashMapOf())
+    private val selectedListCode: HashMap<String, List<String>> = hashMapOf()
+
+    private var interestList = mutableListOf<UploadInterestVO>()
+    private var interestListCode = mutableListOf<UploadInterestVO>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +52,7 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
     private fun initSelect() {
         val result = intent.intentSerializable("SelectedList", HashMap::class.java)
         if (result != null) {
-            for ((key, value) in result) {
-                selectedList[key as String] = value as List<String>
-            }
-            checkedList.value = result as HashMap<String, List<String>>
+            selectedList.value = result as HashMap<String, List<String>>
         }
     }
 
@@ -80,15 +79,30 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
                 binding.rvInterestList.setVisible()
                 binding.btnApply.setVisible()
                 Log.d("TESTING", uiState.data.toString())
-                interestList = uiState.data as List<InterestVO>
+                updateInterestList(uiState.data as List<InterestVO>)
                 adapter.submitList(interestList)
                 binding.pbInterest.setGone()
             }
 
             is UiState.Error<*> -> {
-                applicationContext.toast(uiState.message.toString())
+                handleException(uiState)
                 binding.pbInterest.setGone()
             }
+        }
+    }
+
+    private fun updateInterestList(interest: List<InterestVO>) {
+        interest.forEach {
+            interestListCode.add(
+                UploadInterestVO(
+                    it.category.code,
+                    it.interests.map { interest -> interest.code })
+            )
+            interestList.add(
+                UploadInterestVO(
+                    it.category.name,
+                    it.interests.map { interest -> interest.name })
+            )
         }
     }
 
@@ -96,7 +110,7 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
         adapter = makeAdapter(
             checkable = true,
             hide = true,
-            selectedList
+            selectedList.value ?: hashMapOf()
         ) { checkedList: List<Int>, pos: Int ->
             updateChip(checkedList, pos)
         }
@@ -113,9 +127,9 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
     }
 
     private fun initChip() {
-        checkedList.observe(this) {
+        selectedList.observe(this) {
             binding.chipResult.removeAllViews()
-            val interests = checkedList.value?.values?.flatten()
+            val interests = selectedList.value?.values?.flatten()
             val inflater = LayoutInflater.from(applicationContext)
             interests?.forEach {
                 val chip = inflater.inflate(
@@ -131,7 +145,8 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
     private fun initApply() {
         binding.btnApply.setOnClickListener {
             val intent = Intent()
-            intent.putExtra("InterestList", checkedList.value)
+            intent.putExtra("InterestList", selectedList.value)
+            intent.putExtra("InterestListCode", selectedListCode)
             setResult(RESULT_OK, intent)
             finish()
         }
@@ -143,11 +158,20 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
         }.toList()
 
         val category = interestList[position].category
-        val newMap = checkedList.value?.toMutableMap() ?: mutableMapOf()
+        val newMap = selectedList.value?.toMutableMap() ?: mutableMapOf()
         newMap[category] = result
         val convert = HashMap(newMap)
-        checkedList.value = convert
-        checkedList.postValue(convert)
+        selectedList.postValue(convert)
+
+        val code = interestListCode[position].category
+        val tmp = mutableListOf<String>()
+        result.forEach {
+            val index = interestList[position].interests.indexOf(it)
+            if (index != -1) {
+                tmp.add(interestListCode[position].interests[index])
+            }
+        }
+        selectedListCode[code] = tmp
     }
 }
 

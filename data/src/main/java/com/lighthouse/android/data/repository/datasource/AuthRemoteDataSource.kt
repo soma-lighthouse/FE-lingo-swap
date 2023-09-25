@@ -17,11 +17,11 @@ interface AuthRemoteDataSource {
 
     fun getCountryList(): Flow<Resource<CountryForm>>
 
-    fun registerUser(info: RegisterInfoDTO): Flow<Resource<UserTokenDTO>>
+    fun registerUser(idToken: String?, info: RegisterInfoDTO): Flow<Resource<UserTokenDTO>>
 
     fun getPreSigned(fileName: String): Flow<Resource<PreSignedURL>>
 
     fun uploadImg(url: String, profilePath: RequestBody): Flow<Resource<Boolean>>
 
-    fun postGoogleLogin(): Flow<Resource<UserTokenDTO>>
+    fun postGoogleLogin(idToken: String?): Flow<Resource<UserTokenDTO>>
 }
