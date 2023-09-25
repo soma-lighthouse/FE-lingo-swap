@@ -42,7 +42,8 @@
 
         <activity
             android:name="com.lighthouse.profile.view.DetailProfileActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name="com.lighthouse.android.chats.view.CustomChatActivity"

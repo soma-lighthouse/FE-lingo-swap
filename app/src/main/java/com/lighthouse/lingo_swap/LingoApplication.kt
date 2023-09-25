@@ -1,8 +1,11 @@
 package com.lighthouse.lingo_swap
 
 import android.app.Application
+import android.content.Intent
+import android.os.Process
 import android.util.Log
 import com.lighthouse.android.chats.uikit.CustomFragmentFactory
+import com.lighthouse.auth.AuthActivity
 import com.sendbird.android.SendbirdChat
 import com.sendbird.android.exception.SendbirdException
 import com.sendbird.android.handler.InitResultHandler
@@ -12,6 +15,7 @@ import com.sendbird.uikit.adapter.SendbirdUIKitAdapter
 import com.sendbird.uikit.interfaces.UserInfo
 import com.sendbird.uikit.model.configurations.UIKitConfig
 import dagger.hilt.android.HiltAndroidApp
+import kotlin.system.exitProcess
 
 @HiltAndroidApp
 class LingoApplication : Application() {
@@ -19,6 +23,19 @@ class LingoApplication : Application() {
         super.onCreate()
         initSendBirdUI()
         initSendBirdChat()
+
+//        Thread.setDefaultUncaughtExceptionHandler { _, _ -> caughtException() }
+    }
+
+    private fun caughtException() {
+        val intent = Intent(this, AuthActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+        startActivity(intent)
+
+        Process.killProcess(Process.myPid())
+        exitProcess(-1)
     }
 
     private fun initSendBirdChat() {
