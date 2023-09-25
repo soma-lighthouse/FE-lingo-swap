@@ -3,7 +3,7 @@ package com.lighthouse.domain.entity.response.vo
 
 data class BoardQuestionVO(
     val questionId: Int,
-    val userId: String,
+    val uuid: String,
     var categoryId: Int,
     val profileImageUri: String,
     val name: String,

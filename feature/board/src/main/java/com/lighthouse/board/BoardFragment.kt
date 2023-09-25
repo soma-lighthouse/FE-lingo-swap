@@ -22,7 +22,6 @@ import com.lighthouse.android.common_ui.util.disable
 import com.lighthouse.android.common_ui.util.enable
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.board.adapter.makeAdapter
 import com.lighthouse.board.databinding.FragmentBoardBinding
 import com.lighthouse.board.viewmodel.BoardViewModel
@@ -45,11 +44,12 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         initFab()
         initScrollListener()
         initAdapter()
+        loadMoreProfiles()
     }
 
     override fun onResume() {
         super.onResume()
-        initBoard()
+        viewModel.fetchState(tabPosition, null)
     }
 
     private fun initSpinner() {
@@ -78,7 +78,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                 questionList.clear()
                 tabPosition = tab?.position ?: 0
                 viewModel.next[tabPosition] = null
-                initBoard()
+                viewModel.fetchState(tabPosition, null)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -92,10 +92,10 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     }
 
     private fun initAdapter() {
-        adapter = makeAdapter({ questionId, userId ->
-            viewModel.updateLike(questionId, userId)
-        }, { questionId, userId ->
-            viewModel.cancelLike(questionId, userId)
+        adapter = makeAdapter({ questionId ->
+            viewModel.updateLike(questionId)
+        }, { questionId ->
+            viewModel.cancelLike(questionId)
         }, { userId ->
             mainNavigator.navigateToProfile(
                 requireContext(),
@@ -121,7 +121,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                 val totalCount = recyclerView.adapter?.itemCount?.minus(1)
 
                 if (rvPosition == totalCount && viewModel.page != -1) {
-                    loadMoreProfiles()
+                    viewModel.fetchState(tabPosition, null)
                 }
             }
         })
@@ -130,7 +130,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private fun loadMoreProfiles() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.fetchState(tabPosition, null).collect {
+                viewModel.result.collect {
                     render(it)
                 }
             }
@@ -159,19 +159,8 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             }
 
             is UiState.Error<*> -> {
-                context.toast(uiState.message.toString())
+                handleException(uiState)
                 binding.pbBoardLoading.setGone()
-            }
-        }
-    }
-
-    private fun initBoard() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            if (questionList.isEmpty()) {
-                viewModel.fetchState(tabPosition, null).collect {
-                    render(it)
-                }
-                
             }
         }
     }

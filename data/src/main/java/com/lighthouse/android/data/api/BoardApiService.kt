@@ -23,12 +23,11 @@ interface BoardApiService {
     @POST("api/v1/question")
     suspend fun uploadQuestion(
         @Body info: UploadQuestionDTO,
-    ): Response<BaseResponse<String>>
+    ): Response<BaseResponse<Void>>
 
     @POST("api/v1/question/{questionId}/like")
     suspend fun updateLike(
         @Path("questionId") questionId: Int,
-        @Body memberId: Map<String, String>,
     ): Response<Void>
 
 

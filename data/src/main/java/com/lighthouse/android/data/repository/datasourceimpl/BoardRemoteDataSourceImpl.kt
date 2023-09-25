@@ -23,25 +23,32 @@ class BoardRemoteDataSourceImpl @Inject constructor(
 
     override fun uploadQuestion(
         info: UploadQuestionDTO,
-    ): Flow<Resource<String>> = flow {
-        emit(changeResult(api.uploadQuestion(info)))
+    ): Flow<Resource<Boolean>> = flow {
+        val response = api.uploadQuestion(info)
+        if (response.isSuccessful) {
+            emit(Resource.Success(true))
+        } else {
+            throw errorHandler(response)
+        }
     }
 
-    override fun updateLike(questionId: Int, userId: Map<String, String>): Flow<Resource<Boolean>> =
+    override fun updateLike(questionId: Int): Flow<Resource<Boolean>> =
         flow {
-            if (api.updateLike(questionId, userId).isSuccessful) {
+            val response = api.updateLike(questionId)
+            if (response.isSuccessful) {
                 emit(Resource.Success(true))
             } else {
-                emit(Resource.Error("Like failed"))
+                throw errorHandler(response)
             }
         }
 
     override fun cancelLike(questionId: Int): Flow<Resource<Boolean>> =
         flow {
-            if (api.cancelLike(questionId).isSuccessful) {
+            val response = api.cancelLike(questionId)
+            if (response.isSuccessful) {
                 emit(Resource.Success(true))
             } else {
-                emit(Resource.Error("Cancel failed"))
+                throw errorHandler(response)
             }
         }
 

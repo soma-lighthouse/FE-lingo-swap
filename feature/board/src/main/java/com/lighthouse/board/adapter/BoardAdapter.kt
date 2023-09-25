@@ -12,8 +12,8 @@ import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 
 fun makeAdapter(
-    likeListener: (questionId: Int, userId: String) -> Unit,
-    cancelListener: (questionId: Int, userId: String) -> Unit,
+    likeListener: (questionId: Int) -> Unit,
+    cancelListener: (questionId: Int) -> Unit,
     navigateToProfile: (userId: String) -> Unit,
 ) =
     SimpleListAdapter<BoardQuestionVO, QuestionTileBinding>(
@@ -51,16 +51,16 @@ fun makeAdapter(
                 if (isChecked) {
                     val num = binding.tvLike.text.toString().toInt()
                     binding.tvLike.text = num.plus(1).toString()
-                    likeListener(item.questionId, item.userId)
+                    likeListener(item.questionId)
                 } else {
                     val num = binding.tvLike.text.toString().toInt()
                     binding.tvLike.text = num.minus(1).toString()
-                    cancelListener(item.questionId, item.userId)
+                    cancelListener(item.questionId)
                 }
             }
 
             binding.ivProfile.setOnClickListener {
-                navigateToProfile(item.userId)
+                navigateToProfile(item.uuid)
             }
 
             binding.setVariable(BR.item, item)

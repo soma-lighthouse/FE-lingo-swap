@@ -1,6 +1,7 @@
 package com.lighthouse.android.data.repository
 
 import android.util.Log
+import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.request.UploadQuestionDTO
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
@@ -16,6 +17,7 @@ import javax.inject.Inject
 
 class BoardRepositoryImpl @Inject constructor(
     private val datasource: BoardRemoteDataSource,
+    private val localPreferenceDataSource: LocalPreferenceDataSource
 ) : BoardRepository {
     override fun getBoardQuestions(
         category: Int,
@@ -32,10 +34,10 @@ class BoardRepositoryImpl @Inject constructor(
 
     override fun uploadQuestion(
         info: UploadQuestionVO,
-    ): Flow<Resource<String>> =
+    ): Flow<Resource<Boolean>> =
         datasource.uploadQuestion(
             UploadQuestionDTO(
-                userId = info.userId,
+                uuid = localPreferenceDataSource.getUUID().toString(),
                 categoryId = info.categoryId,
                 content = info.content
             )
@@ -46,9 +48,9 @@ class BoardRepositoryImpl @Inject constructor(
             }
         }
 
-    override fun updateLike(questionId: Int, userId: String) {
+    override fun updateLike(questionId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            datasource.updateLike(questionId, mapOf("userId" to userId)).collect {
+            datasource.updateLike(questionId).collect {
                 when (it) {
                     is Resource.Success ->
                         Log.d("LIKE", "Success")
@@ -59,7 +61,7 @@ class BoardRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun cancelLike(questionId: Int, userId: String) {
+    override fun cancelLike(questionId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             datasource.cancelLike(questionId).collect {
                 when (it) {
