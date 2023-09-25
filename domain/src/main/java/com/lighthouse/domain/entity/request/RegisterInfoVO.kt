@@ -1,7 +1,5 @@
 package com.lighthouse.domain.entity.request
 
-import com.lighthouse.domain.entity.response.vo.InterestVO
-
 data class RegisterInfoVO(
     var uuid: String? = null,
     var name: String? = null,
@@ -9,7 +7,7 @@ data class RegisterInfoVO(
     var email: String? = null,
     var gender: String? = null,
     var region: String? = null,
-    var preferredInterests: List<InterestVO>? = null,
+    var preferredInterests: List<UploadInterestVO>? = null,
     var description: String? = null,
     var languages: List<Map<String, Any>>? = null,
     var preferredCountries: List<String>? = null,

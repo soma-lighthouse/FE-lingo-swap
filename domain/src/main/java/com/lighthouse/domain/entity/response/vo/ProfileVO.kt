@@ -7,6 +7,6 @@ data class ProfileVO(
     val languages: List<LanguageVO>,
     val name: String,
     val region: String,
-    val countries: List<String>,
+    val countries: List<CountryVO>,
     val interests: List<InterestVO>,
 )
