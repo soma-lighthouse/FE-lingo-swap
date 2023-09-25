@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. -->
+
     <style name="Theme.LingoTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/main</item>
@@ -19,6 +20,5 @@
         <item name="android:includeFontPadding">false</item>
 
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
-
     </style>
 </resources>
