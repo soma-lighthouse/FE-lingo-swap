@@ -39,7 +39,6 @@
     <string name="hint_search">검색</string>
     <string name="setting">설정</string>
 
-    <string name="turn_off_alarm">알람끄기</string>
     <string name="type_here">Type here...</string>
     <string name="enter_info">기본정보를 입력하세요 (1/3)</string>
     <string name="basic_info">기본 정보</string>
@@ -88,6 +87,25 @@
     <string name="send_msg">채팅 시작하기</string>
     <string name="edit">편집</string>
 
+    <string name="select_language">최대 5개 언어를 선택하세요</string>
+    <string name="add_language">언어 추가</string>
     <string name="exit_title">나가기</string>
     <string name="exit_body">정말로 나가시겠습니까? 정보는 저장되지 않습니다</string>
+    <string name="filter_error">필터 한개당 최소 한개 아이템을 지정해주세요</string>
+    <string name="error_title">에러 발생!</string>
+    <string name="logout">로그아웃</string>
+    <string name="logout_title">로그아웃</string>
+    <string name="logout_body">정말로 로그아웃 하시겠습니까?</string>
+
+    <string name="ok">확인</string>
+    <string name="cancel">취소</string>
+
+    <string name="profile_description">자기소개</string>
+    <string name="upload_error">업로드 에러</string>
+
+    <string name="leave_channel">채널 나가기</string>
+    <string name="turn_off_alarm">알람끄기</string>
+    <string name="turn_on_alarm">알람켜기</string>
+
+    <string name="upload_success">업로드 성공</string>
 </resources>

@@ -7,4 +7,6 @@ object Constant {
     const val Image_Request_Code = 7
     const val UUID_ACCESS_TOKEN = "com.lighthouse.lingo-swap.UUID"
     const val MAX_SELECTION = 5
+    const val FILTER = 1
+    const val PROFILE = 2
 }
