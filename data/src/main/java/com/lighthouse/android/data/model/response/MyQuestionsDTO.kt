@@ -6,16 +6,25 @@ import com.lighthouse.domain.entity.response.vo.MyQuestionsVO
 data class MyQuestionsDTO(
     @SerializedName("category")
     val categoryId: Int?,
-    @SerializedName("myQuestions")
-    val questions: List<BoardQuestionDTO>?,
+    @SerializedName("questionId")
+    val questionId: Int?,
+    @SerializedName("contents")
+    val contents: String?,
+    @SerializedName("likes")
+    val likes: Int?,
+    @SerializedName("createAt")
+    val createAt: String?,
 ) {
     fun toVO() = MyQuestionsVO(
         categoryId = categoryId ?: -1,
-        questions = questions?.map { it.toVO() } ?: listOf()
+        questionId = questionId ?: -1,
+        contents = contents ?: " ",
+        likes = likes ?: -1,
+        createAt = createAt ?: " "
     )
 }
 
 data class MyQuestionResponse(
-    @SerializedName("myQuestionList")
+    @SerializedName("myQuestions")
     val myQuestionList: List<MyQuestionsDTO>,
 )

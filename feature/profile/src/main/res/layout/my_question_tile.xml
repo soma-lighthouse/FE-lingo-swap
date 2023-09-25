@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.lighthouse.domain.entity.response.vo.BoardQuestionVO" />
+            type="com.lighthouse.domain.entity.response.vo.MyQuestionsVO" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -40,7 +40,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_small"
                 android:includeFontPadding="false"
-                android:text="@{item.createAt}"
                 app:layout_constraintBottom_toBottomOf="@id/tv_category"
                 app:layout_constraintStart_toEndOf="@id/tv_category"
                 app:layout_constraintTop_toTopOf="@id/tv_category"
@@ -64,7 +63,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/margin_small"
                 android:includeFontPadding="false"
-                android:text="@{item.like}"
                 android:textColor="@color/main"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_category"
                 app:layout_constraintEnd_toEndOf="parent"

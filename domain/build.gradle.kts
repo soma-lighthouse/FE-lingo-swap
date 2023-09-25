@@ -12,4 +12,8 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
     implementation("javax.inject:javax.inject:1")
+
+    dependencies {
+        api(project(mapOf("path" to ":lighthousei18n")))
+    }
 }
