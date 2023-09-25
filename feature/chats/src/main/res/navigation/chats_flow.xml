@@ -6,6 +6,12 @@
 
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.lighthouse.android.chats.ChatFragment" />
+        android:name="com.lighthouse.android.chats.ChatFragment">
+        <argument
+            android:name="channelUrl"
+            android:defaultValue=""
+            app:argType="string" />
+
+    </fragment>
 
 </navigation>

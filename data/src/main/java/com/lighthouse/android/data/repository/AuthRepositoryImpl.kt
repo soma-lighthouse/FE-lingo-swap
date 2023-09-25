@@ -98,6 +98,7 @@ class AuthRepositoryImpl @Inject constructor(
                 is Resource.Success -> {
                     val mapping = it.data!!.toVO()
                     saveTokens(mapping.tokens, mapping.uuid)
+                    localPreferenceDataSource.saveUserName(mapping.userName)
                     Resource.Success(true)
                 }
 

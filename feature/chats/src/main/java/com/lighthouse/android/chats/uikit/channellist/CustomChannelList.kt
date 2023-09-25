@@ -14,6 +14,7 @@ import com.sendbird.uikit.vm.ChannelListViewModel
 
 
 open class CustomChannelList : ChannelListFragment() {
+
     override fun onCreateModule(args: Bundle): ChannelListModule {
         val module: ChannelListModule = super.onCreateModule(args)
 
@@ -33,12 +34,7 @@ open class CustomChannelList : ChannelListFragment() {
                 if (e != null) {
                     // TODO("error handling")
                 } else {
-                    val intent = ChannelActivity.newIntentFromCustomActivity(
-                        requireContext(),
-                        CustomChatActivity::class.java,
-                        channel.url
-                    )
-                    startActivity(intent)
+                    joinChannel(channel.url)
                 }
             }
         }
@@ -97,6 +93,15 @@ open class CustomChannelList : ChannelListFragment() {
             }
         }
         builder.show()
+    }
+
+    protected fun joinChannel(channelUrl: String) {
+        val intent = ChannelActivity.newIntentFromCustomActivity(
+            requireContext(),
+            CustomChatActivity::class.java,
+            channelUrl
+        )
+        startActivity(intent)
     }
 
 

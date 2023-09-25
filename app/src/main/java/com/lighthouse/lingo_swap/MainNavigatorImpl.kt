@@ -1,6 +1,7 @@
 package com.lighthouse.lingo_swap
 
 import android.content.Context
+import android.content.Intent
 import com.lighthouse.android.common_ui.util.buildIntent
 import com.lighthouse.android.common_ui.util.navigateActivity
 import com.lighthouse.auth.AuthActivity
@@ -12,8 +13,10 @@ import com.lighthouse.navigation.MainNavigator
 import com.lighthouse.profile.view.DetailProfileActivity
 
 class MainNavigatorImpl : MainNavigator {
-    override fun navigateToMain(context: Context) {
-        context.navigateActivity<MainActivity>()
+    override fun navigateToMain(context: Context, newChat: Pair<String, Boolean>): Intent {
+        val intent = context.buildIntent<MainActivity>(newChat)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        return intent
     }
 
     override fun navigateToProfile(

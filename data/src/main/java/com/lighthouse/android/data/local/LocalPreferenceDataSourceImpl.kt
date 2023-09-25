@@ -104,8 +104,29 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
         return sharedPreferences.getString(key, null)
     }
 
+    override fun saveUserName(name: String) {
+        sharedPreferences.edit {
+            putString(USER_NAME, name)
+        }
+    }
+
+    override fun getUserName(): String? {
+        return sharedPreferences.getString(USER_NAME, null)
+    }
+
+    override fun getIfFilterUpdated(): Boolean {
+        return sharedPreferences.getBoolean("filter_updated", false)
+    }
+
+    override fun saveIfFilterUpdated(updated: Boolean) {
+        sharedPreferences.edit {
+            putBoolean("filter_updated", updated)
+        }
+    }
+
     companion object {
         const val USER_ID = "com.lighthouse.lingo-swap.UUID"
+        const val USER_NAME = "com.lighthouse.lingo-swap.USER_NAME"
         const val ACCESS_TOKEN = "com.lighthouse.lingo-swap.access-token"
         const val REFRESH_TOKEN = "com.lighthouse.lingo-swap.refresh-token"
         const val ACCESS_TOKEN_EXPIRE = "com.lighthouse.lingo-swap.access-token-expire"

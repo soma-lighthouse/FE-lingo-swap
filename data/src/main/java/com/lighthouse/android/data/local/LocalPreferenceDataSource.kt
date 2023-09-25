@@ -29,4 +29,10 @@ interface LocalPreferenceDataSource {
 
     fun saveCurrentRegion(key: String, value: String?)
     fun getCurrentRegion(key: String): String?
+
+    fun saveUserName(name: String)
+    fun getUserName(): String?
+
+    fun getIfFilterUpdated(): Boolean
+    fun saveIfFilterUpdated(updated: Boolean)
 }

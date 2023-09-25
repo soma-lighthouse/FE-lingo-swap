@@ -34,6 +34,8 @@ import com.lighthouse.android.common_ui.util.intentSerializable
 import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
+import com.lighthouse.android.common_ui.util.toast
+import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.profile.R
@@ -74,6 +76,7 @@ class DetailProfileFragment :
         observeLanguageResult()
         observeDescription()
         initImageObserve()
+        initStartChatting()
     }
 
     private fun observeDescription() {
@@ -123,9 +126,24 @@ class DetailProfileFragment :
                 }
                 viewModel.interestList = tmp
                 Log.d("TESTING", viewModel.interestList.toString())
+                observeInterestCode(
+                    it.intentSerializable(
+                        "InterestListCode",
+                        HashMap::class.java
+                    )!!
+                )
                 adapter.submitList(viewModel.interestList)
             }
         }
+    }
+
+    private fun observeInterestCode(codes: HashMap<*, *>) {
+        val tmp = mutableListOf<UploadInterestVO>()
+        for ((key, value) in codes) {
+            tmp.add(UploadInterestVO(key as String, value as List<String>))
+        }
+
+        viewModel.interestListCode = tmp
     }
 
     private fun observeLanguageResult() {
@@ -209,6 +227,7 @@ class DetailProfileFragment :
     }
 
     private fun initSave() {
+        observeSave()
         binding.btnSave.setOnClickListener {
             if (validateInput()) {
                 return@setOnClickListener
@@ -221,6 +240,20 @@ class DetailProfileFragment :
                 viewModel.uploadImg(filePath)
             } else {
                 viewModel.saveUserDetail()
+            }
+        }
+    }
+
+    private fun observeSave() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.register.collect {
+                    if (it is UiState.Success<*>) {
+                        if (it.data is Boolean) {
+                            context.toast("Success")
+                        }
+                    }
+                }
             }
         }
     }
@@ -343,11 +376,14 @@ class DetailProfileFragment :
             is UiState.Success<*> -> {
                 if (uiState.data is ProfileVO) {
                     binding.group1.setVisible()
-                    binding.bottomRectangle.setVisible()
-                    binding.btnStart.setVisible()
                     userProfile = uiState.data as ProfileVO
                     viewModel.setList(userProfile)
+                    storePrevInfo(userProfile)
                     initView()
+                }
+                if (!viewModel.isMe) {
+                    binding.bottomRectangle.setVisible()
+                    binding.btnStart.setVisible()
                 }
                 binding.pbDetailLoading.setGone()
             }
@@ -359,9 +395,42 @@ class DetailProfileFragment :
         }
     }
 
-    private fun initStart() {
+    private fun storePrevInfo(data: ProfileVO) {
+        val tmp = RegisterInfoVO(
+            uuid = data.id,
+            name = data.name,
+            region = data.region,
+            description = data.description,
+            profileImageUri = data.profileImageUri,
+            preferredCountries = data.countries.map { it.code },
+            preferredInterests = data.interests.map {
+                UploadInterestVO(it.category.code, it.interests.map { interest ->
+                    interest.code
+                })
+            },
+            languages = data.languages.map {
+                mapOf("code" to it.code, "level" to it.level)
+            }
+        )
+
+        viewModel.registerInfo = tmp
+    }
+
+    private fun initStartChatting() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.create.collect {
+//                    if (it) {
+//
+//                    }
+//                }
+//            }
+//        }
         binding.btnStart.setOnClickListener {
-            viewModel.createChannel()
+//            viewModel.createChannel()
+            val intent = mainNavigator.navigateToMain(requireContext(), Pair("NewChat", true))
+            startActivity(intent)
+            requireActivity().finish()
         }
     }
 

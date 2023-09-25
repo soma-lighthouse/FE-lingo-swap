@@ -14,16 +14,11 @@ class ChatRepositoryImpl @Inject constructor(
     private val localDataSource: LocalPreferenceDataSource,
 ) : ChatRepository {
     override fun createChannel(opUserId: String): Flow<Resource<Boolean>> =
-        chatDataSource.createChannel(opUserId, localDataSource.getUUID().toString())
-            .map {
-                when (it) {
-                    is Resource.Success -> {
-                        Resource.Success(true)
-                    }
+        chatDataSource.createChannel(
+            "52dd1d13-65f4-4475-a3a1-7763a74f9004",
+            localDataSource.getUUID().toString()
+        )
 
-                    is Resource.Error -> Resource.Error(it.message!!)
-                }
-            }
 
     override fun leaveChannel(): Flow<Resource<Boolean>> =
         chatDataSource.leaveChannel(localDataSource.getUUID().toString())

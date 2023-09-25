@@ -12,7 +12,6 @@ import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.request.UploadInterestVO
-import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.ProfileVO
@@ -22,7 +21,6 @@ import com.lighthouse.domain.usecase.GetMyQuestionsUseCase
 import com.lighthouse.domain.usecase.GetProfileUseCase
 import com.lighthouse.domain.usecase.ManageChannelUseCase
 import com.lighthouse.domain.usecase.SaveLanguageFilterUseCase
-import com.lighthouse.domain.usecase.TestUseCase
 import com.lighthouse.domain.usecase.UpdateUserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +37,6 @@ class ProfileViewModel @Inject constructor(
     private val getLanguageFilterUseCase: GetLanguageFilterUseCase,
     private val updateProfileUseCase: UpdateUserProfileUseCase,
     private val manageChannelUseCase: ManageChannelUseCase,
-    private val test: TestUseCase,
     dispatcherProvider: DispatcherProvider
 ) : BaseViewModel(dispatcherProvider) {
 
@@ -52,10 +49,13 @@ class ProfileViewModel @Inject constructor(
     private val _register = MutableStateFlow<UiState>(UiState.Loading)
     val register = _register.asStateFlow()
 
+    private val _create = MutableStateFlow(false)
+    val create = _create.asStateFlow()
+
     private var _languageList: MutableLiveData<List<LanguageVO>> = MutableLiveData(listOf())
     var languageList: LiveData<List<LanguageVO>> = _languageList
 
-    val registerInfo = RegisterInfoVO()
+    var registerInfo = RegisterInfoVO()
     var profilePath: String? = null
     var profileUrl: String? = null
     var userId: String = ""
@@ -116,6 +116,11 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun saveUserDetail() {
+        registerInfo.profileImageUri?.let {
+            val path = extractPath(it)
+            registerInfo.profileImageUri = path
+        }
+
         val newProfile = RegisterInfoVO(
             profileImageUri = profilePath,
             description = description,
@@ -129,18 +134,29 @@ class ProfileViewModel @Inject constructor(
         Log.d("TESTING", newProfile.toString())
 
         onIO {
-            updateProfileUseCase.invoke(registerInfo, newProfile)
+            try {
+                Log.d("TESTING DETAIL", "${registerInfo}, ${newProfile}")
+                val result = updateProfileUseCase.invoke(registerInfo, newProfile)
+                _register.emit(UiState.Success(result))
+            } catch (e: Exception) {
+                Log.e("TESTING", e.stackTraceToString())
+            }
         }
     }
 
-    private fun InterestVO.toUpload() =
-        UploadInterestVO(category = this.category.code, interests = this.interests.map { it.code })
+    private fun extractPath(profilePath: String): String? {
+        val regex = Regex("/${getUUID()}.*")
+        val matchResult = regex.find(profilePath)
+        return matchResult?.value
+    }
 
     fun uploadImg(filePath: String) {
         onIO {
             authUseCase.uploadImg(profileUrl!!, filePath).catch {
                 if (it is LighthouseException) {
                     _upload.value = UiState.Error(it)
+                } else {
+                    Log.e("TESTING", it.stackTraceToString())
                 }
             }.collect {
                 when (it) {
@@ -175,10 +191,12 @@ class ProfileViewModel @Inject constructor(
             manageChannelUseCase.createChannel(userId).catch {
                 if (it is LighthouseException) {
                     _detail.value = UiState.Error(it)
+                } else {
+                    Log.d("TESTING", it.stackTraceToString())
                 }
             }.collect {
                 when (it) {
-                    is Resource.Success<*> -> _detail.emit(UiState.Success(it.data!!))
+                    is Resource.Success<*> -> _create.emit(it.data!!)
                     else -> _detail.emit(UiState.Error(it.message ?: StringSet.error_msg))
                 }
             }
@@ -197,5 +215,3 @@ class ProfileViewModel @Inject constructor(
 
 
 }
-
-
