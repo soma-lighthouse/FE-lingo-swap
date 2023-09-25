@@ -44,7 +44,6 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
                 val account = task.getResult(ApiException::class.java)
 
                 val idToken = account.idToken ?: ""
-                Log.d("TESTING", account.email ?: "")
                 viewModel.saveIdToken(idToken)
                 getResult.value = null
                 viewModel.postGoogleLogin()

@@ -3,6 +3,7 @@ package com.lighthouse.lingo_swap
 import android.content.Context
 import com.lighthouse.android.common_ui.util.buildIntent
 import com.lighthouse.android.common_ui.util.navigateActivity
+import com.lighthouse.auth.AuthActivity
 import com.lighthouse.auth.view.CameraActivity
 import com.lighthouse.auth.view.CountryListActivity
 import com.lighthouse.auth.view.InterestListActivity
@@ -40,9 +41,11 @@ class MainNavigatorImpl : MainNavigator {
         context: Context,
         selectedList: Pair<String, List<String>>,
         position: Pair<String, Int>,
-        multiSelect: Pair<String, Boolean>,
     ) =
-        context.buildIntent<LanguageListActivity>(selectedList, position, multiSelect)
+        context.buildIntent<LanguageListActivity>(selectedList, position)
+
+    override fun navigateToLogin(context: Context) =
+        context.navigateActivity<AuthActivity>()
 
     override fun navigateToCamera(context: Context) = context.buildIntent<CameraActivity>()
 }
