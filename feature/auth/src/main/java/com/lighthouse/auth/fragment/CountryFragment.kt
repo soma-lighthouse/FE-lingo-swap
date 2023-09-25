@@ -94,7 +94,8 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
         binding.groupCountry.isClickable = true
         binding.pbStart.setGone()
         if (result == true) {
-            mainNavigator.navigateToMain(requireContext())
+            val intent = mainNavigator.navigateToMain(requireContext(), Pair("NewChat", false))
+            startActivity(intent)
             requireActivity().finish()
         } else {
             context.toast(result.toString())

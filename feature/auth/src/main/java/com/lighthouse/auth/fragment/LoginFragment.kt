@@ -99,7 +99,8 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
     }
 
     private fun handleLoginSuccess() {
-        mainNavigator.navigateToMain(requireContext())
+        val intent = mainNavigator.navigateToMain(requireContext(), Pair("NewChat", false))
+        startActivity(intent)
         requireActivity().finish()
     }
 

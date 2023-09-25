@@ -38,14 +38,28 @@ class ProfileRepositoryImpl @Inject constructor(
                 }
             }
 
-    override fun updateProfile(newProfile: RegisterInfoVO): Resource<Boolean> {
-        datasource.updateProfile(local.getUUID() ?: "", newProfile.toUpdateProfileDTO())
-        return Resource.Success(true)
+    override fun updateProfile(newProfile: RegisterInfoVO): Flow<Boolean> {
+        return datasource.updateProfile(local.getUUID() ?: "", newProfile.toUpdateProfileDTO())
+            .map {
+                when (it) {
+                    is Resource.Success -> true
+                    else -> false
+                }
+            }
     }
 
-    override fun updateFilter(newFilter: RegisterInfoVO): Resource<Boolean> {
-        datasource.updateFilter(local.getUUID() ?: "", newFilter.toUpdateFilterDTO())
-        return Resource.Success(true)
+    override fun updateFilter(newFilter: RegisterInfoVO): Flow<Boolean> {
+        return datasource.updateFilter(local.getUUID() ?: "", newFilter.toUpdateFilterDTO())
+            .map {
+                when (it) {
+                    is Resource.Success -> {
+                        local.saveIfFilterUpdated(true)
+                        true
+                    }
+
+                    else -> false
+                }
+            }
     }
 
     override fun getUUID() = local.getUUID()

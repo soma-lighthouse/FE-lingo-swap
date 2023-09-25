@@ -12,9 +12,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BoardApiService {
-    @GET("api/v1/question/category/{category}")
+    @GET("api/v1/question")
     suspend fun getQuestion(
-        @Path("category") category: Int,
+        @Query("categoryId") category: Int,
         @Query("order") order: String?,
         @Query("next") page: Int?,
         @Query("pageSize") pageSize: Int?,

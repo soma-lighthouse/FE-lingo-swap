@@ -1,6 +1,8 @@
 package com.lighthouse.board
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
@@ -36,6 +38,8 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private lateinit var adapter: SimpleListAdapter<BoardQuestionVO, QuestionTileBinding>
     private var tabPosition = 0
     private var start = true
+
+    private var loading = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -75,10 +79,14 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
         binding.tabBoard.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                questionList.clear()
-                tabPosition = tab?.position ?: 0
-                viewModel.next[tabPosition] = null
-                viewModel.fetchState(tabPosition, null)
+                if (!loading) {
+                    questionList.clear()
+                    tabPosition = tab?.position ?: 0
+                    viewModel.next[tabPosition] = null
+                    viewModel.fetchState(tabPosition, null)
+                    binding.tabBoard.isClickable = false
+                    disableTabForSeconds(3)
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -169,6 +177,14 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         binding.fabAdd.setOnClickListener {
             findNavController().navigate(BoardFragmentDirections.actionBoardFragmentToAddFragment())
         }
+    }
+
+    private fun disableTabForSeconds(seconds: Long) {
+        loading = true
+        Handler(Looper.getMainLooper()).postDelayed({
+            loading = false // Enable the tab after the specified duration
+            binding.tabBoard.isClickable = true
+        }, seconds * 1000) // Convert seconds to milliseconds
     }
 
 }

@@ -77,7 +77,9 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
             override fun onPreDraw(): Boolean {
                 return if (::loginState.isInitialized) {
                     if (loginState == LoginState.LOGIN_SUCCESS) {
-                        mainNavigator.navigateToMain(this@AuthActivity)
+                        val intent =
+                            mainNavigator.navigateToMain(this@AuthActivity, Pair("NewChat", false))
+                        startActivity(intent)
                         finish()
                     }
                     content.viewTreeObserver.removeOnPreDrawListener(this)
