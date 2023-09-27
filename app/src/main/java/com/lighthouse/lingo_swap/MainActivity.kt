@@ -71,8 +71,7 @@ class MainActivity @Inject constructor() :
     private fun initChatting() {
         val new = intent.getBooleanExtra("NewChat", false)
         if (new) {
-            Log.d("TESTING", new.toString())
-            navigateToFlow(NavigationFlow.ChatFlow("sendbird_group_channel_125495456_d3756bdea7755b0771cfed6df74f86763b53848a"))
+            navigateToFlow(NavigationFlow.ChatFlow(intent.getStringExtra("ChannelId") ?: ""))
         }
 
     }

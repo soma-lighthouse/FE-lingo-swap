@@ -1,7 +1,9 @@
 package com.lighthouse.android.data.repository.datasourceimpl
 
+import android.util.Log
 import com.lighthouse.android.data.api.ChatApiService
 import com.lighthouse.android.data.model.request.CreateChannelDTO
+import com.lighthouse.android.data.model.response.ChannelDTO
 import com.lighthouse.android.data.model.response.ChatQuestionsDTO
 import com.lighthouse.android.data.repository.datasource.ChatRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
@@ -12,18 +14,22 @@ import javax.inject.Inject
 class ChatRemoteDataSourceImpl @Inject constructor(
     private val chatApiService: ChatApiService,
 ) : ChatRemoteDataSource, NetworkResponse() {
-    override fun createChannel(opUserId: String, myUserId: String): Flow<Resource<Boolean>> = flow {
-        val response =
-            chatApiService.createChannel(
-                CreateChannelDTO(listOf(opUserId, myUserId))
+    override fun createChannel(opUserId: String, myUserId: String): Flow<Resource<ChannelDTO>> =
+        flow {
+            Log.d("TESTING CHANNEL", "Enter createChannel")
+            emit(
+                changeResult(
+                    chatApiService.createChannel(
+                        CreateChannelDTO(
+                            listOf(
+                                opUserId,
+                                myUserId
+                            )
+                        )
+                    )
+                )
             )
-
-        if (response.isSuccessful) {
-            emit(Resource.Success(true))
-        } else {
-            throw errorHandler(response)
         }
-    }
 
     override fun leaveChannel(myUserId: String): Flow<Resource<Boolean>> = flow {
         val response = chatApiService.leaveChannel(mapOf("userId" to myUserId))

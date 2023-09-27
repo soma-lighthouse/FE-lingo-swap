@@ -11,7 +11,7 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ChatApiService {
-    @POST("api/v1/chat")
+    @POST("api/v1/chat/chatroom")
     suspend fun createChannel(
         @Body userIds: CreateChannelDTO
     ): Response<BaseResponse<ChannelDTO>>

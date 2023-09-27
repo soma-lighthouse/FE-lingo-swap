@@ -13,8 +13,12 @@ import com.lighthouse.navigation.MainNavigator
 import com.lighthouse.profile.view.DetailProfileActivity
 
 class MainNavigatorImpl : MainNavigator {
-    override fun navigateToMain(context: Context, newChat: Pair<String, Boolean>): Intent {
-        val intent = context.buildIntent<MainActivity>(newChat)
+    override fun navigateToMain(
+        context: Context,
+        newChat: Pair<String, Boolean>,
+        channelId: Pair<String, String>
+    ): Intent {
+        val intent = context.buildIntent<MainActivity>(newChat, channelId)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         return intent
     }
