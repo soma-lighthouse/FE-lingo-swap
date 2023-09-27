@@ -53,7 +53,7 @@ class AuthRepositoryImpl @Inject constructor(
                     interest.toVO()
                 })
 
-                else -> Resource.Error(it.message ?: "No message Found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 
@@ -64,7 +64,7 @@ class AuthRepositoryImpl @Inject constructor(
                     language.toVO()
                 })
 
-                else -> Resource.Error(it.message ?: "No message Found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 
@@ -75,7 +75,7 @@ class AuthRepositoryImpl @Inject constructor(
                     country.toVO()
                 })
 
-                else -> Resource.Error(it.message ?: "No message Found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 

@@ -6,6 +6,7 @@ import com.lighthouse.android.data.model.mapping.toUpdateProfileDTO
 import com.lighthouse.android.data.repository.datasource.ProfileRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
+import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.MyQuestionsVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.repository.ProfileRepository
@@ -22,7 +23,7 @@ class ProfileRepositoryImpl @Inject constructor(
             .map {
                 when (it) {
                     is Resource.Success -> Resource.Success(it.data!!.toVO())
-                    else -> Resource.Error(it.message ?: "No Message found")
+                    else -> throw LighthouseException(null, null).addErrorMsg()
                 }
             }
 
@@ -34,7 +35,7 @@ class ProfileRepositoryImpl @Inject constructor(
                         questions.toVO()
                     })
 
-                    else -> Resource.Error(it.message ?: "No Message found")
+                    else -> throw LighthouseException(null, null).addErrorMsg()
                 }
             }
 
@@ -63,4 +64,12 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override fun getUUID() = local.getUUID()
+
+    override fun setPushEnabled(enabled: Boolean) {
+        local.setPushEnabled(enabled)
+    }
+
+    override fun getPushEnabled(): Boolean {
+        return local.getPushEnabled()
+    }
 }

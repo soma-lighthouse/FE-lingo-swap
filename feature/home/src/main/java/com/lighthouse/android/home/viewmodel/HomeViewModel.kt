@@ -8,7 +8,6 @@ import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.UploadFilterVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
-import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.usecase.GetFilterSettingUseCase
 import com.lighthouse.domain.usecase.GetLanguageFilterUseCase
@@ -33,7 +32,7 @@ class HomeViewModel @Inject constructor(
     private val saveLanguageFilterUseCase: SaveLanguageFilterUseCase,
     private val uploadFilterSettingUseCase: UploadFilterSettingUseCase,
     manageFilterUpdateUseCase: ManageFilterUpdateUseCase,
-    dispatcherProvider: DispatcherProvider
+    dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel(dispatcherProvider) {
     private var userProfiles = listOf<ProfileVO>()
     var next: Int? = null
@@ -68,11 +67,7 @@ class HomeViewModel @Inject constructor(
                     _filter.value = UiState.Loading
                 }
                 .catch {
-                    if (it is LighthouseException) {
-                        _filter.emit(UiState.Error(it))
-                    } else {
-                        _filter.emit(UiState.Error(StringSet.error_msg))
-                    }
+                    _filter.value = handleException(it)
                 }.collect {
                     when (it) {
                         is Resource.Success -> {
@@ -95,11 +90,7 @@ class HomeViewModel @Inject constructor(
         onIO {
             getFilterSettingUseCase.invoke()
                 .catch {
-                    if (it is LighthouseException) {
-                        _filter.value = UiState.Error(it)
-                    } else {
-                        _filter.value = UiState.Error(StringSet.error_msg)
-                    }
+                    _filter.value = handleException(it)
                 }
                 .collect {
                     when (it) {
@@ -119,11 +110,7 @@ class HomeViewModel @Inject constructor(
         onIO {
             uploadFilterSettingUseCase.invoke(filter)
                 .catch {
-                    if (it is LighthouseException) {
-                        _filter.value = (UiState.Error(it))
-                    } else {
-                        _filter.value = (UiState.Error(StringSet.error_msg))
-                    }
+                    _filter.value = handleException(it)
                 }
                 .collect {
                     when (it) {
@@ -152,6 +139,10 @@ class HomeViewModel @Inject constructor(
 
     fun resetUploadState() {
         _upload.value = false
+    }
+
+    fun resetFilterState() {
+        _filter.value = UiState.Loading
     }
 
 }

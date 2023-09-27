@@ -97,6 +97,8 @@ abstract class BindingActivity<T : ViewDataBinding>(
                     // do nothing
                 }
             }
+        } else {
+            applicationContext.toast(exception.toString())
         }
     }
 

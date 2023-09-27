@@ -7,6 +7,7 @@ import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.UploadQuestionVO
 import com.lighthouse.domain.entity.response.vo.BoardVO
+import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.repository.BoardRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,7 @@ class BoardRepositoryImpl @Inject constructor(
         datasource.getBoardQuestions(category, order, page, pageSize).map {
             when (it) {
                 is Resource.Success -> Resource.Success(it.data!!.toVO())
-                else -> Resource.Error(it.message ?: "No message found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 
@@ -44,7 +45,7 @@ class BoardRepositoryImpl @Inject constructor(
         ).map {
             when (it) {
                 is Resource.Success -> Resource.Success(it.data!!)
-                else -> Resource.Error(it.message ?: "No message Found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 

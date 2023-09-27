@@ -8,7 +8,7 @@ enum class APIErrorType(
 
     FIRST_LOGIN(
         40400,
-        "First login. Please try again later.",
+        "First login. Please register first.",
         ErrorTypeHandling.DIRECT_AND_DIALOG
     ),
 

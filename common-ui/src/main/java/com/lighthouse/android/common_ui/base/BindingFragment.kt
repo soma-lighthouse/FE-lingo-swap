@@ -24,6 +24,7 @@ import com.lighthouse.domain.constriant.ErrorTypeHandling
 import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.navigation.MainNavigator
 import dagger.hilt.android.EntryPointAccessors
+import java.lang.ref.WeakReference
 
 abstract class BindingFragment<T : ViewDataBinding>(
     @LayoutRes private val layoutRes: Int,
@@ -31,6 +32,8 @@ abstract class BindingFragment<T : ViewDataBinding>(
     private var _binding: T? = null
     protected val binding: T
         get() = requireNotNull(_binding)
+
+    protected var bindingWeakRef: WeakReference<T>? = null
 
     protected val getResult = MutableLiveData<Intent>()
 
@@ -46,7 +49,9 @@ abstract class BindingFragment<T : ViewDataBinding>(
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        _binding = DataBindingUtil.inflate(inflater, layoutRes, container, false)
+        val dataBinding: T = DataBindingUtil.inflate(inflater, layoutRes, container, false)
+        _binding = dataBinding
+        bindingWeakRef = WeakReference(dataBinding)
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
@@ -100,6 +105,8 @@ abstract class BindingFragment<T : ViewDataBinding>(
                     // do nothing
                 }
             }
+        } else {
+            context.toast(exception.toString())
         }
     }
 

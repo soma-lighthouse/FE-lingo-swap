@@ -6,18 +6,18 @@ import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.usecase.ManageChannelUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val chatUseCase: ManageChannelUseCase,
-    dispatcherProvider: DispatcherProvider
+    dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel(dispatcherProvider) {
     private val _question = MutableStateFlow<UiState>(UiState.Loading)
     val question = _question.asStateFlow()
@@ -29,10 +29,11 @@ class ChatViewModel @Inject constructor(
     fun getQuestion(category: Int) {
         onIO {
             chatUseCase.getRecommendedQuestions(category, next[category])
+                .onStart {
+                    _question.value = UiState.Loading
+                }
                 .catch {
-                    if (it is LighthouseException) {
-                        _question.value = UiState.Error(it)
-                    }
+                    _question.value = handleException(it)
                 }.collect {
                     when (it) {
                         is Resource.Success -> {

@@ -7,6 +7,7 @@ import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.UploadFilterVO
 import com.lighthouse.domain.entity.response.FilterVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.UserProfileVO
 import com.lighthouse.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +30,7 @@ class HomeRepositoryImpl @Inject constructor(
         return datasource.getMatchedUser(userId, next, pageSize).map {
             when (it) {
                 is Resource.Success -> Resource.Success(it.data!!.toVO())
-                else -> Resource.Error(it.message ?: "No message found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
     }
@@ -40,7 +41,7 @@ class HomeRepositoryImpl @Inject constructor(
             .map {
                 when (it) {
                     is Resource.Success -> Resource.Success(it.data!!.toVO())
-                    else -> Resource.Error(it.message ?: "No message found")
+                    else -> throw LighthouseException(null, null).addErrorMsg()
                 }
             }
     }
@@ -54,7 +55,7 @@ class HomeRepositoryImpl @Inject constructor(
             .map {
                 when (it) {
                     is Resource.Success -> Resource.Success(it.data!!)
-                    else -> Resource.Error(it.message ?: "No message found")
+                    else -> throw LighthouseException(null, null).addErrorMsg()
                 }
             }
     }
