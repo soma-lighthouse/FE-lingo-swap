@@ -6,6 +6,8 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Patterns
@@ -177,4 +179,8 @@ inline fun BaseViewModel.onDefault(
     crossinline body: suspend CoroutineScope.() -> Unit
 ) = viewModelScope.launch(default) {
     body(this)
+}
+
+fun disableTabForSeconds(seconds: Long, action: () -> Unit) {
+    Handler(Looper.getMainLooper()).postDelayed(action, seconds * 1000)
 }

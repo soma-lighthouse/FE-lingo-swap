@@ -21,6 +21,7 @@ import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.disableTabForSeconds
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,12 +83,16 @@ class QuestionFragment : BindingFragment<FragmentQuestionBinding>(R.layout.fragm
     private fun initChip() {
         viewModel.getQuestion(curPosition)
         binding.chipCategory.setOnCheckedStateChangeListener { _, checkedIds ->
+            Log.d("TESTING CHIPS", "enter")
+
             questionList.clear()
+            adapter.notifyDataSetChanged()
             curPosition = checkedIds.first()
+            start = true
             Log.d("TESTING", curPosition.toString())
             viewModel.next[curPosition] = null
             viewModel.getQuestion(curPosition)
-            binding.rvQuestionPanel.scrollToPosition(0)
+            binding.chipCategory.isClickable = false
         }
     }
 
@@ -127,15 +132,20 @@ class QuestionFragment : BindingFragment<FragmentQuestionBinding>(R.layout.fragm
                     binding.rvQuestionPanel.setGone()
                     start = false
                 }
-
             }
 
             is UiState.Success<*> -> {
-                binding.rvQuestionPanel.setVisible()
                 questionList.addAll(uiState.data as List<String>)
                 adapter.submitList(questionList)
-                binding.pbQuestionLoading.setGone()
-                loading = false
+                disableTabForSeconds(1) {
+                    bindingWeakRef?.get()?.let { b ->
+                        b.rvQuestionPanel.setVisible()
+                        b.pbQuestionLoading.setGone()
+                        b.rvQuestionPanel.scrollToPosition(0)
+                        b.chipCategory.isClickable = true
+                        loading = false
+                    }
+                }
             }
 
             is UiState.Error<*> -> {

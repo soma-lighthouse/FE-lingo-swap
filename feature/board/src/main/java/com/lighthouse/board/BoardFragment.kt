@@ -1,8 +1,6 @@
 package com.lighthouse.board
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
@@ -21,6 +19,7 @@ import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.QuestionTileBinding
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.disable
+import com.lighthouse.android.common_ui.util.disableTabForSeconds
 import com.lighthouse.android.common_ui.util.enable
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
@@ -37,9 +36,9 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private val questionList = mutableListOf<BoardQuestionVO>()
     private lateinit var adapter: SimpleListAdapter<BoardQuestionVO, QuestionTileBinding>
     private var tabPosition = 0
-    private var start = true
 
     private var loading = false
+    private var start = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,9 +50,12 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         loadMoreProfiles()
     }
 
+
     override fun onResume() {
         super.onResume()
-        viewModel.fetchState(tabPosition, null)
+        if (questionList.isEmpty()) {
+            viewModel.fetchState(tabPosition, null)
+        }
     }
 
     private fun initSpinner() {
@@ -62,9 +64,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             resources.getString(com.lighthouse.android.common_ui.R.string.sort_top_rated)
         )
         val arrayAdapter = ArrayAdapter(
-            requireContext(),
-            com.lighthouse.android.common_ui.R.layout.spinner_item,
-            arrayList
+            requireContext(), com.lighthouse.android.common_ui.R.layout.spinner_item, arrayList
         ).apply {
             setDropDownViewResource(com.google.android.material.R.layout.support_simple_spinner_dropdown_item)
         }
@@ -79,14 +79,13 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
         binding.tabBoard.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                if (!loading) {
-                    questionList.clear()
-                    tabPosition = tab?.position ?: 0
-                    viewModel.next[tabPosition] = null
-                    viewModel.fetchState(tabPosition, null)
-                    binding.tabBoard.isClickable = false
-                    disableTabForSeconds(3)
-                }
+                questionList.clear()
+                adapter.notifyDataSetChanged()
+                start = true
+                tabPosition = tab?.position ?: 0
+                viewModel.next[tabPosition] = null
+                viewModel.fetchState(tabPosition, null)
+                binding.tabBoard.isClickable = false
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -106,9 +105,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             viewModel.cancelLike(questionId)
         }, { userId ->
             mainNavigator.navigateToProfile(
-                requireContext(),
-                Pair("userId", userId),
-                Pair("isMe", false)
+                requireContext(), Pair("userId", userId), Pair("isMe", false)
             )
         })
 
@@ -128,7 +125,8 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
                 val totalCount = recyclerView.adapter?.itemCount?.minus(1)
 
-                if (rvPosition == totalCount && viewModel.page != -1) {
+                if (rvPosition == totalCount && viewModel.page != -1 && !loading) {
+                    loading = true
                     viewModel.fetchState(tabPosition, null)
                 }
             }
@@ -158,12 +156,18 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             }
 
             is UiState.Success<*> -> {
-                binding.rvBoard.setVisible()
-                binding.tabBoard.enable()
                 questionList.addAll(uiState.data as List<BoardQuestionVO>)
                 Log.d("QUESTION", questionList.size.toString())
                 adapter.submitList(questionList)
-                binding.pbBoardLoading.setGone()
+                binding.tabBoard.enable()
+                disableTabForSeconds(2) {
+                    bindingWeakRef?.get()?.let { b ->
+                        b.rvBoard.setVisible()
+                        b.pbBoardLoading.setGone()
+                        loading = false
+                    }
+                }
+                viewModel.clearResult()
             }
 
             is UiState.Error<*> -> {
@@ -178,13 +182,4 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             findNavController().navigate(BoardFragmentDirections.actionBoardFragmentToAddFragment())
         }
     }
-
-    private fun disableTabForSeconds(seconds: Long) {
-        loading = true
-        Handler(Looper.getMainLooper()).postDelayed({
-            loading = false // Enable the tab after the specified duration
-            binding.tabBoard.isClickable = true
-        }, seconds * 1000) // Convert seconds to milliseconds
-    }
-
 }
