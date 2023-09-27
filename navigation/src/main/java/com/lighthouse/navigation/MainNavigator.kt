@@ -4,7 +4,12 @@ import android.content.Context
 import android.content.Intent
 
 interface MainNavigator {
-    fun navigateToMain(context: Context, newChat: Pair<String, Boolean>): Intent
+    fun navigateToMain(
+        context: Context,
+        newChat: Pair<String, Boolean>,
+        channelId: Pair<String, String>
+    ): Intent
+
     fun navigateToProfile(
         context: Context,
         userId: Pair<String, String>,

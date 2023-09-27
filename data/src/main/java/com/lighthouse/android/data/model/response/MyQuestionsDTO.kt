@@ -12,7 +12,7 @@ data class MyQuestionsDTO(
     val contents: String?,
     @SerializedName("likes")
     val likes: Int?,
-    @SerializedName("createAt")
+    @SerializedName("createdAt")
     val createAt: String?,
 ) {
     fun toVO() = MyQuestionsVO(
@@ -25,6 +25,6 @@ data class MyQuestionsDTO(
 }
 
 data class MyQuestionResponse(
-    @SerializedName("myQuestions")
+    @SerializedName("questions")
     val myQuestionList: List<MyQuestionsDTO>,
 )

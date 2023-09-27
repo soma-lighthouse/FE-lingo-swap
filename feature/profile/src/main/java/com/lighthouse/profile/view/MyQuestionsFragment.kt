@@ -22,8 +22,6 @@ import com.lighthouse.profile.databinding.FragmentMyQuestionsBinding
 import com.lighthouse.profile.databinding.MyQuestionTileBinding
 import com.lighthouse.profile.viewmodel.ProfileViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class MyQuestionsFragment :
     BindingFragment<FragmentMyQuestionsBinding>(R.layout.fragment_my_questions) {
@@ -95,13 +93,13 @@ private fun makeAdapter(categoryList: List<String>) =
         ),
         layoutId = R.layout.my_question_tile,
         onBindCallback = { viewHolder, item ->
+            Log.d("TESTING MY", item.toString())
             val binding = viewHolder.binding
             binding.tvCategory.text = categoryList[item.categoryId]
             binding.tvLike.text = item.likes.toString()
 
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+            val date = item.createAt.split("T")[0]
 
-            val dateTime = LocalDateTime.parse(item.createAt, formatter)
-            binding.tvCreateAt.text = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            binding.tvCreateAt.text = date
         }
     )
