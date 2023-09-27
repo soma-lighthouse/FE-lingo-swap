@@ -63,7 +63,8 @@ class HomeFragment @Inject constructor() :
 
     private fun initMatch() {
         if (viewModel.getUserProfiles().isEmpty()) {
-            Log.d("TESTING", "EMPTY")
+            Log.d("TESTING INITMATCH", "EMPTY")
+            viewModel.resetFilterState()
             viewModel.fetchNextPage()
             loading = true
         }
@@ -95,6 +96,7 @@ class HomeFragment @Inject constructor() :
                 binding.rvHome.setVisible()
                 if (uiState.data is List<*>) {
                     profileList.addAll(uiState.data as List<ProfileVO>)
+                    Log.d("TESTING RENDER", profileList.size.toString())
                 }
                 Log.d("MATCHING", uiState.data.toString())
                 Log.d("MATCHING", profileList.size.toString())

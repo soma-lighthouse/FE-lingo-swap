@@ -151,6 +151,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                     binding.pbBoardLoading.setVisible()
                     binding.rvBoard.setGone()
                     binding.tabBoard.disable()
+                    binding.fabAdd.setGone()
                     start = false
                 }
             }
@@ -164,6 +165,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                     bindingWeakRef?.get()?.let { b ->
                         b.rvBoard.setVisible()
                         b.pbBoardLoading.setGone()
+                        b.fabAdd.setVisible()
                         loading = false
                     }
                 }
