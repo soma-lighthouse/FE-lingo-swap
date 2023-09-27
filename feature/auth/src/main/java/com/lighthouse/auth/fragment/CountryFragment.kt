@@ -14,7 +14,6 @@ import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentCountryBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
@@ -35,23 +34,15 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
         initStart()
         initCountry()
         initChip()
-        initObserve()
+        observeUpload()
+        observeRegister()
+
     }
 
     private fun initBack() {
         binding.btnBack.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
-    }
-
-    private fun initObserve() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                observeUpload()
-                observeRegister()
-            }
-        }
-
     }
 
     private fun initStart() {
@@ -70,35 +61,43 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
         }
     }
 
-    private suspend fun observeUpload() {
-        viewModel.upload.drop(1).collect {
-            Log.d("REGISTER", "observeUpload: $it")
-            if (it) {
-                viewModel.registerUser()
-            } else {
-                flowOf(getString(com.lighthouse.android.common_ui.R.string.upload_error))
+    private fun observeUpload() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.upload.drop(1).collect {
+                    if (it) {
+                        viewModel.registerUser()
+                    } else {
+                        flowOf(getString(com.lighthouse.android.common_ui.R.string.upload_error))
+                    }
+                }
             }
-
         }
     }
 
 
-    private suspend fun observeRegister() {
-        viewModel.register.drop(1).collect {
-            Log.d("REGISTER", "observeRegister: $it")
-            registerComplete(it)
+    private fun observeRegister() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.register.collect {
+                    registerComplete(it)
+                }
+            }
         }
     }
 
-    private fun registerComplete(result: Any?) {
+    private fun registerComplete(result: Boolean) {
+        Log.d("TESTING4", "registerComplete: $result")
         binding.groupCountry.isClickable = true
         binding.pbStart.setGone()
-        if (result == true) {
-            val intent = mainNavigator.navigateToMain(requireContext(), Pair("NewChat", false))
+        if (result) {
+            val intent = mainNavigator.navigateToMain(
+                requireContext(),
+                Pair("NewChat", false),
+                Pair("ChannelxId", "")
+            )
             startActivity(intent)
             requireActivity().finish()
-        } else {
-            context.toast(result.toString())
         }
     }
 
