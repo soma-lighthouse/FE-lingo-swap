@@ -273,7 +273,12 @@ class DetailProfileFragment :
     private fun endEditMode() {
         binding.editGroup.setGone()
         binding.interestGroup.setGone()
-        binding.tbProfile.enable()
+        binding.tbProfile.menu.add(
+            0,
+            R.id.item_edit,
+            0,
+            getString(com.lighthouse.android.common_ui.R.string.edit)
+        )
         binding.tvDescription.disable()
         binding.interestFoldGroup.setVisible()
         viewModel.editMode = false
@@ -349,10 +354,11 @@ class DetailProfileFragment :
     private fun initEdit() {
         binding.editGroup.setVisible()
         binding.interestGroup.setVisible()
-        binding.tbProfile.disable()
+        binding.tbProfile.menu.clear()
         binding.interestFoldGroup.setGone()
         binding.tvDescription.enable()
     }
+
 
     private fun initFold() {
         binding.clickInterest.setOnClickListener { _ ->

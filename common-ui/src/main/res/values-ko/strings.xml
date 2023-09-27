@@ -126,4 +126,6 @@
     <string name="language">언어</string>
     <string name="language_limit">최대 5개의 언어만 선택 가능합니다</string>
     <string name="invalid_name">잘못된 이름 형식입니다</string>
+    <string name="save">저장</string>
+
 </resources>

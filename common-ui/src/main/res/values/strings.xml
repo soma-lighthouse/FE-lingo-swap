@@ -125,4 +125,6 @@
 
     <string name="invalid_name">Invalid name</string>
 
+    <string name="save">Save</string>
+
 </resources>
