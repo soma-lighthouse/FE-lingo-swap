@@ -17,6 +17,7 @@ class PermissionsFragment : Fragment() {
                 navigateToCameraFeature()
             } else {
                 context.toast("Camera permission denied")
+                requireActivity().finish()
             }
         }
 

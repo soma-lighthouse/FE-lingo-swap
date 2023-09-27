@@ -1,6 +1,8 @@
 package com.lighthouse.android.home.adapter
 
 import android.util.Log
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DecodeFormat
 import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
@@ -22,14 +24,14 @@ fun makeAdapter(
         onBindCallback = { viewHolder, item ->
             val binding = viewHolder.binding
 
-//            Glide.with(binding.ivProfileImg).load(item.profileImageUri)
-//                .placeholder(R.drawable.placeholder)
-//                .skipMemoryCache(false)
-//                .format(DecodeFormat.PREFER_RGB_565)
-//                .centerInside()
-//                .override(calSize(Constant.PROFILE_IMAGE_SIZE))
-//                .dontAnimate()
-//                .into(binding.ivProfileImg)
+            Glide.with(binding.ivProfileImg).load(item.profileImageUri)
+                .placeholder(R.drawable.placeholder)
+                .skipMemoryCache(false)
+                .format(DecodeFormat.PREFER_RGB_565)
+                .centerInside()
+                .override(calSize(Constant.PROFILE_IMAGE_SIZE))
+                .dontAnimate()
+                .into(binding.ivProfileImg)
 
             val flag = binding.root.context.resources.getIdentifier(
                 item.region, "drawable", binding.root.context.packageName
