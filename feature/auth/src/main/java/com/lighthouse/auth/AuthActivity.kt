@@ -46,14 +46,19 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
     private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                showOKDialog(
-                    this@AuthActivity,
-                    getString(com.lighthouse.android.common_ui.R.string.exit_title),
-                    getString(com.lighthouse.android.common_ui.R.string.exit_body)
-                ) { _, _ ->
+
+                if (navController.currentDestination?.id == R.id.info_fragment) {
+                    showOKDialog(
+                        this@AuthActivity,
+                        getString(com.lighthouse.android.common_ui.R.string.exit_title),
+                        getString(com.lighthouse.android.common_ui.R.string.exit_body)
+                    ) { _, _ ->
+                        navController.popBackStack()
+                    }
+                } else {
                     if (navController.currentDestination?.id == R.id.loginFragment) {
                         finish()
-                    } else if (navController.currentDestination?.id == R.id.info_fragment) {
+                    } else {
                         navController.popBackStack()
                     }
                 }
@@ -78,7 +83,11 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
                 return if (::loginState.isInitialized) {
                     if (loginState == LoginState.LOGIN_SUCCESS) {
                         val intent =
-                            mainNavigator.navigateToMain(this@AuthActivity, Pair("NewChat", false))
+                            mainNavigator.navigateToMain(
+                                this@AuthActivity,
+                                Pair("NewChat", false),
+                                Pair("ChannelId", "")
+                            )
                         startActivity(intent)
                         finish()
                     }
