@@ -51,10 +51,16 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
     private fun initAdd() {
         binding.btnAdd.setOnClickListener {
             if (dataList.size < 5) {
-                dataList.add(LanguageVO(name = "country", level = 1, code = ""))
+                dataList.add(
+                    LanguageVO(
+                        name = requireContext().getString(com.lighthouse.android.common_ui.R.string.language),
+                        level = 1,
+                        code = ""
+                    )
+                )
                 adapter.notifyItemInserted(dataList.size - 1)
             } else {
-                context.toast("Only up to maximum 5 Language")
+                context.toast(getString(com.lighthouse.android.common_ui.R.string.language_limit))
             }
         }
     }

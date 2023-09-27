@@ -27,8 +27,7 @@ class EditLanguageFragment :
 
     private val viewModel: ProfileViewModel by activityViewModels()
     private lateinit var adapter: SelectionAdapter
-    private val dataList: MutableList<LanguageVO> =
-        mutableListOf(LanguageVO(name = "English", level = 1, code = "en"))
+    private val dataList: MutableList<LanguageVO> = mutableListOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,10 +82,16 @@ class EditLanguageFragment :
     private fun initAdd() {
         binding.btnAdd.setOnClickListener {
             if (dataList.size < 5) {
-                dataList.add(LanguageVO(name = "country", level = 1, code = ""))
+                dataList.add(
+                    LanguageVO(
+                        name = getString(com.lighthouse.android.common_ui.R.string.language),
+                        level = 1,
+                        code = ""
+                    )
+                )
                 adapter.notifyItemInserted(dataList.size - 1)
             } else {
-                context.toast("Only up to maximum 5 Language")
+                context.toast(getString(com.lighthouse.android.common_ui.R.string.language_limit))
             }
         }
     }

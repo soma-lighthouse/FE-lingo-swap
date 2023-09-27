@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">lingo swap</string>
+    <string name="app_name">LingoTalk</string>
     <string name="unknown_view_type">Unknown View Type!</string>
     <string name="btn_nav_home">home</string>
     <string name="btn_nav_chat">chat</string>
@@ -34,14 +34,14 @@
     <string name="chat_title">Chat</string>
     <string name="hint_search">Search</string>
     <string name="setting">Setting</string>
-    <string name="type_here">Type here...</string>
+    <string name="type_here">Type here…</string>
     <string name="enter_info">Enter basic information (1/3)</string>
     <string name="basic_info">Basic information</string>
     <string name="name">Name</string>
     <string name="enter_name">Enter your name</string>
     <string name="email">Email</string>
     <string name="birthday">Birthday</string>
-    <string name="enter_birthday">Enter your birthday</string>
+    <string name="enter_birthday">e.g. 2019-01-01</string>
     <string name="enter_email">Enter your email</string>
     <string name="nation">Nation</string>
     <string name="age">Age</string>
@@ -90,7 +90,7 @@
     <string name="logout_title">Confirm Logout</string>
     <string name="logout_body">Are you sure you want to Logout?</string>
 
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 
     <string name="profile_description">Description</string>
@@ -101,5 +101,28 @@
     <string name="turn_on_alarm">Turn on alarm</string>
 
     <string name="upload_success">Upload success</string>
+
+    <string name="push_notification">Push notification</string>
+    Find the profile of the person you want and talk to him
+    <string name="home_title_1">Find the\u0020</string>
+    <string name="home_title_2">profile\u0020</string>
+    <string name="home_title_3">of the person you want and start\u0020</string>
+    <string name="home_title_4">chatting</string>
+    <string name="home_title_5">!</string>
+
+    <string name="internet_error">No Internet connection</string>
+    <string name="server_error">Something went wrong. Please try again later.</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+
+    <string name="choose_image">Choose</string>
+
+    <string name="sign_in_google">Sign in with Google</string>
+
+    <string name="language">Language</string>
+
+    <string name="language_limit">Only up to maximum 5 Language</string>
+
+    <string name="invalid_name">Invalid name</string>
 
 </resources>

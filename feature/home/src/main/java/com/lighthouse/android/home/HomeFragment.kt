@@ -20,7 +20,7 @@ import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.home.adapter.makeAdapter
 import com.lighthouse.android.home.databinding.FragmentHomeBinding
-import com.lighthouse.android.home.util.homeTitle
+import com.lighthouse.android.home.util.getHomeTitle
 import com.lighthouse.android.home.viewmodel.HomeViewModel
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,12 +42,17 @@ class HomeFragment @Inject constructor() :
         initScrollListener()
         initFab()
         initMatch()
+        initHomeTitle()
+    }
 
+    private fun initHomeTitle() {
         lifecycleScope.launch {
             binding.tvHomeTitle.text =
-                SpannableStringBuilderProvider.getSpannableBuilder(homeTitle, requireContext())
+                SpannableStringBuilderProvider.getSpannableBuilder(
+                    getHomeTitle(requireContext()),
+                    requireContext()
+                )
         }
-
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -96,6 +101,7 @@ class HomeFragment @Inject constructor() :
                 adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
                 binding.fabFilter.setVisible()
+                viewModel.resetFilterState()
                 loading = false
             }
 
