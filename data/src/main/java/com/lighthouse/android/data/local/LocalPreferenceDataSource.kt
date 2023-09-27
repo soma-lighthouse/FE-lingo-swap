@@ -35,4 +35,7 @@ interface LocalPreferenceDataSource {
 
     fun getIfFilterUpdated(): Boolean
     fun saveIfFilterUpdated(updated: Boolean)
+
+    fun getPushEnabled(): Boolean
+    fun setPushEnabled(enabled: Boolean)
 }

@@ -13,7 +13,7 @@ class HeaderInterceptor @Inject constructor(
     private val i18nManager: I18nManager,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response = with(chain) {
-        Log.d("I18n HeaderInterceptor", "intercept: ${i18nManager.getLocale().language}}")
+        Log.d("I18n HeaderInterceptor", "intercept: ${i18nManager.getLocale().language}")
         val newRequest = request().newBuilder()
             .addHeader("Accept", "application/json")
             .addHeader("User-Id", localPreferenceDataSource.getUUID() ?: "1")

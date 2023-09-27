@@ -17,4 +17,6 @@ interface ProfileRepository {
 
     fun getUUID(): String?
 
+    fun setPushEnabled(enabled: Boolean)
+    fun getPushEnabled(): Boolean
 }

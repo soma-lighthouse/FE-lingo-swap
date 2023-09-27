@@ -9,11 +9,15 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.sendbird.android.SendbirdChat
 import com.sendbird.android.push.PushTokenRegistrationStatus
 import org.json.JSONObject
+import javax.inject.Inject
 
-class MyFirebaseMessagingService : FirebaseMessagingService() {
+class MyFirebaseMessagingService @Inject constructor(
+    private val local: LocalPreferenceDataSource
+) : FirebaseMessagingService() {
     private val channelId = "channel_id"
     private val channelName = "Sendbird Channel"
     private val channelDescription = "Notification_Channel"
@@ -23,7 +27,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.d("Messaging", "Message data payload: ${remoteMessage.data}")
         }
 
-        if (remoteMessage.data.containsKey("sendbird")) {
+        if (remoteMessage.data.containsKey("sendbird") && local.getPushEnabled()) {
             val sendbird = JSONObject(remoteMessage.getData().get("sendbird"))
             val channel = sendbird.get("channel") as JSONObject
             val channelUrl = channel["channel_url"] as String

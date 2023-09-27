@@ -60,7 +60,7 @@
                     android:id="@+id/iv_flag"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="48dp"
+                    android:layout_marginStart="40dp"
                     android:layout_marginTop="-25dp"
                     app:layout_constraintStart_toStartOf="@+id/iv_profile_img"
                     app:layout_constraintTop_toBottomOf="@+id/iv_profile_img"
@@ -69,12 +69,11 @@
                     tools:src="@drawable/placeholder" />
 
                 <TextView
-                    android:id="@+id/tv_profile_intro"
+                    android:id="@+id/tv_description"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="20dp"
-                    android:text="@{item.description}"
                     android:textColor="@color/brownish_grey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
@@ -93,8 +92,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/tv_profile_intro"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_profile_intro"
+                    app:layout_constraintStart_toStartOf="@+id/tv_description"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_description"
                     app:layout_constraintVertical_bias="1.0" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -106,6 +105,16 @@
                     android:backgroundTint="@color/silver"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ProgressBar
+                    android:id="@+id/pb_profile"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -224,6 +233,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_review" />
 
+        <ImageView
+            android:id="@+id/iv_notification"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="18dp"
+            android:background="@drawable/notification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line3" />
+
+        <TextView
+            android:id="@+id/tv_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:fontFamily="@font/noto_sans_kr_regular"
+            android:text="@string/push_notification"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_notification"
+            app:layout_constraintStart_toEndOf="@id/iv_notification"
+            app:layout_constraintTop_toTopOf="@id/iv_notification" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/toggle_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:textOff=""
+            android:textOn=""
+            app:layout_constraintBottom_toBottomOf="@id/iv_notification"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/iv_notification" />
+
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_logout"
             android:layout_width="25dp"
@@ -231,7 +273,7 @@
             android:layout_margin="23dp"
             android:background="@drawable/logout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/line3" />
+            app:layout_constraintTop_toBottomOf="@id/iv_notification" />
 
         <TextView
             android:id="@+id/tv_logout"

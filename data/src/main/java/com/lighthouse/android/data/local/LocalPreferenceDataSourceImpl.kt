@@ -124,6 +124,16 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
         }
     }
 
+    override fun getPushEnabled(): Boolean {
+        return sharedPreferences.getBoolean(PUSH_ENABLED, true)
+    }
+
+    override fun setPushEnabled(enabled: Boolean) {
+        sharedPreferences.edit {
+            putBoolean(PUSH_ENABLED, enabled)
+        }
+    }
+
     companion object {
         const val USER_ID = "com.lighthouse.lingo-swap.UUID"
         const val USER_NAME = "com.lighthouse.lingo-swap.USER_NAME"
@@ -133,5 +143,6 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
         const val REFRESH_TOKEN_EXPIRE = "com.lighthouse.lingo-swap.refresh-token-expire"
         const val ID_TOKEN = "com.lighthouse.lingo-swap.id-token"
         const val LANGUAGE_SETTING = "com.lighthouse.lingo-swap.language-setting"
+        const val PUSH_ENABLED = "com.lighthouse.lingo-swap.push-enabled"
     }
 }

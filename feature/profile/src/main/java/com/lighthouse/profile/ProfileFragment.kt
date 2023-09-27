@@ -17,6 +17,8 @@ import com.lighthouse.android.common_ui.dialog.showOKDialog
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.calSize
+import com.lighthouse.android.common_ui.util.setGone
+import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.profile.databinding.FragmentProfileBinding
 import com.lighthouse.profile.viewmodel.ProfileViewModel
@@ -33,6 +35,16 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         initProfile()
         initMyQuestions()
         initLogout()
+        initToggle()
+    }
+
+    private fun initToggle() {
+        if (viewModel.getNotification()) {
+            binding.toggleNotification.isChecked = true
+        }
+        binding.toggleNotification.setOnCheckedChangeListener { _, b ->
+            viewModel.setNotification(b)
+        }
     }
 
     private fun initLogout() {
@@ -78,16 +90,18 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
-                // TODO()
+                binding.pbProfile.setVisible()
             }
 
             is UiState.Success<*> -> {
                 val data = uiState.data as ProfileVO
                 renderProfile(data)
+                binding.pbProfile.setGone()
             }
 
             is UiState.Error<*> -> {
                 handleException(uiState)
+                binding.pbProfile.setGone()
             }
         }
     }
@@ -123,6 +137,10 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         binding.ivFlag.layoutParams.width = calSize(Constant.PROFILE_FLAG_SIZE)
         binding.ivFlag.layoutParams.height = calSize(Constant.PROFILE_FLAG_SIZE)
         binding.ivFlag.requestLayout()
+
+        binding.tvDescription.text = data.description.ifEmpty {
+            getString(com.lighthouse.android.common_ui.R.string.profile_description)
+        }
 
         binding.setVariable(BR.item, data)
     }
