@@ -37,6 +37,7 @@ import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.request.UploadInterestVO
+import com.lighthouse.domain.entity.response.vo.ChannelVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.profile.R
 import com.lighthouse.profile.databinding.FragmentDetailProfileBinding
@@ -147,11 +148,11 @@ class DetailProfileFragment :
     }
 
     private fun observeLanguageResult() {
-        viewModel.languageList.observe(viewLifecycleOwner) {
-            initChip(binding.chipLanguage, it.map { c -> c.name })
+        viewModel.languageList.observe(viewLifecycleOwner) { value ->
+            Log.d("TESTING LANGUAGE", value.toString())
+            initChip(binding.chipLanguage, value.map { c -> "${c.name}/${c.level}" })
         }
     }
-
 
     private fun initInterest() {
         binding.clickInterest2.setOnClickListener {
@@ -160,6 +161,7 @@ class DetailProfileFragment :
             viewModel.interestList.forEach {
                 hash[it.category] = it.interests
             }
+            Log.d("TESTING INTEREST", hash.toString())
             val intent = mainNavigator.navigateToInterest(
                 requireContext(),
                 Pair("SelectedList", hash),
@@ -204,11 +206,13 @@ class DetailProfileFragment :
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getProfileDetail(viewModel.userId)
                 viewModel.detail.collect {
                     render(it)
                 }
             }
+        }
+        if (!viewModel.editMode) {
+            viewModel.getProfileDetail(viewModel.userId)
         }
     }
 
@@ -353,11 +357,17 @@ class DetailProfileFragment :
     private fun initFold() {
         binding.clickInterest.setOnClickListener { _ ->
             if (binding.cvInterest.visibility == View.VISIBLE) {
-                TransitionManager.beginDelayedTransition(binding.collapseInterest, AutoTransition())
+                TransitionManager.beginDelayedTransition(
+                    binding.collapseInterest,
+                    AutoTransition()
+                )
                 binding.cvInterest.visibility = View.GONE
                 binding.btnFoldInterest.animate().rotation(0f).start()
             } else {
-                TransitionManager.beginDelayedTransition(binding.collapseInterest, AutoTransition())
+                TransitionManager.beginDelayedTransition(
+                    binding.collapseInterest,
+                    AutoTransition()
+                )
                 binding.cvInterest.visibility = View.VISIBLE
                 binding.btnFoldInterest.animate().rotation(180f).start()
             }
@@ -367,6 +377,9 @@ class DetailProfileFragment :
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
+                if (::userProfile.isInitialized) {
+                    return
+                }
                 binding.pbDetailLoading.setVisible()
                 binding.group1.setGone()
                 binding.bottomRectangle.setGone()
@@ -377,7 +390,9 @@ class DetailProfileFragment :
                 if (uiState.data is ProfileVO) {
                     binding.group1.setVisible()
                     userProfile = uiState.data as ProfileVO
-                    viewModel.setList(userProfile)
+                    if (!viewModel.editMode) {
+                        viewModel.setList(userProfile)
+                    }
                     storePrevInfo(userProfile)
                     initView()
                 }
@@ -417,20 +432,25 @@ class DetailProfileFragment :
     }
 
     private fun initStartChatting() {
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                viewModel.create.collect {
-//                    if (it) {
-//
-//                    }
-//                }
-//            }
-//        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.create.collect {
+                    Log.d("TESTING COLLECT", it.toString())
+                    if (it is UiState.Success<*> && it.data is ChannelVO) {
+                        val intent =
+                            mainNavigator.navigateToMain(
+                                requireContext(),
+                                Pair("NewChat", true),
+                                Pair("ChannelId", (it.data as ChannelVO).id)
+                            )
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }
+                }
+            }
+        }
         binding.btnStart.setOnClickListener {
-//            viewModel.createChannel()
-            val intent = mainNavigator.navigateToMain(requireContext(), Pair("NewChat", true))
-            startActivity(intent)
-            requireActivity().finish()
+            viewModel.createChannel()
         }
     }
 
@@ -478,10 +498,11 @@ class DetailProfileFragment :
         })
 
 
-//        Glide.with(binding.ivProfileImg).load(userProfile.profileImageUri)
-//            .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
-//            .into(binding.ivProfileImg)
+        Glide.with(binding.ivProfileImg).load(userProfile.profileImageUri)
+            .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
+            .into(binding.ivProfileImg)
 
+        viewModel.imageUri = Uri.parse(userProfile.profileImageUri)
 
         val flag = binding.root.context.resources.getIdentifier(
             userProfile.region, "drawable", binding.root.context.packageName
@@ -501,7 +522,8 @@ class DetailProfileFragment :
     private fun loadImage(result: Uri) {
         Glide.with(this).load(result).fitCenter()
             .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
-            .error(com.lighthouse.android.common_ui.R.drawable.question).into(binding.ivProfileImg)
+            .error(com.lighthouse.android.common_ui.R.drawable.question)
+            .into(binding.ivProfileImg)
     }
 
     private fun observeImage() {
@@ -514,7 +536,8 @@ class DetailProfileFragment :
 
             Glide.with(this).load(imageUri).fitCenter()
                 .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
-                .error(com.lighthouse.android.common_ui.R.drawable.question).override(calSize(200f))
+                .error(com.lighthouse.android.common_ui.R.drawable.question)
+                .override(calSize(200f))
                 .into(binding.ivProfileImg)
 
             viewModel.getPreSignedUrl(getFileName(imageUri))
@@ -562,10 +585,7 @@ class DetailProfileFragment :
             imagePicker = ImagePickerDialog.newInstance()
         }
         if (!imagePicker.isAdded) {
-            imagePicker.setListener(this)
-            imagePicker.show(
-                requireActivity().supportFragmentManager, imagePicker.javaClass.simpleName
-            )
+            imagePicker.showDialog(requireContext(), this)
         }
     }
 

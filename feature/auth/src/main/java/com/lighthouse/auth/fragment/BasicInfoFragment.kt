@@ -47,12 +47,11 @@ class BasicInfoFragment :
     BindingFragment<FragmentBasicInfoBinding>(com.lighthouse.auth.R.layout.fragment_basic_info),
     ImagePickerDialog.CameraDialogListener {
     private val viewModel: AuthViewModel by activityViewModels()
-    private val interestList = mutableListOf<UploadInterestVO>(
-        UploadInterestVO("여행", listOf("해변", "도시 여행"))
-    )
+    private val interestList = mutableListOf<UploadInterestVO>()
+
     private var interestListCode = mutableListOf<UploadInterestVO>()
     private lateinit var interestAdapter: SimpleListAdapter<UploadInterestVO, InterestListTileBinding>
-    private var selectedCountry: CountryVO? = CountryVO("kr", "한국")
+    private var selectedCountry: CountryVO? = null
     private lateinit var imagePicker: ImagePickerDialog
     private lateinit var imageUri: Uri
 
@@ -87,7 +86,7 @@ class BasicInfoFragment :
     }
 
     private fun initCamera() {
-        binding.ivCamera.setOnClickListener {
+        binding.colorOverlay.setOnClickListener {
             getImagePicker()
         }
     }
@@ -108,11 +107,7 @@ class BasicInfoFragment :
             imagePicker = ImagePickerDialog.newInstance()
         }
         if (!imagePicker.isAdded) {
-            imagePicker.setListener(this)
-            imagePicker.show(
-                requireActivity().supportFragmentManager, imagePicker.javaClass.simpleName
-
-            )
+            imagePicker.showDialog(requireContext(), this)
         }
 
     }
@@ -253,8 +248,15 @@ class BasicInfoFragment :
         )
 
         val nameIsEmpty = binding.etName.text.toString().isEmpty()
+
         setErrorAndBackground(
             binding.etName, !nameIsEmpty, getString(R.string.invalid_null)
+        )
+
+        val nameIsValid = isValidName(binding.etName.text.toString())
+
+        setErrorAndBackground(
+            binding.etName, nameIsValid, getString(R.string.invalid_name)
         )
 
         val genderIsEmpty =
@@ -273,7 +275,12 @@ class BasicInfoFragment :
             binding.collapseInterest, !interestIsEmpty, getString(R.string.invalid_null)
         )
 
-        return emailIsValid && birthdayIsValid && !nameIsEmpty && !genderIsEmpty && !interestIsEmpty && !nationIsEmpty
+        return emailIsValid && birthdayIsValid && !nameIsEmpty && !genderIsEmpty && !interestIsEmpty && !nationIsEmpty && nameIsValid
+    }
+
+    private fun isValidName(name: String): Boolean {
+        val regex = "^[a-zA-Z\\s'-]+$"
+        return name.matches(Regex(regex))
     }
 
     private fun setErrorAndBackground(
@@ -319,7 +326,7 @@ class BasicInfoFragment :
     }
 
     private fun initInterest() {
-        binding.btnInterest.setOnClickListener {
+        binding.clickInterest.setOnClickListener {
             val hash = hashMapOf<String, List<String>>()
 
             interestList.forEach {
