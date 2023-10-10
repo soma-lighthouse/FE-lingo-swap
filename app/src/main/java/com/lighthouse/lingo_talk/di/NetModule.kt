@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap.di
+package com.lighthouse.lingo_talk.di
 
 import com.lighthouse.android.data.api.AuthApiService
 import com.lighthouse.android.data.api.BoardApiService
@@ -7,11 +7,11 @@ import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.ProfileApiService
 import com.lighthouse.android.data.api.interceptor.AuthInterceptor
-import com.lighthouse.lingo_swap.BuildConfig
-import com.lighthouse.lingo_swap.HeaderInterceptor
-import com.lighthouse.lingo_swap.NullOrEmptyConverter
-import com.lighthouse.lingo_swap.di.annotation.Main
-import com.lighthouse.lingo_swap.di.annotation.Test
+import com.lighthouse.lingo_talk.BuildConfig
+import com.lighthouse.lingo_talk.HeaderInterceptor
+import com.lighthouse.lingo_talk.NullOrEmptyConverter
+import com.lighthouse.lingo_talk.di.annotation.Main
+import com.lighthouse.lingo_talk.di.annotation.Test
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

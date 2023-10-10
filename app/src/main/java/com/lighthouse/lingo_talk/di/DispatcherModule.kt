@@ -1,7 +1,7 @@
-package com.lighthouse.lingo_swap.di
+package com.lighthouse.lingo_talk.di
 
 import com.lighthouse.android.common_ui.util.DispatcherProvider
-import com.lighthouse.lingo_swap.dispatcher.DispatcherProviderImpl
+import com.lighthouse.lingo_talk.dispatcher.DispatcherProviderImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

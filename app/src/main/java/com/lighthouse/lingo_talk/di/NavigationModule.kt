@@ -1,6 +1,6 @@
-package com.lighthouse.lingo_swap.di
+package com.lighthouse.lingo_talk.di
 
-import com.lighthouse.lingo_swap.MainNavigatorImpl
+import com.lighthouse.lingo_talk.MainNavigatorImpl
 import com.lighthouse.navigation.MainNavigator
 import com.lighthouse.navigation.Navigator
 import dagger.Module

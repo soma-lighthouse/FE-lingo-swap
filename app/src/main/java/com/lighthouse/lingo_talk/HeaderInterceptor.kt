@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap
+package com.lighthouse.lingo_talk
 
 import android.os.Build
 import android.util.Log

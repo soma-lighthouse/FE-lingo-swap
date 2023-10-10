@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap
+package com.lighthouse.lingo_talk
 
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +8,9 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.messaging.FirebaseMessaging
 import com.lighthouse.android.chats.uikit.CustomFragmentFactory
 import com.lighthouse.android.common_ui.base.BindingActivity
-import com.lighthouse.lingo_swap.databinding.ActivityMainBinding
+import com.lighthouse.android.common_ui.base.MyFirebaseMessagingService
+import com.lighthouse.android.common_ui.util.PushUtils
+import com.lighthouse.lingo_talk.databinding.ActivityMainBinding
 import com.lighthouse.navigation.NavigationFlow
 import com.lighthouse.navigation.Navigator
 import com.lighthouse.navigation.ToFlowNavigatable
@@ -57,6 +59,8 @@ class MainActivity @Inject constructor() :
                 com.lighthouse.android.home.R.id.filterFragment -> hideBottomNavBar()
                 com.lighthouse.board.R.id.boardFragment -> showBottomNavBar()
                 com.lighthouse.board.R.id.addFragment -> hideBottomNavBar()
+                com.lighthouse.profile.R.id.myQuestionsFragment -> hideBottomNavBar()
+                com.lighthouse.profile.R.id.profileFragment -> showBottomNavBar()
             }
         }
 
@@ -124,6 +128,7 @@ class MainActivity @Inject constructor() :
                 }
             }
         )
+
     }
 
     private fun initSendBirdUI() {
@@ -143,7 +148,7 @@ class MainActivity @Inject constructor() :
                     }
 
                     override fun getNickname(): String {
-                        return "test"
+                        return getUserName()
                     }
 
                     override fun getProfileUrl(): String {
@@ -175,5 +180,7 @@ class MainActivity @Inject constructor() :
         UIKitConfig.groupChannelConfig.enableTypingIndicator = true
         UIKitConfig.groupChannelConfig.enableReactions = false
         SendbirdUIKit.setUIKitFragmentFactory(CustomFragmentFactory())
+
+        PushUtils.registerPushHandler(MyFirebaseMessagingService())
     }
 }

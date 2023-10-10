@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap.di
+package com.lighthouse.lingo_talk.di
 
 import com.lighthouse.android.data.api.AuthApiService
 import com.lighthouse.android.data.api.BoardApiService
@@ -18,8 +18,8 @@ import com.lighthouse.android.data.repository.datasourceimpl.ChatRemoteDataSourc
 import com.lighthouse.android.data.repository.datasourceimpl.DrivenRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasourceimpl.HomeRemoteDataSourceImpl
 import com.lighthouse.android.data.repository.datasourceimpl.ProfileRemoteDataSourceImpl
-import com.lighthouse.lingo_swap.di.annotation.Main
-import com.lighthouse.lingo_swap.di.annotation.Test
+import com.lighthouse.lingo_talk.di.annotation.Main
+import com.lighthouse.lingo_talk.di.annotation.Test
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

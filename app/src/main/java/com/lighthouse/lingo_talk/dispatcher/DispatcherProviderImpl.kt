@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap.dispatcher
+package com.lighthouse.lingo_talk.dispatcher
 
 import com.lighthouse.android.common_ui.util.DispatcherProvider
 import kotlinx.coroutines.CoroutineDispatcher

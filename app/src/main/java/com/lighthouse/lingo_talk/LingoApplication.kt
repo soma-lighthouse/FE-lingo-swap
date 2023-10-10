@@ -1,10 +1,11 @@
-package com.lighthouse.lingo_swap
+package com.lighthouse.lingo_talk
 
 import android.app.Application
 import android.content.Intent
 import android.os.Process
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.gms.ads.MobileAds
 import com.lighthouse.auth.AuthActivity
 import dagger.hilt.android.HiltAndroidApp
 import kotlin.system.exitProcess
@@ -13,6 +14,7 @@ import kotlin.system.exitProcess
 class LingoApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        MobileAds.initialize(this)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         Thread.setDefaultUncaughtExceptionHandler { _, e -> caughtException(e) }
     }

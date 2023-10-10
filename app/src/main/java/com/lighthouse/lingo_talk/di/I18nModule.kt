@@ -1,8 +1,8 @@
-package com.lighthouse.lingo_swap.di
+package com.lighthouse.lingo_talk.di
 
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.lighthousei18n.I18nManager
-import com.lighthouse.lingo_swap.i18n.I18nManagerImpl
+import com.lighthouse.lingo_talk.i18n.I18nManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

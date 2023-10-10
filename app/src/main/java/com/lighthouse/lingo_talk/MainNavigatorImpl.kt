@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap
+package com.lighthouse.lingo_talk
 
 import android.content.Context
 import android.content.Intent

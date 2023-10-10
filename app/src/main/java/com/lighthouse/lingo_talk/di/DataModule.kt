@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap.di
+package com.lighthouse.lingo_talk.di
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -26,7 +26,7 @@ import com.lighthouse.domain.repository.DrivenRepository
 import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.domain.repository.ProfileRepository
 import com.lighthouse.lighthousei18n.I18nManager
-import com.lighthouse.lingo_swap.HeaderInterceptor
+import com.lighthouse.lingo_talk.HeaderInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

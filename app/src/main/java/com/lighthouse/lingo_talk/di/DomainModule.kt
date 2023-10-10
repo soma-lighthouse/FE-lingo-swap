@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap.di
+package com.lighthouse.lingo_talk.di
 
 import com.lighthouse.domain.repository.AuthRepository
 import com.lighthouse.domain.repository.BoardRepository

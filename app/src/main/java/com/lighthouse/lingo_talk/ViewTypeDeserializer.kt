@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap
+package com.lighthouse.lingo_talk
 
 import com.google.gson.Gson
 import com.google.gson.JsonDeserializationContext

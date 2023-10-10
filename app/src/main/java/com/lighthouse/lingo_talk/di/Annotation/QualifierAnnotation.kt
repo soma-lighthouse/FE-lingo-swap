@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap.di.annotation
+package com.lighthouse.lingo_talk.di.annotation
 
 import javax.inject.Qualifier
 

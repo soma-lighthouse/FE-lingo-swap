@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap.i18n
+package com.lighthouse.lingo_talk.i18n
 
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.domain.i18n.supportRegions.SupportRegions

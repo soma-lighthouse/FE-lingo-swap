@@ -1,4 +1,4 @@
-package com.lighthouse.lingo_swap
+package com.lighthouse.lingo_talk
 
 import com.lighthouse.android.data.model.response.EmptyResponse
 import okhttp3.ResponseBody
