@@ -68,9 +68,6 @@ open class CustomChannel : ChannelFragment() {
 
         if (inputComponent is CustomMessageInputComponent) {
             val customInput = module.messageInputComponent as CustomMessageInputComponent
-            customInput.cameraInput = View.OnClickListener {
-                takePhoto()
-            }
             customInput.voiceInput = View.OnClickListener {
                 takeVoiceRecorder()
             }
@@ -86,6 +83,8 @@ open class CustomChannel : ChannelFragment() {
 
                 }
             }
+
+            customInput.channel = channel
         }
     }
 

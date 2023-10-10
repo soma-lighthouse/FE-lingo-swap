@@ -7,10 +7,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.lighthouse.android.chats.databinding.MessageOtherBinding
+import com.lighthouse.lighthousei18n.I18nManager
 import com.sendbird.android.channel.BaseChannel
 import com.sendbird.android.message.BaseMessage
 import com.sendbird.android.message.Reaction
 import com.sendbird.android.message.SendingStatus
+import com.sendbird.android.message.UserMessage
 import com.sendbird.uikit.activities.viewholder.GroupChannelMessageViewHolder
 import com.sendbird.uikit.consts.ClickableViewIdentifier
 import com.sendbird.uikit.interfaces.OnItemClickListener
@@ -18,11 +20,15 @@ import com.sendbird.uikit.interfaces.OnItemLongClickListener
 import com.sendbird.uikit.model.MessageListUIParams
 import com.sendbird.uikit.utils.DrawableUtils
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
 class MessageOtherViewHolder(
     private val binding: MessageOtherBinding,
     private val toProfile: (String, Boolean) -> Unit,
 ) : GroupChannelMessageViewHolder(binding.root) {
+    @Inject
+    lateinit var i18nManager: I18nManager
+    
     override fun getClickableViewMap(): MutableMap<String, View> {
         val viewMap = ConcurrentHashMap<String, View>()
         viewMap[ClickableViewIdentifier.Chat.name] = binding.tvMessage
@@ -64,18 +70,18 @@ class MessageOtherViewHolder(
             com.sendbird.uikit.R.drawable.icon_user,
             com.sendbird.uikit.R.color.ondark_01
         )
-        Glide.with(context)
-            .load(url)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .error(errorIcon)
-            .apply(RequestOptions.circleCropTransform())
-            .into(binding.ivProfileView)
+        Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).error(errorIcon)
+            .apply(RequestOptions.circleCropTransform()).into(binding.ivProfileView)
 
         binding.ivProfileView.setOnClickListener {
             val id = sender?.userId ?: ""
             toProfile(id, false)
         }
 
-        binding.tvMessage.text = message.message
+        if (message is UserMessage && message.translations.isNotEmpty()) {
+            binding.tvMessage.text = message.translations[i18nManager.getLocale().language]
+        } else {
+            binding.tvMessage.text = message.message
+        }
     }
 }

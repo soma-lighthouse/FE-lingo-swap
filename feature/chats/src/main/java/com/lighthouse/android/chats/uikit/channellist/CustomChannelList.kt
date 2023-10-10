@@ -43,20 +43,6 @@ open class CustomChannelList : ChannelListFragment() {
         }
     }
 
-//    private fun showTitleChangeDialog(channel: GroupChannel) {
-//        val input = EditText(context)
-//        val builder = AlertDialog.Builder(requireContext())
-//        builder.setView(input)
-//            .setTitle(com.lighthouse.android.common_ui.R.string.error_title)
-//            .setPositiveButton(
-//                com.lighthouse.android.common_ui.R.string.ok
-//            ) { dialog, which ->
-//                val params = GroupChannelUpdateParams()
-//                params.name = input.text.toString()
-//                channel.updateChannel(params, null)
-//            }
-//        builder.show()
-//    }
 
     private fun showListContextMenu(channel: GroupChannel) {
         if (context == null) return
