@@ -2,6 +2,7 @@ package com.lighthouse.android.common_ui.server_driven.viewholders.viewholder
 
 import android.content.res.Resources
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
@@ -26,13 +27,13 @@ class HomeViewHolder(
         data as ProfileVO
 
         CoroutineScope(Dispatchers.Main).launch {
-//            Glide.with(binding.ivProfileImg)
-//                .load(data.profileImageUri)
-//                .override(calSize(Constant.PROFILE_IMAGE_SIZE))
-//                .into(binding.ivProfileImg)
+            Glide.with(binding.ivProfileImg)
+                .load(data.profileImageUri)
+                .override(calSize(Constant.PROFILE_IMAGE_SIZE))
+                .into(binding.ivProfileImg)
 
             val flag = binding.root.context.resources.getIdentifier(
-                data.region,
+                data.region.code,
                 "drawable",
                 binding.root.context.packageName
             )

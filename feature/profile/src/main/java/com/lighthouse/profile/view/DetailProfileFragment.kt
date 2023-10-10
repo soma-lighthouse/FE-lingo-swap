@@ -2,7 +2,6 @@ package com.lighthouse.profile.view
 
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.util.Log
@@ -27,6 +26,7 @@ import com.lighthouse.android.common_ui.dialog.ImagePickerDialog
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.UriUtil
 import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.android.common_ui.util.disable
 import com.lighthouse.android.common_ui.util.enable
@@ -150,7 +150,7 @@ class DetailProfileFragment :
     private fun observeLanguageResult() {
         viewModel.languageList.observe(viewLifecycleOwner) { value ->
             Log.d("TESTING LANGUAGE", value.toString())
-            initChip(binding.chipLanguage, value.map { c -> "${c.name}/${c.level}" })
+            initChip(binding.chipLanguage, value.map { c -> "${c.name}/LV${c.level}" })
         }
     }
 
@@ -239,7 +239,7 @@ class DetailProfileFragment :
 
             endEditMode()
             val contentUri = viewModel.profilePath?.let { Uri.parse(it) }
-            val filePath = contentUri?.let { getRealPathFromUri(it) }
+            val filePath = contentUri?.let { UriUtil.getRealPath(requireContext(), it) }
             if (filePath != null) {
                 viewModel.uploadImg(filePath)
             } else {
@@ -264,8 +264,9 @@ class DetailProfileFragment :
 
     private suspend fun observeRegister() {
         viewModel.register.drop(1).collect {
-            Log.d("REGISTER", "observeRegister: $it")
-
+            if (it is UiState.Success<*> && it.data is Boolean) {
+                viewModel.saveUserDetail()
+            }
         }
     }
 
@@ -317,23 +318,6 @@ class DetailProfileFragment :
             view.setBackgroundResource(com.lighthouse.android.common_ui.R.drawable.edit_box)
         }
     }
-
-    private fun getRealPathFromUri(uri: Uri): String? {
-        var realPath: String? = null
-        if (uri.scheme == "file") {
-            realPath = uri.path
-        } else if (uri.scheme == "content") {
-            val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
-            cursor?.use {
-                val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                if (it.moveToFirst()) {
-                    return it.getString(columnIndex)
-                }
-            }
-        }
-        return realPath
-    }
-
 
     private fun initMenu() {
         binding.tbProfile.setOnMenuItemClickListener {
@@ -420,7 +404,7 @@ class DetailProfileFragment :
         val tmp = RegisterInfoVO(
             uuid = data.id,
             name = data.name,
-            region = data.region,
+            region = data.region.code,
             description = data.description,
             profileImageUri = data.profileImageUri,
             preferredCountries = data.countries.map { it.code },
@@ -511,7 +495,7 @@ class DetailProfileFragment :
         viewModel.imageUri = Uri.parse(userProfile.profileImageUri)
 
         val flag = binding.root.context.resources.getIdentifier(
-            userProfile.region, "drawable", binding.root.context.packageName
+            userProfile.region.code, "drawable", binding.root.context.packageName
         )
         binding.ivFlag.setImageResource(flag)
         binding.ivFlag.layoutParams.width = calSize(Constant.PROFILE_FLAG_SIZE)

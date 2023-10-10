@@ -72,6 +72,11 @@ class MyQuestionsFragment :
             is UiState.Success<*> -> {
                 binding.rvMyQuestions.setVisible()
                 val data = uiState.data as List<MyQuestionsVO>
+                if (data.isEmpty()) {
+                    binding.tvEmpty.setVisible()
+                } else {
+                    binding.tvEmpty.setGone()
+                }
                 adapter.submitList(data)
                 binding.pbMyQuestion.setGone()
 

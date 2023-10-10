@@ -3,6 +3,7 @@ package com.lighthouse.android.data.model.response
 
 import com.google.gson.annotations.SerializedName
 import com.lighthouse.domain.entity.response.vo.ProfileVO
+import com.lighthouse.domain.entity.response.vo.RegionVO
 
 data class ProfileDTO(
     @SerializedName("uuid")
@@ -16,7 +17,7 @@ data class ProfileDTO(
     @SerializedName("name")
     val name: String?,
     @SerializedName("region")
-    val region: String?,
+    val region: RegionDTO?,
     @SerializedName("preferredCountries")
     val countries: List<CountryDTO>?,
     @SerializedName("preferredInterests")
@@ -29,8 +30,21 @@ data class ProfileDTO(
             profileImageUri = profileImageUri ?: "",
             languages = languages?.map { it.toVO() } ?: listOf(),
             name = name ?: "",
-            region = region ?: "",
+            region = region?.toVO() ?: RegionVO("", ""),
             countries = countries?.map { it.toVO() } ?: listOf(),
             interests = interests?.map { it.toVO() } ?: listOf()
+        )
+}
+
+data class RegionDTO(
+    @SerializedName("name")
+    val name: String?,
+    @SerializedName("code")
+    val code: String?
+) {
+    fun toVO() =
+        RegionVO(
+            name = name ?: "",
+            code = code ?: ""
         )
 }

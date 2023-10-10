@@ -27,7 +27,7 @@ class EditLanguageFragment :
 
     private val viewModel: ProfileViewModel by activityViewModels()
     private lateinit var adapter: SelectionAdapter
-    private val dataList: MutableList<LanguageVO> = mutableListOf()
+    private var dataList: MutableList<LanguageVO> = mutableListOf()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -103,11 +103,9 @@ class EditLanguageFragment :
     }
 
     private fun removeExtra() {
-        dataList.forEach {
-            if (it.name == "country") {
-                dataList.remove(it)
-            }
-        }
+        dataList =
+            dataList.filter { it.name != getString(com.lighthouse.android.common_ui.R.string.language) }
+                .toMutableList()
     }
 
     private fun initAdapter() {

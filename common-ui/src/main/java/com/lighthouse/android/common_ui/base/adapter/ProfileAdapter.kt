@@ -15,11 +15,12 @@ fun makeAdapter(
     checkable: Boolean = false,
     hide: Boolean = false,
     selectedList: HashMap<String, List<String>> = hashMapOf(),
-    chip: ((List<Int>, Int) -> Unit)? = null,
+    chip: ((List<Int>, Int) -> Unit)? = null
 ) =
-    SimpleListAdapter<UploadInterestVO, InterestListTileBinding>(diffCallBack = ItemDiffCallBack(
-        onItemsTheSame = { old, new -> old.category == new.category },
-        onContentsTheSame = { old, new -> old == new }),
+    SimpleListAdapter<UploadInterestVO, InterestListTileBinding>(
+        diffCallBack = ItemDiffCallBack(
+            onItemsTheSame = { old, new -> old.category == new.category },
+            onContentsTheSame = { old, new -> old == new }),
         layoutId = com.lighthouse.android.common_ui.R.layout.interest_list_tile,
         onBindCallback = { viewHolder, item ->
             val binding = viewHolder.binding
@@ -84,4 +85,5 @@ fun makeAdapter(
                     chip(checkedId, viewHolder.adapterPosition)
                 }
             }
-        })
+        },
+    )

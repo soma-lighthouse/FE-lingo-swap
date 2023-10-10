@@ -146,7 +146,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:text="@{item.region}"
+                    android:text="@{item.region.name}"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_flag"
                     app:layout_constraintStart_toEndOf="@+id/iv_flag"
@@ -236,6 +236,7 @@
                     android:id="@+id/click_language"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:background="@android:color/transparent"
                     app:layout_constraintBottom_toBottomOf="@id/tv_language_title"
                     app:layout_constraintTop_toTopOf="@id/tv_language_title" />
 
@@ -274,6 +275,7 @@
                     android:id="@+id/click_country"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    android:background="@android:color/transparent"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@id/tv_country_title"
                     app:layout_constraintTop_toTopOf="@id/tv_country_title" />
@@ -341,6 +343,7 @@
                             android:id="@+id/click_interest"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
+                            android:background="@android:color/transparent"
                             android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="@id/tv_interest"
                             app:layout_constraintTop_toTopOf="@id/tv_interest" />
@@ -349,6 +352,7 @@
                             android:id="@+id/click_interest2"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
+                            android:background="@android:color/transparent"
                             android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="@id/tv_interest"
                             app:layout_constraintTop_toTopOf="@id/tv_interest" />
@@ -379,10 +383,11 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="20dp"
+                            android:layout_marginEnd="20dp"
                             app:cardCornerRadius="10dp"
                             app:cardElevation="0dp"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@id/btn_interest"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="@id/tv_interest"
                             app:layout_constraintTop_toBottomOf="@id/tv_interest"
                             app:strokeColor="@color/very_light_pink"

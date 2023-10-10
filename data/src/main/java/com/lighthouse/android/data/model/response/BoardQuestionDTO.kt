@@ -22,6 +22,8 @@ data class BoardQuestionDTO(
     val like: Int?,
     @SerializedName("createAt")
     val createAt: String?,
+    @SerializedName("clicked")
+    val clicked: Boolean?
 ) {
     fun toVO() = BoardQuestionVO(
         questionId = questionId ?: -1,
@@ -32,7 +34,8 @@ data class BoardQuestionDTO(
         name = name ?: " ",
         region = region ?: " ",
         like = like ?: -1,
-        createAt = createAt ?: " "
+        createAt = createAt ?: " ",
+        clicked = clicked ?: false
     )
 
 }

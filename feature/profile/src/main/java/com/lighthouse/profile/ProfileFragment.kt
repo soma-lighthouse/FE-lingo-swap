@@ -1,5 +1,7 @@
 package com.lighthouse.profile
 
+import android.app.NotificationManager
+import android.content.Context.NOTIFICATION_SERVICE
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -10,18 +12,23 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.base.BindingFragment
+import com.lighthouse.android.common_ui.base.MyFirebaseMessagingService
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
 import com.lighthouse.android.common_ui.dialog.showOKDialog
 import com.lighthouse.android.common_ui.util.Constant
+import com.lighthouse.android.common_ui.util.PushUtils
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
+import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.profile.databinding.FragmentProfileBinding
 import com.lighthouse.profile.viewmodel.ProfileViewModel
+import com.sendbird.android.exception.SendbirdException
+import com.sendbird.android.handler.PushRequestCompleteHandler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -39,10 +46,26 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
     }
 
     private fun initToggle() {
-        if (viewModel.getNotification()) {
-            binding.toggleNotification.isChecked = true
-        }
+        binding.toggleNotification.isChecked = viewModel.getNotification()
+
         binding.toggleNotification.setOnCheckedChangeListener { _, b ->
+            if (b) {
+                PushUtils.registerPushHandler(MyFirebaseMessagingService())
+            } else {
+                PushUtils.unRegisterPushHandler(object : PushRequestCompleteHandler {
+                    override fun onComplete(isRegistered: Boolean, token: String?) {
+                        val notification =
+                            requireContext().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                        notification.cancelAll()
+                    }
+
+                    override fun onError(e: SendbirdException) {
+                        context.toast(e.message.toString())
+                        binding.toggleNotification.isChecked = true
+                    }
+                })
+            }
+
             viewModel.setNotification(b)
         }
     }
@@ -128,7 +151,7 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         langAdapter.submitList(languages)
 
         val flag = binding.root.context.resources.getIdentifier(
-            data.region, "drawable", binding.root.context.packageName
+            data.region.name, "drawable", binding.root.context.packageName
         )
 
         binding.rvLanguage.adapter = langAdapter

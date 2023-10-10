@@ -11,4 +11,7 @@ data class BoardQuestionVO(
     val contents: String,
     val like: Int,
     val createAt: String,
-)
+    val clicked: Boolean
+) {
+    constructor() : this(0, "", 0, "", "", "", "", 0, "", false)
+}
