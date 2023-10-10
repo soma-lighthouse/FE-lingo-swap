@@ -126,5 +126,12 @@
     <string name="invalid_name">Invalid name</string>
 
     <string name="save">Save</string>
+    <string name="term_service">Terms of service</string>
+    <string name="term_use">Terms and Conditions</string>
+    <string name="term_personal">Privacy Policy</string>
+
+    <string name="empty_my_question">Questions have not been uploaded yet!\nPlease begin the process of uploading your question on the board.</string>
+
+    <string name="ad_attribution">Ad</string>
 
 </resources>

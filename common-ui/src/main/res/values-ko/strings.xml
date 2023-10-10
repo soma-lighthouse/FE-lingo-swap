@@ -128,4 +128,11 @@
     <string name="invalid_name">잘못된 이름 형식입니다</string>
     <string name="save">저장</string>
 
+    <string name="term_service">서비스 약관</string>
+    <string name="term_use">이용 약관</string>
+    <string name="term_personal">개인정보 수집 및 이용 동의</string>
+    <string name="empty_my_question">작성한 질문이 없습니다.\n게시판에서 질문을 작성해보세요!</string>
+
+    <string name="ad_attribution">Ad</string>
+
 </resources>

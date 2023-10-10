@@ -42,6 +42,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.0")
 
     implementation(libs.bundles.androidx.ui.foundation)
+    implementation(libs.google.admob)
     implementation(libs.bundles.android.basic.ui)
     implementation(libs.kotlin.coroutines)
     implementation(libs.hilt)
