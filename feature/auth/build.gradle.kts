@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.hilt)
     implementation("androidx.core:core-splashscreen:1.0.0-beta02")
     implementation(libs.google.login)
+    implementation("com.google.guava:guava:31.0.1-android")
 
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)

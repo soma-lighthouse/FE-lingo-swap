@@ -1,4 +1,4 @@
-package com.lighthouse.android.common_ui.base.selection_adapter
+package com.lighthouse.android.common_ui.base.selection_adapter.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.databinding.CountryTileBinding

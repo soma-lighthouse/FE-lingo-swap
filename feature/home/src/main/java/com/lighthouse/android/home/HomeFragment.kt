@@ -95,6 +95,7 @@ class HomeFragment @Inject constructor() :
             is UiState.Success<*> -> {
                 binding.rvHome.setVisible()
                 if (uiState.data is List<*>) {
+                    profileList.add(ProfileVO())
                     profileList.addAll(uiState.data as List<ProfileVO>)
                     Log.d("TESTING RENDER", profileList.size.toString())
                 }
@@ -116,7 +117,7 @@ class HomeFragment @Inject constructor() :
 
 
     private fun initAdapter() {
-        adapter = makeAdapter { userId ->
+        adapter = makeAdapter(requireContext()) { userId ->
             mainNavigator.navigateToProfile(
                 context = requireContext(),
                 userId = Pair("userId", userId),

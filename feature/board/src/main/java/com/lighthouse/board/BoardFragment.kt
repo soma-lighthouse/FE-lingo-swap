@@ -99,7 +99,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     }
 
     private fun initAdapter() {
-        adapter = makeAdapter({ questionId ->
+        adapter = makeAdapter(requireContext(), { questionId ->
             viewModel.updateLike(questionId)
         }, { questionId ->
             viewModel.cancelLike(questionId)
@@ -157,6 +157,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             }
 
             is UiState.Success<*> -> {
+                questionList.add(BoardQuestionVO())
                 questionList.addAll(uiState.data as List<BoardQuestionVO>)
                 Log.d("QUESTION", questionList.size.toString())
                 adapter.submitList(questionList)
