@@ -110,7 +110,7 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
         adapter = makeAdapter(
             checkable = true,
             hide = true,
-            selectedList.value ?: hashMapOf()
+            selectedList.value ?: hashMapOf(),
         ) { checkedList: List<Int>, pos: Int ->
             updateChip(checkedList, pos)
         }

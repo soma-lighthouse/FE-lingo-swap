@@ -38,10 +38,22 @@
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login">
         <action
-            android:id="@+id/action_loginFragment_to_infoFragment"
+            android:id="@+id/action_loginFragment_to_termFragment"
+            app:destination="@id/termFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/termFragment"
+        android:name="com.lighthouse.auth.fragment.TermFragment"
+        tools:layout="@layout/fragment_term">
+        <action
+            android:id="@+id/action_termFragment_to_infoFragment"
             app:destination="@id/info_fragment"
             app:enterAnim="@anim/nav_default_pop_enter_anim"
             app:exitAnim="@anim/nav_default_pop_exit_anim" />
+
     </fragment>
 
 </navigation>
