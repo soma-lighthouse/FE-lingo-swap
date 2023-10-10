@@ -2,7 +2,6 @@ package com.lighthouse.auth.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.BindingFragment
+import com.lighthouse.android.common_ui.util.UriUtil
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.auth.R
@@ -52,7 +52,7 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
             binding.groupCountry.isClickable = false
             binding.pbStart.setVisible()
             val contentUri = viewModel.profilePath?.let { Uri.parse(it) }
-            val filePath = contentUri?.let { getRealPathFromUri(it) }
+            val filePath = contentUri?.let { UriUtil.getRealPath(requireContext(), it) }
             if (filePath != null) {
                 viewModel.uploadImg(filePath)
             } else {
@@ -99,23 +99,6 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
             startActivity(intent)
             requireActivity().finish()
         }
-    }
-
-
-    private fun getRealPathFromUri(uri: Uri): String? {
-        var realPath: String? = null
-        if (uri.scheme == "file") {
-            realPath = uri.path
-        } else if (uri.scheme == "content") {
-            val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
-            cursor?.use {
-                val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                if (it.moveToFirst()) {
-                    return it.getString(columnIndex)
-                }
-            }
-        }
-        return realPath
     }
 
 
