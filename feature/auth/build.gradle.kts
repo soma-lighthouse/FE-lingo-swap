@@ -31,6 +31,18 @@ android {
             "GOOGLE_CLIENT_ID",
             properties.getProperty("GOOGLE_CLIENT_ID")
         )
+
+        buildConfigField(
+            "String",
+            "PRIVACY_TERM_URL",
+            properties.getProperty("PRIVACY_TERM_URL")
+        )
+
+        buildConfigField(
+            "String",
+            "SERVICE_TERM_URL",
+            properties.getProperty("SERVICE_TERM_URL")
+        )
     }
 
     buildFeatures {

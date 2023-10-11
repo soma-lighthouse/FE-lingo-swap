@@ -8,6 +8,7 @@ import androidx.navigation.fragment.findNavController
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.util.disable
 import com.lighthouse.android.common_ui.util.enable
+import com.lighthouse.auth.BuildConfig
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentTermBinding
 
@@ -28,14 +29,14 @@ class TermFragment : BindingFragment<FragmentTermBinding>(R.layout.fragment_term
     }
 
     private fun openBrowser() {
-        binding.tvPersonalTitle.setOnClickListener {
-            val url = "https://soft-prawn-8b2.notion.site/2a06866fc42b478080782fe6dc2d7ce5?pvs=4"
+        binding.clickPrivacy.setOnClickListener {
+            val url = BuildConfig.PRIVACY_TERM_URL
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }
 
-        binding.tvServiceTitle.setOnClickListener {
-            val url = "https://soft-prawn-8b2.notion.site/d7eced380535466295c9df9fcfffd592?pvs=4"
+        binding.clickService.setOnClickListener {
+            val url = BuildConfig.SERVICE_TERM_URL
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }

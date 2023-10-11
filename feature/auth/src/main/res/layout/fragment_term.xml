@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,10 +46,19 @@
             android:id="@+id/cb_service_check2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="50dp"
-            app:layout_constraintBottom_toTopOf="@+id/guideline6"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_margin="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_use_title"
+            tools:layout_editor_absoluteY="268dp" />
+
+        <View
+            android:id="@+id/click_privacy"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_personal_title"
+            app:layout_constraintEnd_toEndOf="@id/iv_privacy_arrow"
+            app:layout_constraintStart_toStartOf="@id/tv_personal_title"
+            app:layout_constraintTop_toTopOf="@id/tv_personal_title" />
 
 
         <TextView
@@ -66,6 +76,7 @@
             app:layout_constraintVertical_bias="0.466" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_privacy_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
@@ -73,13 +84,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/tv_personal_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tv_personal_title" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5" />
 
         <TextView
             android:id="@+id/tv_service_title"
@@ -95,7 +99,17 @@
             app:layout_constraintTop_toTopOf="@+id/cb_service_check"
             app:layout_constraintVertical_bias="0.518" />
 
+        <View
+            android:id="@+id/click_service"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_service_title"
+            app:layout_constraintEnd_toEndOf="@id/iv_service_arrow"
+            app:layout_constraintStart_toStartOf="@id/tv_service_title"
+            app:layout_constraintTop_toTopOf="@id/tv_service_title" />
+
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_service_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
@@ -117,10 +131,10 @@
             android:id="@+id/cb_service_check"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="50dp"
+            android:layout_margin="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline6" />
+            app:layout_constraintTop_toBottomOf="@id/cb_service_check2"
+            tools:layout_editor_absoluteY="416dp" />
 
         <View
             android:id="@+id/bottom_rectangle"
