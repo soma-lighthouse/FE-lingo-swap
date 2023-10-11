@@ -118,7 +118,7 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
     override fun getItemViewType(position: Int): Int {
         return if (isLoadingVisible && position == itemCount - 1) {
             TYPE_LOADING
-        } else if (position % 10 == 0 && ads) {
+        } else if ((position % 11 == 0 || position == 0) && ads) {
             TYPE_AD
         } else {
             TYPE_ITEM
