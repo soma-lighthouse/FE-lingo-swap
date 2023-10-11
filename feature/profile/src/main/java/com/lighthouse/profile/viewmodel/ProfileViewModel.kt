@@ -62,6 +62,7 @@ class ProfileViewModel @Inject constructor(
     var editMode = false
     var imageUri: Uri? = null
     var description = ""
+    var filePath: String = ""
 
     var interestList = listOf<UploadInterestVO>()
     var interestListCode = listOf<UploadInterestVO>()

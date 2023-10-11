@@ -36,6 +36,7 @@ class AuthViewModel @Inject constructor(
     val registerInfo = RegisterInfoVO()
     var profilePath: String? = null
     var profileUrl: String? = null
+    var filePath: String = ""
 
     private val _result = MutableStateFlow<UiState>(UiState.Loading)
     val result: StateFlow<UiState> = _result.asStateFlow()
@@ -106,11 +107,9 @@ class AuthViewModel @Inject constructor(
             useCase.registerUser(registerInfo)
                 .catch {
                     _register.value = false
-                    Log.e("TESTING ERROR", it.toString())
                 }.collect {
                     when (it) {
                         is Resource.Success -> {
-                            Log.d("TESTING2", "collect: ${it.toString()}")
                             _register.value = true
                         }
 

@@ -205,7 +205,7 @@ object UriUtil {
 
         if (extension == null || extension.isEmpty()) {
             // default extension for matches the previous behavior of the plugin
-            extension = "jpg"
+            extension = "webp"
         }
 
         return ".$extension"
@@ -214,7 +214,7 @@ object UriUtil {
     private fun getImageFile(fileDir: File, extension: String? = null): File? {
         try {
             // Create an image file name
-            val ext = extension ?: ".jpg"
+            val ext = extension ?: ".webp"
             val fileName = getFileName()
             val imageFileName = "$fileName$ext"
 

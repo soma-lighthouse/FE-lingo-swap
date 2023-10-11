@@ -22,6 +22,7 @@ import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
 import com.lighthouse.android.common_ui.dialog.ImagePickerDialog
 import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.UriUtil
 import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.android.common_ui.util.intentSerializable
 import com.lighthouse.android.common_ui.util.isValidBirthday
@@ -36,7 +37,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -119,20 +119,24 @@ class BasicInfoFragment :
                 return@observe
             }
             imageUri = Uri.parse(it.data.toString())
+            val contentUri = Uri.parse(imageUri.toString())
+            viewModel.filePath = UriUtil.getRealPath(requireContext(), contentUri) ?: ""
 
             Glide.with(this).load(imageUri).fitCenter()
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.question)
                 .override(calSize(200f)).into(binding.ivProfileImg)
 
-            viewModel.getPreSignedUrl(getFileName(imageUri))
+            viewModel.getPreSignedUrl(getFileName(viewModel.filePath))
         }
     }
 
-    private fun getFileName(uri: Uri): String {
-        val fileName = getFileExtensionFromUri(uri)
-        val file = File(fileName)
-        return "/${viewModel.userId}/${file.name}"
+    private fun getFileName(uri: String): String {
+        if (uri == "") {
+            return ""
+        }
+        val fileName = uri.substringAfterLast("/")
+        return "/${viewModel.userId}/${fileName}"
     }
 
     private fun observePresignUrl() {
@@ -146,7 +150,7 @@ class BasicInfoFragment :
     }
 
     private suspend fun render(uiState: UiState) {
-        val serverFileName = getFileName(imageUri)
+        val serverFileName = getFileName(viewModel.filePath)
         when (uiState) {
             is UiState.Success<*> -> {
                 viewModel.registerInfo.profileImageUri = serverFileName
@@ -164,15 +168,6 @@ class BasicInfoFragment :
                     viewModel.getPreSignedUrl(serverFileName)
                 }
             }
-        }
-    }
-
-    private fun getFileExtensionFromUri(uri: Uri): String {
-        return if (uri.scheme == "content") {
-            val mimeType = requireContext().contentResolver.getType(uri)
-            "$uri.${mimeType?.substringAfterLast('/')}"
-        } else {
-            uri.toString()
         }
     }
 

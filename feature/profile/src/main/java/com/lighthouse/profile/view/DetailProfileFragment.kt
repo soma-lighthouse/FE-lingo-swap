@@ -45,7 +45,6 @@ import com.lighthouse.profile.viewmodel.ProfileViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
-import java.io.File
 
 class DetailProfileFragment :
     BindingFragment<FragmentDetailProfileBinding>(R.layout.fragment_detail_profile),
@@ -238,10 +237,8 @@ class DetailProfileFragment :
             }
 
             endEditMode()
-            val contentUri = viewModel.profilePath?.let { Uri.parse(it) }
-            val filePath = contentUri?.let { UriUtil.getRealPath(requireContext(), it) }
-            if (filePath != null) {
-                viewModel.uploadImg(filePath)
+            if (viewModel.filePath != "") {
+                viewModel.uploadImg(viewModel.filePath!!)
             } else {
                 viewModel.saveUserDetail()
             }
@@ -523,6 +520,8 @@ class DetailProfileFragment :
                 return@observe
             }
             imageUri = Uri.parse(it.data.toString())
+            val contentUri = Uri.parse(imageUri.toString())
+            viewModel.filePath = UriUtil.getRealPath(requireContext(), contentUri) ?: ""
 
             Glide.with(this).load(imageUri).fitCenter()
                 .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
@@ -530,21 +529,24 @@ class DetailProfileFragment :
                 .override(calSize(200f))
                 .into(binding.ivProfileImg)
 
-            viewModel.getPreSignedUrl(getFileName(imageUri))
+            viewModel.getPreSignedUrl(getFileName(viewModel.filePath))
         }
     }
 
-    private fun getFileName(uri: Uri): String {
-        val fileName = getFileExtensionFromUri(uri)
-        val file = File(fileName)
-        return "/${viewModel.userId}/${file.name}"
+    private fun getFileName(uri: String): String {
+        if (uri == "") {
+            return ""
+        }
+        val fileName = uri.substringAfterLast("/")
+        return "/${viewModel.userId}/${fileName}"
     }
 
     private fun observePresignUrl() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.upload.drop(1).collect {
-                    val serverFileName = getFileName(imageUri)
+                    val serverFileName = getFileName(viewModel.filePath)
+
                     when (it) {
                         is UiState.Success<*> -> {
                             if (it.data is String) {
@@ -576,15 +578,6 @@ class DetailProfileFragment :
         }
         if (!imagePicker.isAdded) {
             imagePicker.showDialog(requireContext(), this)
-        }
-    }
-
-    private fun getFileExtensionFromUri(uri: Uri): String {
-        return if (uri.scheme == "content") {
-            val mimeType = requireContext().contentResolver.getType(uri)
-            "$uri.${mimeType?.substringAfterLast('/')}"
-        } else {
-            uri.toString()
         }
     }
 

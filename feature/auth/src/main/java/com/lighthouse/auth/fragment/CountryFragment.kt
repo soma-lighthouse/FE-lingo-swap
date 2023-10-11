@@ -1,6 +1,5 @@
 package com.lighthouse.auth.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.BindingFragment
-import com.lighthouse.android.common_ui.util.UriUtil
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.auth.R
@@ -51,10 +49,8 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
             viewModel.registerInfo.preferredCountries = selectedCountryCode
             binding.groupCountry.isClickable = false
             binding.pbStart.setVisible()
-            val contentUri = viewModel.profilePath?.let { Uri.parse(it) }
-            val filePath = contentUri?.let { UriUtil.getRealPath(requireContext(), it) }
-            if (filePath != null) {
-                viewModel.uploadImg(filePath)
+            if (viewModel.filePath != "") {
+                viewModel.uploadImg(viewModel.filePath)
             } else {
                 viewModel.registerUser()
             }
