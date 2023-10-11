@@ -7,12 +7,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.lighthouse.android.chats.databinding.MessageOtherBinding
-import com.lighthouse.lighthousei18n.I18nManager
 import com.sendbird.android.channel.BaseChannel
 import com.sendbird.android.message.BaseMessage
 import com.sendbird.android.message.Reaction
 import com.sendbird.android.message.SendingStatus
-import com.sendbird.android.message.UserMessage
 import com.sendbird.uikit.activities.viewholder.GroupChannelMessageViewHolder
 import com.sendbird.uikit.consts.ClickableViewIdentifier
 import com.sendbird.uikit.interfaces.OnItemClickListener
@@ -20,15 +18,12 @@ import com.sendbird.uikit.interfaces.OnItemLongClickListener
 import com.sendbird.uikit.model.MessageListUIParams
 import com.sendbird.uikit.utils.DrawableUtils
 import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Inject
 
 class MessageOtherViewHolder(
     private val binding: MessageOtherBinding,
     private val toProfile: (String, Boolean) -> Unit,
 ) : GroupChannelMessageViewHolder(binding.root) {
-    @Inject
-    lateinit var i18nManager: I18nManager
-    
+
     override fun getClickableViewMap(): MutableMap<String, View> {
         val viewMap = ConcurrentHashMap<String, View>()
         viewMap[ClickableViewIdentifier.Chat.name] = binding.tvMessage
@@ -78,10 +73,7 @@ class MessageOtherViewHolder(
             toProfile(id, false)
         }
 
-        if (message is UserMessage && message.translations.isNotEmpty()) {
-            binding.tvMessage.text = message.translations[i18nManager.getLocale().language]
-        } else {
-            binding.tvMessage.text = message.message
-        }
+        binding.tvMessage.text = message.message
+
     }
 }

@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.lighthouse.android.chats.R
 import com.lighthouse.android.chats.databinding.CustomChannelHeaderBinding
-import com.lighthouse.android.common_ui.util.toast
 import com.sendbird.android.SendbirdChat
 import com.sendbird.android.channel.GroupChannel
 import com.sendbird.android.user.Member
@@ -25,26 +23,10 @@ class CustomChannelHeader : ChannelHeaderComponent() {
     ): View {
         binding = CustomChannelHeaderBinding.inflate(inflater, parent, false)
         binding.btnBack.setOnClickListener(this::onLeftButtonClicked)
-        binding.tbProfile.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.item_setting -> {
-                    onRightButtonClicked(binding.root)
-                    true
-                }
-
-                R.id.item_alarm -> {
-                    context.toast("alarm clicked")
-                    true
-                }
-
-                else -> {
-                    true
-                }
-            }
-        }
         binding.tbProfile.setBackgroundColor(Color.WHITE)
 
-
+        binding.tvOpponentName.text =
+            context.getString(com.lighthouse.android.common_ui.R.string.no_user)
         return binding.root
     }
 
@@ -58,8 +40,6 @@ class CustomChannelHeader : ChannelHeaderComponent() {
                 if (members[0].nickname != currentUser) members[0] else members[1]
             binding.tvOpponentName.text = opponent.nickname
             binding.tvOnline.text = opponent.connectionStatus.toString()
-        } else {
-            binding.tvOpponentName.text = channel.name
         }
 
     }

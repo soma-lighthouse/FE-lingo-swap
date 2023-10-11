@@ -50,7 +50,7 @@ class QuestionFragment : BindingFragment<FragmentQuestionBinding>(R.layout.fragm
     }
 
     private fun initAdapter() {
-        adapter = makeAdapter() {
+        adapter = makeAdapter {
             viewModel.sendQuestion.value = it
         }
         val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)

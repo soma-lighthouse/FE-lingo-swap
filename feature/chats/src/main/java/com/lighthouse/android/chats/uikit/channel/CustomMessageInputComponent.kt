@@ -16,17 +16,14 @@ import androidx.core.content.ContextCompat
 import com.lighthouse.android.chats.databinding.CustomMessageInputBinding
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.android.common_ui.util.toast
 import com.sendbird.android.channel.GroupChannel
 import com.sendbird.android.message.BaseMessage
-import com.sendbird.android.params.UserMessageCreateParams
 import com.sendbird.uikit.modules.components.MessageInputComponent
 import com.sendbird.uikit.widgets.MessageInputView
 
 class CustomMessageInputComponent : MessageInputComponent() {
     private lateinit var binding: CustomMessageInputBinding
     private var mode = MessageInputView.Mode.DEFAULT
-    private var translate = false
     var voiceInput: View.OnClickListener? = null
     var channel: GroupChannel? = null
 
@@ -38,7 +35,7 @@ class CustomMessageInputComponent : MessageInputComponent() {
     ): View {
         binding = CustomMessageInputBinding.inflate(inflater, parent, false)
 
-        translateMode()
+        binding.ivSend.setOnClickListener(this::onInputRightButtonClicked)
 
         binding.ivCamera.setOnClickListener {
             onInputLeftButtonClicked(it)
@@ -73,25 +70,6 @@ class CustomMessageInputComponent : MessageInputComponent() {
             }
         }
 
-        binding.ivTranslate.setOnClickListener {
-            translate = !translate
-            if (translate) {
-                context.toast("Translate on")
-                binding.ivTranslate.setColorFilter(
-                    ContextCompat.getColor(
-                        context, com.lighthouse.android.common_ui.R.color.main
-                    )
-                )
-            } else {
-                context.toast("Translate off")
-                binding.ivTranslate.setColorFilter(
-                    ContextCompat.getColor(
-                        context, com.lighthouse.android.common_ui.R.color.brown_grey
-                    )
-                )
-            }
-        }
-
         binding.etMessageInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // TODO("Not yet implemented")
@@ -111,27 +89,12 @@ class CustomMessageInputComponent : MessageInputComponent() {
 
                 }
 
-                binding.ivSend.visibility = if (s?.isNotEmpty() != true) View.GONE else View.VISIBLE
+                binding.ivSend.visibility =
+                    if (s?.isNotEmpty() != true || (channel != null && channel?.memberCount == 1)) View.GONE else View.VISIBLE
             }
         })
         return binding.root
     }
-
-    private fun translateMode() {
-        binding.ivSend.setOnClickListener {
-            if (translate) {
-                val targetLanguage = listOf("en", "kr")
-                val params = UserMessageCreateParams(binding.etMessageInput.text.toString()).apply {
-                    translationTargetLanguages = targetLanguage
-                }
-                channel?.sendUserMessage(params, null)
-            } else {
-                onInputRightButtonClicked(it)
-            }
-        }
-
-    }
-
 
     override fun getEditTextView(): EditText {
         return binding.etMessageInput
@@ -171,13 +134,13 @@ class CustomMessageInputComponent : MessageInputComponent() {
         val before = this.mode
         this.mode = mode
         if (mode == MessageInputView.Mode.QUOTE_REPLY) {
-            translateMode()
+            binding.ivSend.setOnClickListener(this::onInputRightButtonClicked)
         } else if (mode == MessageInputView.Mode.EDIT) {
             binding.ivSend.setOnClickListener(this::onEditModeSaveButtonClicked)
             binding.replyPanel.setGone()
             binding.ivCross.setGone()
         } else {
-            translateMode()
+            binding.ivSend.setOnClickListener(this::onInputRightButtonClicked)
             binding.replyPanel.setGone()
             binding.replyPanel.setGone()
         }

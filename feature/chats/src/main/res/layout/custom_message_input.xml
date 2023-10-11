@@ -87,27 +87,27 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/question" />
 
-            <ImageView
-                android:id="@+id/iv_emoticon"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/emoticon" />
+            <!--            <ImageView-->
+            <!--                android:id="@+id/iv_emoticon"-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:adjustViewBounds="true"-->
+            <!--                android:padding="8dp"-->
+            <!--                android:scaleType="fitCenter"-->
+            <!--                android:src="@drawable/emoticon" />-->
 
-            <ImageView
-                android:id="@+id/iv_translate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/translate" />
+            <!--            <ImageView-->
+            <!--                android:id="@+id/iv_translate"-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:layout_weight="1"-->
+            <!--                android:adjustViewBounds="true"-->
+            <!--                android:padding="8dp"-->
+            <!--                android:scaleType="fitCenter"-->
+            <!--                android:src="@drawable/translate" />-->
 
             <ImageView
                 android:id="@+id/iv_camera"

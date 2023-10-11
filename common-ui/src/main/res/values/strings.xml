@@ -133,5 +133,6 @@
     <string name="empty_my_question">Questions have not been uploaded yet!\nPlease begin the process of uploading your question on the board.</string>
 
     <string name="ad_attribution">Ad</string>
+    <string name="no_user">User has left the channel</string>
 
 </resources>

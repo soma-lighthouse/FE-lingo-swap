@@ -50,8 +50,8 @@ class CustomChannelListAdapter(
                     .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
                     .into(binding.ivProfileImg)
             } else {
-                val channel = item.name
-                binding.tvName.text = channel
+                binding.tvName.text =
+                    binding.root.context.getText(com.lighthouse.android.common_ui.R.string.no_user)
             }
 
             // Alarm setting

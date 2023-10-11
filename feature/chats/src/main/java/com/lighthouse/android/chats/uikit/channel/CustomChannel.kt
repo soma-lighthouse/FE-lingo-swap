@@ -3,7 +3,10 @@ package com.lighthouse.android.chats.uikit.channel
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.lifecycleScope
 import com.lighthouse.android.chats.viewmodel.ChatViewModel
+import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.Injector
 import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.toast
@@ -17,6 +20,10 @@ import com.sendbird.uikit.modules.components.MessageInputComponent
 import com.sendbird.uikit.modules.components.MessageListComponent
 import com.sendbird.uikit.vm.ChannelViewModel
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.launch
 
 open class CustomChannel : ChannelFragment() {
     private val viewModels: ChatViewModel by activityViewModels()
@@ -72,17 +79,23 @@ open class CustomChannel : ChannelFragment() {
                 takeVoiceRecorder()
             }
 
-            viewModels.sendQuestion.observe(this) {
-                val params = UserMessageCreateParams(it).apply {
-                    customType = StringSet.question_type
-                }
-                channel?.sendUserMessage(params) { _, e ->
-                    if (e != null) {
-                        //error handling
-                    }
 
-                }
+            lifecycleScope.launch {
+                viewModels.sendQuestion.asFlow()
+                    .buffer(1, BufferOverflow.DROP_LATEST)
+                    .collect { question ->
+                        val params = UserMessageCreateParams(question).apply {
+                            customType = StringSet.question_type
+                        }
+                        channel?.sendUserMessage(params) { _, e ->
+                            if (e != null) {
+                                // Handle errors here
+                            }
+                        }
+                        delay(Constant.DELAY) // Introduce a delay after sending the message
+                    }
             }
+
 
             customInput.channel = channel
         }
