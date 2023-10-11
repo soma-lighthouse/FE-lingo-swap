@@ -23,11 +23,31 @@ class BoardViewModel @Inject constructor(
     dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel(dispatcherProvider) {
     var next: MutableList<Int?> = MutableList(7) { null }
-    private var questions = listOf<BoardQuestionVO>()
     var page = 1
 
     private val _result: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val result: StateFlow<UiState> = _result.asStateFlow()
+
+    private val _questionList: MutableMap<Int, List<BoardQuestionVO>> = mutableMapOf()
+    private val _firstNext: MutableList<Int?> = MutableList(7) { null }
+
+    fun getQuestion(category: Int) = _questionList[category]
+    fun getFirstNext(category: Int) = _firstNext[category]
+
+    fun setLike(category: Int, questionId: Int, like: Boolean) {
+
+        val question = _questionList[category]?.find { it.questionId == questionId }
+
+        question?.let {
+            if (like) {
+                it.like += 1
+                it.clicked = true
+            } else {
+                it.like -= 1
+                it.clicked = false
+            }
+        }
+    }
 
     fun fetchState(category: Int, order: String?, pageSize: Int? = null) {
         onIO {
@@ -45,7 +65,12 @@ class BoardViewModel @Inject constructor(
                         } else {
                             next[category] = it.data!!.nextId
                         }
-                        _result.value = UiState.Success(it.data!!.questions)
+                        val questions = it.data!!.questions
+                        if (_questionList[category] == null) {
+                            _questionList[category] = questions
+                            _firstNext[category] = it.data!!.nextId
+                        }
+                        _result.value = UiState.Success(questions)
                     }
 
                     is Resource.Error -> _result.value =
@@ -80,11 +105,4 @@ class BoardViewModel @Inject constructor(
     fun clearResult() {
         _result.value = UiState.Loading
     }
-
-    fun saveQuestion(questions: List<BoardQuestionVO>) {
-        this.questions = questions
-    }
-
-    fun getQuestions() = questions
-
 }

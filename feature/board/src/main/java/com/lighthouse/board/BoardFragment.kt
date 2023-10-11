@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_board) {
     private val viewModel: BoardViewModel by viewModels()
-    private val questionList = mutableListOf<BoardQuestionVO>()
+    private var questionList = mutableListOf<BoardQuestionVO>()
     private lateinit var adapter: SimpleListAdapter<BoardQuestionVO, QuestionTileBinding>
     private var tabPosition = 0
 
@@ -48,13 +48,30 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         initScrollListener()
         initAdapter()
         loadMoreProfiles()
+        initRefresh()
+    }
+
+    private fun initRefresh() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.next[tabPosition] = null
+            questionList.clear()
+            viewModel.fetchState(tabPosition, null)
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
     }
 
 
     override fun onResume() {
         super.onResume()
-        if (questionList.isEmpty()) {
+        if (viewModel.getQuestion(tabPosition).isNullOrEmpty()) {
             viewModel.fetchState(tabPosition, null)
+        } else {
+            questionList.add(BoardQuestionVO())
+            viewModel.getQuestion(tabPosition)?.let { questionList.addAll(it) }
+            adapter.submitList(questionList)
+            binding.rvBoard.setVisible()
+            binding.fabAdd.setVisible()
+            binding.pbBoardLoading.setGone()
         }
     }
 
@@ -83,8 +100,16 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
                 adapter.notifyDataSetChanged()
                 start = true
                 tabPosition = tab?.position ?: 0
-                viewModel.next[tabPosition] = null
-                viewModel.fetchState(tabPosition, null)
+                if (!viewModel.getQuestion(tabPosition).isNullOrEmpty()) {
+                    viewModel.next[tabPosition] = viewModel.getFirstNext(tabPosition)
+                    questionList.add(BoardQuestionVO())
+                    viewModel.getQuestion(tabPosition)?.let { questionList.addAll(it) }
+
+                    adapter.submitList(questionList)
+                } else {
+                    viewModel.next[tabPosition] = null
+                    viewModel.fetchState(tabPosition, null)
+                }
                 binding.tabBoard.isClickable = false
             }
 
@@ -101,8 +126,10 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private fun initAdapter() {
         adapter = makeAdapter(requireContext(), { questionId ->
             viewModel.updateLike(questionId)
+            viewModel.setLike(tabPosition, questionId, true)
         }, { questionId ->
             viewModel.cancelLike(questionId)
+            viewModel.setLike(tabPosition, questionId, false)
         }, { userId ->
             mainNavigator.navigateToProfile(
                 requireContext(), Pair("userId", userId), Pair("isMe", false)

@@ -57,8 +57,8 @@ fun makeAdapter(
                 binding.root.context.getColor(R.color.brown_grey)
             }
 
-            binding.ivLike.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
+            binding.ivLike.setOnClickListener {
+                if (binding.ivLike.isChecked) {
                     val num = binding.tvLike.text.toString().toInt()
                     binding.tvLike.text = num.plus(1).toString()
                     likeListener(item.questionId)
