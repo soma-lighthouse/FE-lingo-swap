@@ -1,9 +1,11 @@
 package com.lighthouse.lingo_talk
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.messaging.FirebaseMessaging
 import com.lighthouse.android.chats.uikit.CustomFragmentFactory
@@ -53,6 +55,8 @@ class MainActivity @Inject constructor() :
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
+
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 com.lighthouse.android.home.R.id.homeFragment -> showBottomNavBar()
@@ -67,10 +71,25 @@ class MainActivity @Inject constructor() :
         navigator.navController = navController
         binding.bottomNav.setupWithNavController(navController)
 
+
+        binding.bottomNav.setOnItemSelectedListener(null)
+
+        var lastClickTime: Long = 0
+        val delayMillis = 300 // Set your desired delay in milliseconds
+
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            if (SystemClock.elapsedRealtime() - lastClickTime < delayMillis) {
+                Log.d("TESTING DELAY", "Too fast!")
+                return@setOnItemSelectedListener false
+            }
+
+            lastClickTime = SystemClock.elapsedRealtime()
+            Log.d("TESTING DELAY", lastClickTime.toString())
+
+            return@setOnItemSelectedListener item.onNavDestinationSelected(navController)
+        }
         initChatting()
     }
-
-    val testing: Boolean = false
 
     private fun initChatting() {
         val new = intent.getBooleanExtra("NewChat", false)

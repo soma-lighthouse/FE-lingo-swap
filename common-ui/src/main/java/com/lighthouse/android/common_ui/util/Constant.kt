@@ -9,4 +9,5 @@ object Constant {
     const val MAX_SELECTION = 5
     const val FILTER = 1
     const val PROFILE = 2
+    const val DELAY = 1000L
 }
