@@ -113,7 +113,7 @@ object DataModule {
 
         return EncryptedSharedPreferences.create(
             context,
-            "encrypted-setting",
+            "encrypted_preferences",
             masterKey,
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
