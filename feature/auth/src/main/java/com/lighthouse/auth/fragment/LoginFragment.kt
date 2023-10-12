@@ -19,12 +19,10 @@ import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.BuildConfig
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentLoginBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
-import com.lighthouse.domain.entity.response.vo.LighthouseException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -106,10 +104,6 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
                         }
 
                         is UiState.Error<*> -> {
-                            val msg = result.message
-                            if (msg is LighthouseException) {
-                                requireContext().toast(msg.message.toString())
-                            }
                             handleLoginFailure()
                             binding.pbLogin.setGone()
                             clearResult()

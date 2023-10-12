@@ -383,7 +383,7 @@ class DetailProfileFragment :
                     storePrevInfo(userProfile)
                     initView()
                 }
-                if (!viewModel.isMe) {
+                if (!viewModel.isMe && !viewModel.chat) {
                     binding.bottomRectangle.setVisible()
                     binding.btnStart.setVisible()
                 }

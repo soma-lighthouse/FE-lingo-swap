@@ -274,7 +274,7 @@ class BasicInfoFragment :
     }
 
     private fun isValidName(name: String): Boolean {
-        val regex = "^[a-zA-Z\\s'-]+$"
+        val regex = "^[\\p{L}\\s'-]+$"
         return name.matches(Regex(regex))
     }
 

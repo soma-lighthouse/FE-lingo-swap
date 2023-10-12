@@ -16,6 +16,7 @@ import com.sendbird.uikit.activities.adapter.ChannelListAdapter
 import com.sendbird.uikit.activities.viewholder.BaseViewHolder
 
 class CustomChannelListAdapter(
+    private val toProfile: (String) -> Unit,
 ) : ChannelListAdapter() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -49,6 +50,10 @@ class CustomChannelListAdapter(
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
                     .into(binding.ivProfileImg)
+
+                binding.ivProfileImg.setOnClickListener {
+                    toProfile(opponent.userId)
+                }
             } else {
                 binding.tvName.text =
                     binding.root.context.getText(com.lighthouse.android.common_ui.R.string.no_user)

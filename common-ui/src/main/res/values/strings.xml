@@ -7,7 +7,7 @@
     <string name="btn_nav_board">board</string>
     <string name="btn_nav_profile">profile</string>
     <string name="unknown">Error: No right viewType found</string>
-    <string name="filter">filter</string>
+    <string name="filter">Filter</string>
     <string name="prefer_country">Prefer country</string>
     <string name="prefer_language">Prefer language</string>
     <string name="board_title">Question board</string>

@@ -14,6 +14,7 @@ interface MainNavigator {
         context: Context,
         userId: Pair<String, String>,
         isMe: Pair<String, Boolean>,
+        isChat: Pair<String, Boolean>
     )
 
     fun navigateToInterest(

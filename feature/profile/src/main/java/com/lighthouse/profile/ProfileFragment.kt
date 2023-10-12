@@ -99,7 +99,8 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
             mainNavigator.navigateToProfile(
                 requireContext(),
                 Pair("userId", viewModel.getUUID()),
-                Pair("isMe", true)
+                Pair("isMe", true),
+                Pair("isChat", false)
             )
         }
     }

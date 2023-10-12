@@ -12,6 +12,7 @@ import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.usecase.GetFilterSettingUseCase
 import com.lighthouse.domain.usecase.GetLanguageFilterUseCase
 import com.lighthouse.domain.usecase.GetMatchedUserUseCase
+import com.lighthouse.domain.usecase.GetProfileUseCase
 import com.lighthouse.domain.usecase.ManageFilterUpdateUseCase
 import com.lighthouse.domain.usecase.SaveLanguageFilterUseCase
 import com.lighthouse.domain.usecase.UploadFilterSettingUseCase
@@ -31,6 +32,7 @@ class HomeViewModel @Inject constructor(
     private val getFilterSettingUseCase: GetFilterSettingUseCase,
     private val saveLanguageFilterUseCase: SaveLanguageFilterUseCase,
     private val uploadFilterSettingUseCase: UploadFilterSettingUseCase,
+    private val profileUseCase: GetProfileUseCase,
     manageFilterUpdateUseCase: ManageFilterUpdateUseCase,
     dispatcherProvider: DispatcherProvider,
 ) : BaseViewModel(dispatcherProvider) {
@@ -136,6 +138,8 @@ class HomeViewModel @Inject constructor(
 
     fun saveLanguageFilter(languages: List<LanguageVO>) =
         saveLanguageFilterUseCase.invoke(languages)
+
+    fun setNotification(b: Boolean) = profileUseCase.setNotification(b)
 
     fun resetUploadState() {
         _upload.value = false

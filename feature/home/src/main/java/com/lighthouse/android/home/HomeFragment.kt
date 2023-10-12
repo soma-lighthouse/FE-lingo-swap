@@ -1,8 +1,13 @@
 package com.lighthouse.android.home
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +41,13 @@ class HomeFragment @Inject constructor() :
     private var next: Int? = null
     private var loading = false
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            Log.d("TESTING PERMISSION", "$isGranted")
+            viewModel.setNotification(isGranted)
+        }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
@@ -43,6 +55,21 @@ class HomeFragment @Inject constructor() :
         initFab()
         initMatch()
         initHomeTitle()
+        checkPermission()
+    }
+
+    private fun checkPermission() {
+        if (!hasPermission()) {
+            Log.d("TESTING PERMISSION", "NO PERMISSION")
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+
+    private fun hasPermission(): Boolean {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ActivityCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun initHomeTitle() {
@@ -121,7 +148,8 @@ class HomeFragment @Inject constructor() :
             mainNavigator.navigateToProfile(
                 context = requireContext(),
                 userId = Pair("userId", userId),
-                isMe = Pair("isMe", false)
+                isMe = Pair("isMe", false),
+                isChat = Pair("isChat", false)
             )
         }
         val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)

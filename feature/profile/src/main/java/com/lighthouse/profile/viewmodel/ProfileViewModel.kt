@@ -59,6 +59,7 @@ class ProfileViewModel @Inject constructor(
     var profileUrl: String? = null
     var userId: String = ""
     var isMe: Boolean = false
+    var chat: Boolean = false
     var editMode = false
     var imageUri: Uri? = null
     var description = ""

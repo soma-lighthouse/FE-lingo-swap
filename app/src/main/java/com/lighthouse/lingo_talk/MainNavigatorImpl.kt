@@ -27,8 +27,9 @@ class MainNavigatorImpl : MainNavigator {
         context: Context,
         userId: Pair<String, String>,
         isMe: Pair<String, Boolean>,
+        isChat: Pair<String, Boolean>
     ) {
-        context.navigateActivity<DetailProfileActivity>(userId, isMe)
+        context.navigateActivity<DetailProfileActivity>(userId, isMe, isChat)
     }
 
     override fun navigateToInterest(

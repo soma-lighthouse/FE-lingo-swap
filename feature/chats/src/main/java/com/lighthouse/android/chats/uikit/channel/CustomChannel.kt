@@ -57,7 +57,8 @@ open class CustomChannel : ChannelFragment() {
                 mainNavigator.navigateToProfile(
                     requireContext(),
                     Pair("userId", data.sender!!.userId),
-                    Pair("isMe", false)
+                    Pair("isMe", false),
+                    Pair("isChat", true)
                 )
 
                 onMessageProfileClicked(view, position, data)
@@ -113,7 +114,8 @@ open class CustomChannel : ChannelFragment() {
             mainNavigator.navigateToProfile(
                 requireContext(),
                 Pair("userId", id),
-                Pair("isMe", isMe)
+                Pair("isMe", isMe),
+                Pair("isChat", true)
             )
         })
     }
