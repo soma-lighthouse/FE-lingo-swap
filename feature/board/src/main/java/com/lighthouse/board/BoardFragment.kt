@@ -132,7 +132,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             viewModel.setLike(tabPosition, questionId, false)
         }, { userId ->
             mainNavigator.navigateToProfile(
-                requireContext(), Pair("userId", userId), Pair("isMe", false)
+                requireContext(), Pair("userId", userId), Pair("isMe", false), Pair("isChat", false)
             )
         })
 
