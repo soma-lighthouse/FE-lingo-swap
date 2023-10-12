@@ -72,7 +72,7 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
 
                 }.withAdListener(object : AdListener() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
-                        // Handle the failure by logging, altering the UI, and so on.
+                        Log.d("TESTING ADS", adError.toString())
                     }
                 }).withNativeAdOptions(
                     NativeAdOptions.Builder().build()
