@@ -33,7 +33,7 @@ class HomeViewHolder(
                 .into(binding.ivProfileImg)
 
             val flag = binding.root.context.resources.getIdentifier(
-                data.region,
+                data.region.code,
                 "drawable",
                 binding.root.context.packageName
             )

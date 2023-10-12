@@ -4,11 +4,17 @@ import android.content.Context
 import android.content.Intent
 
 interface MainNavigator {
-    fun navigateToMain(context: Context)
+    fun navigateToMain(
+        context: Context,
+        newChat: Pair<String, Boolean>,
+        channelId: Pair<String, String>
+    ): Intent
+
     fun navigateToProfile(
         context: Context,
         userId: Pair<String, String>,
         isMe: Pair<String, Boolean>,
+        isChat: Pair<String, Boolean>
     )
 
     fun navigateToInterest(
@@ -26,10 +32,13 @@ interface MainNavigator {
         context: Context,
         selectedList: Pair<String, List<String>>,
         position: Pair<String, Int>,
-        multiSelect: Pair<String, Boolean>,
     ): Intent
 
     fun navigateToCamera(
         context: Context,
     ): Intent
+
+    fun navigateToLogin(
+        context: Context,
+    )
 }

@@ -7,8 +7,7 @@ class GetMatchedUserUseCase @Inject constructor(
     private val repository: HomeRepository,
 ) {
     fun invoke(
-        userId: String,
         next: Int?,
         pageSize: Int?,
-    ) = repository.getMatchedUser(userId, next, pageSize)
+    ) = repository.getMatchedUser(next, pageSize)
 }

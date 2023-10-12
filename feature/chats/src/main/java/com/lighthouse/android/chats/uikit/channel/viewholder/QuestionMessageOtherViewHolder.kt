@@ -11,6 +11,7 @@ import com.sendbird.android.channel.BaseChannel
 import com.sendbird.android.message.BaseMessage
 import com.sendbird.android.message.Reaction
 import com.sendbird.android.message.SendingStatus
+import com.sendbird.android.message.UserMessage
 import com.sendbird.uikit.activities.viewholder.GroupChannelMessageViewHolder
 import com.sendbird.uikit.consts.ClickableViewIdentifier
 import com.sendbird.uikit.interfaces.OnItemClickListener
@@ -73,6 +74,10 @@ class QuestionMessageOtherViewHolder(
             toProfile(id, false)
         }
 
-        binding.tvMessage.text = message.message
+        if (message is UserMessage && message.translations.isNotEmpty()) {
+            binding.tvMessage.text = message.translations["en"]
+        } else {
+            binding.tvMessage.text = message.message
+        }
     }
 }

@@ -8,5 +8,11 @@ class GetProfileUseCase @Inject constructor(
 ) {
     fun getProfileDetail(userId: String) = repository.getProfileDetail(userId)
 
-    fun getUID() = repository.getUID() ?: ""
+    fun getUUID() = repository.getUUID() ?: ""
+
+    fun setNotification(enabled: Boolean) {
+        repository.setPushEnabled(enabled)
+    }
+
+    fun getNotification() = repository.getPushEnabled()
 }

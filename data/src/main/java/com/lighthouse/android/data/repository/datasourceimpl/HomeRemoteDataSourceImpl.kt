@@ -1,6 +1,8 @@
 package com.lighthouse.android.data.repository.datasourceimpl
 
 import com.lighthouse.android.data.api.HomeApiService
+import com.lighthouse.android.data.model.request.UploadFilterDTO
+import com.lighthouse.android.data.model.response.FilterDTO
 import com.lighthouse.android.data.model.response.UserProfileDTO
 import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
@@ -19,4 +21,20 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         emit(changeResult(api.getMatchedUser(userId, next, pageSize)))
     }
 
+    override fun getFilterSetting(userId: String): Flow<Resource<FilterDTO>> = flow {
+        emit(changeResult(api.getFilterSetting(userId)))
+    }
+
+    override fun uploadFilterSetting(
+        userId: String,
+        filter: UploadFilterDTO
+    ): Flow<Resource<Boolean>> =
+        flow {
+            val response = api.uploadFilterSetting(userId, filter)
+            if (response.isSuccessful) {
+                emit(Resource.Success(true))
+            } else {
+                throw errorHandler(response)
+            }
+        }
 }

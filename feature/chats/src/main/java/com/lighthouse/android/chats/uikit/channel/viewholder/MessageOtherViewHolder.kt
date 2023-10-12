@@ -23,6 +23,7 @@ class MessageOtherViewHolder(
     private val binding: MessageOtherBinding,
     private val toProfile: (String, Boolean) -> Unit,
 ) : GroupChannelMessageViewHolder(binding.root) {
+
     override fun getClickableViewMap(): MutableMap<String, View> {
         val viewMap = ConcurrentHashMap<String, View>()
         viewMap[ClickableViewIdentifier.Chat.name] = binding.tvMessage
@@ -64,12 +65,8 @@ class MessageOtherViewHolder(
             com.sendbird.uikit.R.drawable.icon_user,
             com.sendbird.uikit.R.color.ondark_01
         )
-        Glide.with(context)
-            .load(url)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .error(errorIcon)
-            .apply(RequestOptions.circleCropTransform())
-            .into(binding.ivProfileView)
+        Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).error(errorIcon)
+            .apply(RequestOptions.circleCropTransform()).into(binding.ivProfileView)
 
         binding.ivProfileView.setOnClickListener {
             val id = sender?.userId ?: ""
@@ -77,5 +74,6 @@ class MessageOtherViewHolder(
         }
 
         binding.tvMessage.text = message.message
+
     }
 }

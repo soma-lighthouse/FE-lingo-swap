@@ -15,10 +15,10 @@ plugins {
 }
 
 android {
-    namespace = "com.lighthouse.lingo_swap"
+    namespace = "com.lighthouse.lingo_talk"
 
     defaultConfig {
-        applicationId = "com.lighthouse.lingo_swap"
+        applicationId = "com.lighthouse.lingo_talk"
         versionCode = libs.versions.versionCode.get().toInt()
         versionName = libs.versions.appVersion.get()
 
@@ -65,6 +65,7 @@ kapt {
 }
 
 dependencies {
+
     implementation("com.sendbird.sdk:uikit:3.+")
     implementation(project(":domain"))
     implementation(project(":data"))
@@ -86,11 +87,13 @@ dependencies {
     implementation(libs.bundles.room)
     kapt(libs.room.complier)
     implementation(libs.bundles.navigation)
-    implementation(libs.okhttp.logging.interceptor)
+//    implementation(libs.okhttp.logging.interceptor)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation(libs.shared.preference.security)
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
     implementation("com.google.firebase:firebase-auth:22.1.1")
     implementation(libs.google.services)
     implementation(libs.google.login)
     implementation(libs.bundles.firebase)
+    implementation(libs.google.admob)
 }

@@ -10,7 +10,7 @@ data class CountryDTO(
     val name: String?,
 ) {
     fun toVO() = CountryVO(
-        code = code ?: "question",
-        name = name ?: "unknown",
+        code = code ?: "",
+        name = name ?: "",
     )
 }

@@ -1,5 +1,6 @@
 package com.lighthouse.board.adapter
 
+import android.content.Context
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.lighthouse.android.common_ui.BR
@@ -12,9 +13,10 @@ import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 
 fun makeAdapter(
-    likeListener: (questionId: Int, userId: String) -> Unit,
-    cancelListener: (questionId: Int, userId: String) -> Unit,
-    navigateToProfile: (userId: String) -> Unit,
+    context: Context,
+    likeListener: (questionId: Int) -> Unit,
+    cancelListener: (questionId: Int) -> Unit,
+    navigateToProfile: (userId: String) -> Unit
 ) =
     SimpleListAdapter<BoardQuestionVO, QuestionTileBinding>(
         diffCallBack = ItemDiffCallBack(
@@ -47,23 +49,34 @@ fun makeAdapter(
             binding.ivFlag.layoutParams.height = calSize(16f)
             binding.ivFlag.requestLayout()
 
-            binding.ivLike.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
+            binding.ivLike.isChecked = item.clicked
+
+            if (item.clicked) {
+                binding.root.context.getColor(R.color.main)
+            } else {
+                binding.root.context.getColor(R.color.brown_grey)
+            }
+
+            binding.ivLike.setOnClickListener {
+                if (binding.ivLike.isChecked) {
                     val num = binding.tvLike.text.toString().toInt()
                     binding.tvLike.text = num.plus(1).toString()
-                    likeListener(item.questionId, item.userId)
+                    likeListener(item.questionId)
                 } else {
                     val num = binding.tvLike.text.toString().toInt()
                     binding.tvLike.text = num.minus(1).toString()
-                    cancelListener(item.questionId, item.userId)
+                    cancelListener(item.questionId)
                 }
             }
 
+
             binding.ivProfile.setOnClickListener {
-                navigateToProfile(item.userId)
+                navigateToProfile(item.uuid)
             }
 
             binding.setVariable(BR.item, item)
 
-        }
+        },
+        context = context,
+        ads = true
     )

@@ -21,7 +21,7 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
     SelectionAdapter.OnItemClickListenerLang {
     private val viewModel: AuthViewModel by activityViewModels()
     private lateinit var adapter: SelectionAdapter
-    private val dataList: MutableList<LanguageVO> =
+    private var dataList: MutableList<LanguageVO> =
         mutableListOf(LanguageVO(name = "English", level = 1, code = "en"))
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,10 +35,10 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
 
     private fun observeResult() {
         getResult.observe(viewLifecycleOwner) {
-            val result = it.getStringArrayListExtra("LanguageNameList")?.first()
+            val result = it.getStringExtra("language")
             val pos = it.getIntExtra("position", -1)
             if (pos != -1 && result != null) {
-                val code = it.getStringArrayListExtra("LanguageCodeList")?.first() ?: "language"
+                val code = it.getStringExtra("code") ?: ""
                 dataList[pos].name = result
                 dataList[pos].code = code
                 adapter.notifyItemChanged(pos)
@@ -51,10 +51,16 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
     private fun initAdd() {
         binding.btnAdd.setOnClickListener {
             if (dataList.size < 5) {
-                dataList.add(LanguageVO(name = "country", level = 1, code = ""))
+                dataList.add(
+                    LanguageVO(
+                        name = requireContext().getString(com.lighthouse.android.common_ui.R.string.language),
+                        level = 1,
+                        code = ""
+                    )
+                )
                 adapter.notifyItemInserted(dataList.size - 1)
             } else {
-                context.toast("Only up to maximum 5 Language")
+                context.toast(getString(com.lighthouse.android.common_ui.R.string.language_limit))
             }
         }
     }
@@ -76,14 +82,11 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
     }
 
     private fun removeExtra() {
-        val iterator = dataList.iterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            if (item.name == "country") {
-                iterator.remove()
-            }
-        }
+        dataList =
+            dataList.filter { it.name != getString(com.lighthouse.android.common_ui.R.string.language) }
+                .toMutableList()
     }
+
 
     private fun initAdapter() {
         adapter = SelectionAdapter(
@@ -104,7 +107,6 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
             requireContext(),
             Pair("selected", dataList.map { it.name }),
             Pair("position", position),
-            Pair("multiSelect", false)
         )
 
         resultLauncher.launch(intent)

@@ -1,10 +1,13 @@
 package com.lighthouse.board.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -19,6 +22,7 @@ import com.lighthouse.board.databinding.FragmentAddBinding
 import com.lighthouse.board.viewmodel.BoardViewModel
 import com.lighthouse.domain.entity.request.UploadQuestionVO
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -29,7 +33,7 @@ class AddFragment : BindingFragment<FragmentAddBinding>(R.layout.fragment_add) {
         super.onViewCreated(view, savedInstanceState)
         initBack()
         initAddButton()
-
+        observeResult()
         addChipToGroup(
             binding.chipInterest,
             resources.getStringArray(com.lighthouse.android.common_ui.R.array.tab_name).toList()
@@ -44,20 +48,31 @@ class AddFragment : BindingFragment<FragmentAddBinding>(R.layout.fragment_add) {
 
     private fun addChipToGroup(chipGroup: ChipGroup, interestList: List<String>) {
         val inflater = LayoutInflater.from(context)
-        interestList.forEach {
+        interestList.forEachIndexed { index, s ->
             val chip = inflater.inflate(
                 com.lighthouse.android.common_ui.R.layout.chip, binding.chipInterest, false
             ) as Chip
 
-            chip.text = it
+            chip.text = s
             chip.isCloseIconVisible = false
-            if (it == interestList[0]) {
+            chip.id = index
+            if (s == interestList[0]) {
                 chip.isChecked = true
             }
 
             chipGroup.isSingleSelection = true
             chipGroup.isSelectionRequired = true
             chipGroup.addView(chip)
+        }
+    }
+
+    private fun observeResult() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.result.drop(1).collect {
+                    render(it)
+                }
+            }
         }
     }
 
@@ -69,38 +84,38 @@ class AddFragment : BindingFragment<FragmentAddBinding>(R.layout.fragment_add) {
                     requireContext().resources.getString(com.lighthouse.android.common_ui.R.string.question_size_error)
                 context.toast(msg)
             } else {
-                val categoryId = binding.chipInterest.checkedChipId - 2
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.uploadQuestion(UploadQuestionVO(521, categoryId, text)).collect {
-                        when (it) {
-                            is UiState.Loading -> {
-                                binding.apply {
-                                    pbAddLoading.setVisible()
-                                    btnAdd.isEnabled = false
-                                    btnBack.isEnabled = false
-                                }
-                            }
+                val categoryId = binding.chipInterest.checkedChipId + 1
+                Log.d("TESTING", categoryId.toString())
+                viewModel.uploadQuestion(UploadQuestionVO(1, categoryId, text))
+            }
+        }
+    }
 
-                            is UiState.Success<*> -> {
-                                binding.apply {
-                                    pbAddLoading.setGone()
-                                    context.toast("question uploaded!")
-                                    findNavController().navigate(AddFragmentDirections.actionAddFragmentToBoardFragment())
-                                }
-                            }
-
-                            is UiState.Error<*> -> {
-                                binding.apply {
-                                    pbAddLoading.setInvisible()
-                                    btnAdd.isEnabled = true
-                                    btnBack.isEnabled = true
-                                    context.toast("question uploaded failed")
-                                }
-                            }
-                        }
-                    }
-
+    private fun render(uiState: UiState) {
+        when (uiState) {
+            is UiState.Loading -> {
+                binding.apply {
+                    pbAddLoading.setVisible()
+                    btnAdd.isEnabled = false
+                    btnBack.isEnabled = false
                 }
+            }
+
+            is UiState.Success<*> -> {
+                binding.apply {
+                    pbAddLoading.setGone()
+                    context.toast("question uploaded!")
+                    findNavController().navigate(AddFragmentDirections.actionAddFragmentToBoardFragment())
+                }
+            }
+
+            is UiState.Error<*> -> {
+                binding.apply {
+                    pbAddLoading.setInvisible()
+                    btnAdd.isEnabled = true
+                    btnBack.isEnabled = true
+                }
+                handleException(uiState)
             }
         }
     }

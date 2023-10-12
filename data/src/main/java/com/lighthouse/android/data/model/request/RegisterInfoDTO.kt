@@ -1,17 +1,15 @@
 package com.lighthouse.android.data.model.request
 
-import com.lighthouse.android.data.model.response.InterestDTO
-
 data class RegisterInfoDTO(
-    val uid: String,
+    val uuid: String,
     val name: String,
     val birthday: String,
     val email: String,
     val gender: String,
-    val region: String,
-    val preferredInterests: List<InterestDTO>,
     val description: String,
+    val region: String,
+    val profileImageUri: String,
+    val preferredInterests: List<UploadInterestDTO>,
     val usedLanguages: List<Map<String, Any>>,
     val preferredCountries: List<String>,
-    val profileImageUri: String,
 )

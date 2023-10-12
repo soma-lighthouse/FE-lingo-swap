@@ -1,50 +1,57 @@
 package com.lighthouse.android.chats.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.lighthouse.android.common_ui.base.BaseViewModel
+import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.usecase.GetQuestionUseCase
+import com.lighthouse.domain.usecase.ManageChannelUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val useCase: GetQuestionUseCase,
-) : ViewModel() {
-    val question: MutableLiveData<String> = MutableLiveData()
+    private val chatUseCase: ManageChannelUseCase,
+    dispatcherProvider: DispatcherProvider,
+) : BaseViewModel(dispatcherProvider) {
+    private val _question = MutableStateFlow<UiState>(UiState.Loading)
+    val question = _question.asStateFlow()
+
+    val sendQuestion: MutableLiveData<String> = MutableLiveData()
     var next: MutableList<Int?> = MutableList(7) { null }
     var page = 1
 
-    fun getQuestion(category: Int, order: String?, pageSize: Int? = null) =
-        useCase.invoke(category, order, next[category], pageSize)
-            .map {
-                when (it) {
-                    is Resource.Success -> {
-                        if (it.data!!.nextId == -1) {
-                            page = -1
-                        } else {
-                            next[category] = it.data!!.nextId
-                        }
-                        UiState.Success(it.data!!.questions)
-                    }
-
-                    is Resource.Error -> UiState.Error(it.message ?: "Error found")
+    fun getQuestion(category: Int) {
+        onIO {
+            chatUseCase.getRecommendedQuestions(category, next[category])
+                .onStart {
+                    _question.value = UiState.Loading
                 }
-            }
-            .catch {
-                emit(UiState.Error(it.message ?: "Error found"))
-            }
-            .stateIn(
-                scope = viewModelScope,
-                initialValue = UiState.Loading,
-                started = SharingStarted.WhileSubscribed(5000)
-            )
+                .catch {
+                    _question.value = handleException(it)
+                }.collect {
+                    when (it) {
+                        is Resource.Success -> {
+                            if (it.data!!.nextId == -1) {
+                                page = -1
+                            } else {
+                                next[category] = it.data!!.nextId
+                            }
+                            _question.value = UiState.Success(it.data!!.questions)
+                        }
+
+                        is Resource.Error ->
+                            _question.value = UiState.Error(it.message ?: "Error found")
+                    }
+                }
+        }
+
+    }
 
 
 }

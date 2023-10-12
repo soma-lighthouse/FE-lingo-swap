@@ -13,7 +13,7 @@ interface BoardRemoteDataSource {
         pageSize: Int?,
     ): Flow<Resource<BoardDTO>>
 
-    fun uploadQuestion(info: UploadQuestionDTO): Flow<Resource<String>>
-    fun updateLike(questionId: Int, memberId: Map<String, String>): Flow<Resource<Boolean>>
+    fun uploadQuestion(info: UploadQuestionDTO): Flow<Resource<Boolean>>
+    fun updateLike(questionId: Int): Flow<Resource<Boolean>>
     fun cancelLike(questionId: Int): Flow<Resource<Boolean>>
 }

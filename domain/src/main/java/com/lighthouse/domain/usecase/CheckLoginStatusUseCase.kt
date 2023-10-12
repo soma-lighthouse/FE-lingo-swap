@@ -8,14 +8,11 @@ import javax.inject.Inject
 class CheckLoginStatusUseCase @Inject constructor(
     private val authRepository: AuthRepository,
 ) {
-    suspend fun invoke(): LoginState {
-        val expireTime = authRepository.getExpireTime()
+    fun invoke(): LoginState {
         val refreshExpireTime = authRepository.getRefreshExpireTime()
         val currentTimeSecond = Instant.now().epochSecond
 
-        return if (currentTimeSecond < expireTime) {
-            LoginState.LOGIN_SUCCESS
-        } else if (currentTimeSecond < refreshExpireTime) {
+        return if (currentTimeSecond < refreshExpireTime) {
             LoginState.LOGIN_SUCCESS
         } else {
             LoginState.LOGIN_FAILURE

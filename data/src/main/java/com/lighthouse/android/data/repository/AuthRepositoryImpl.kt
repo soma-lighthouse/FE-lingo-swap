@@ -3,7 +3,7 @@ package com.lighthouse.android.data.repository
 import android.util.Log
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.request.RegisterInfoDTO
-import com.lighthouse.android.data.model.response.InterestDTO
+import com.lighthouse.android.data.model.request.UploadInterestDTO
 import com.lighthouse.android.data.repository.datasource.AuthRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
@@ -53,7 +53,7 @@ class AuthRepositoryImpl @Inject constructor(
                     interest.toVO()
                 })
 
-                else -> Resource.Error(it.message ?: "No message Found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 
@@ -64,7 +64,7 @@ class AuthRepositoryImpl @Inject constructor(
                     language.toVO()
                 })
 
-                else -> Resource.Error(it.message ?: "No message Found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 
@@ -75,31 +75,30 @@ class AuthRepositoryImpl @Inject constructor(
                     country.toVO()
                 })
 
-                else -> Resource.Error(it.message ?: "No message Found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 
     override fun registerUser(info: RegisterInfoVO): Flow<Resource<Boolean>> {
-        val tmp = RegisterInfoDTO(
-            uuid = info.uuid ?: "null",
+        val tmp = RegisterInfoDTO(uuid = info.uuid ?: "null",
             name = info.name ?: "null",
             birthday = info.birthday ?: "null",
             email = info.email ?: "null",
             gender = info.gender ?: "null",
             region = info.region ?: "null",
             preferredInterests = info.preferredInterests?.map {
-                InterestDTO(it.category, it.interest)
+                UploadInterestDTO(it.category, it.interests)
             } ?: listOf(),
             description = info.description ?: "",
             usedLanguages = info.languages ?: listOf(),
             preferredCountries = info.preferredCountries ?: listOf(),
-            profileImageUri = info.profileImageUri ?: ""
-        )
-        return authRemoteDataSource.registerUser(tmp).map {
+            profileImageUri = info.profileImageUri ?: "")
+        return authRemoteDataSource.registerUser(localPreferenceDataSource.getIdToken(), tmp).map {
             when (it) {
                 is Resource.Success -> {
                     val mapping = it.data!!.toVO()
                     saveTokens(mapping.tokens, mapping.uuid)
+                    localPreferenceDataSource.saveUserName(mapping.userName)
                     Resource.Success(true)
                 }
 
@@ -114,8 +113,7 @@ class AuthRepositoryImpl @Inject constructor(
     ): Flow<Resource<Boolean>> {
         Log.d("PICTURE", profilePath)
         val imageFile = File(profilePath)
-        val requestBody =
-            imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+        val requestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
 
         return authRemoteDataSource.uploadImg(url, requestBody).map {
             when (it) {
@@ -135,7 +133,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
 
     override fun postGoogleLogin(): Flow<Resource<UserTokenVO>> =
-        authRemoteDataSource.postGoogleLogin().map {
+        authRemoteDataSource.postGoogleLogin(localPreferenceDataSource.getIdToken()).map {
             when (it) {
                 is Resource.Success -> {
                     Log.d("TESTING before", it.data.toString())
@@ -148,8 +146,7 @@ class AuthRepositoryImpl @Inject constructor(
                     Log.d("TESTING", it.message ?: "No message Found")
                     Resource.Error(
                         it.message ?: throw LighthouseException(
-                            null,
-                            null
+                            null, null
                         ).addErrorMsg()
                     )
                 }

@@ -1,8 +1,7 @@
 package com.lighthouse.auth.fragment
 
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -13,12 +12,11 @@ import com.google.android.material.chip.Chip
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentCountryBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
@@ -34,6 +32,9 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
         initStart()
         initCountry()
         initChip()
+        observeUpload()
+        observeRegister()
+
     }
 
     private fun initBack() {
@@ -44,61 +45,56 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
 
     private fun initStart() {
         binding.btnStart.setOnClickListener {
-            if (validateInput()) {
-                viewModel.registerInfo.preferredCountries = selectedCountryCode
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        if (viewModel.profilePath != null) {
-                            val contentUri = Uri.parse(viewModel.profilePath)
-                            val filePath = getRealPathFromUri(contentUri)
-                            if (filePath != null) {
-                                viewModel.uploadImg(filePath).flatMapLatest { uploadResult ->
-                                    if (uploadResult == true) {
-                                        binding.groupCountry.isClickable = false
-                                        binding.pbStart.setVisible()
-                                        viewModel.registerUser()
-                                    } else {
-                                        flowOf(false)
-                                    }
-                                }.collect { result ->
-                                    binding.groupCountry.isClickable = true
-                                    binding.pbStart.setGone()
-                                    registerComplete(result)
-                                }
-                            }
-                        } else {
-                            viewModel.registerUser().collect { result ->
-                                registerComplete(result)
-                            }
-                        }
+            if (!validateInput()) return@setOnClickListener
+            viewModel.registerInfo.preferredCountries = selectedCountryCode
+            binding.groupCountry.isClickable = false
+            binding.pbStart.setVisible()
+            if (viewModel.filePath != "") {
+                viewModel.uploadImg(viewModel.filePath)
+            } else {
+                viewModel.registerUser()
+            }
+        }
+    }
+
+    private fun observeUpload() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.upload.drop(1).collect {
+                    if (it) {
+                        viewModel.registerUser()
+                    } else {
+                        flowOf(getString(com.lighthouse.android.common_ui.R.string.upload_error))
                     }
                 }
-
             }
         }
     }
 
-    private fun registerComplete(result: Any?) = if (result == true) {
-        mainNavigator.navigateToMain(requireContext())
-        requireActivity().finish()
-    } else {
-        context.toast(result.toString())
-    }
 
-    private fun getRealPathFromUri(uri: Uri): String? {
-        var realPath: String? = null
-        if (uri.scheme == "file") {
-            realPath = uri.path
-        } else if (uri.scheme == "content") {
-            val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
-            cursor?.use {
-                val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                if (it.moveToFirst()) {
-                    return it.getString(columnIndex)
+    private fun observeRegister() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.register.collect {
+                    registerComplete(it)
                 }
             }
         }
-        return realPath
+    }
+
+    private fun registerComplete(result: Boolean) {
+        Log.d("TESTING4", "registerComplete: $result")
+        binding.groupCountry.isClickable = true
+        binding.pbStart.setGone()
+        if (result) {
+            val intent = mainNavigator.navigateToMain(
+                requireContext(),
+                Pair("NewChat", false),
+                Pair("ChannelxId", "")
+            )
+            startActivity(intent)
+            requireActivity().finish()
+        }
     }
 
 

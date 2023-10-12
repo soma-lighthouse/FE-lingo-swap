@@ -13,14 +13,14 @@ class GetQuestionUseCase @Inject constructor(
         repository.getBoardQuestions(category, order, next, pageSize)
 
 
-    fun uploadQuestion(info: UploadQuestionVO): Flow<Resource<String>> =
+    fun uploadQuestion(info: UploadQuestionVO): Flow<Resource<Boolean>> =
         repository.uploadQuestion(info)
 
-    fun updateLike(questionId: Int, userId: String) {
-        repository.updateLike(questionId, userId)
+    fun updateLike(questionId: Int) {
+        repository.updateLike(questionId)
     }
 
-    fun cancelLike(questionId: Int, userId: String) {
-        repository.cancelLike(questionId, userId)
+    fun cancelLike(questionId: Int) {
+        repository.cancelLike(questionId)
     }
 }

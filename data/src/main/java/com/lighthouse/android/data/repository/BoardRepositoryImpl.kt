@@ -1,11 +1,13 @@
 package com.lighthouse.android.data.repository
 
 import android.util.Log
+import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.request.UploadQuestionDTO
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.UploadQuestionVO
 import com.lighthouse.domain.entity.response.vo.BoardVO
+import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.repository.BoardRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +18,7 @@ import javax.inject.Inject
 
 class BoardRepositoryImpl @Inject constructor(
     private val datasource: BoardRemoteDataSource,
+    private val localPreferenceDataSource: LocalPreferenceDataSource
 ) : BoardRepository {
     override fun getBoardQuestions(
         category: Int,
@@ -26,29 +29,29 @@ class BoardRepositoryImpl @Inject constructor(
         datasource.getBoardQuestions(category, order, page, pageSize).map {
             when (it) {
                 is Resource.Success -> Resource.Success(it.data!!.toVO())
-                else -> Resource.Error(it.message ?: "No message found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 
     override fun uploadQuestion(
         info: UploadQuestionVO,
-    ): Flow<Resource<String>> =
+    ): Flow<Resource<Boolean>> =
         datasource.uploadQuestion(
             UploadQuestionDTO(
-                userId = info.userId,
+                uuid = localPreferenceDataSource.getUUID().toString(),
                 categoryId = info.categoryId,
                 content = info.content
             )
         ).map {
             when (it) {
                 is Resource.Success -> Resource.Success(it.data!!)
-                else -> Resource.Error(it.message ?: "No message Found")
+                else -> throw LighthouseException(null, null).addErrorMsg()
             }
         }
 
-    override fun updateLike(questionId: Int, userId: String) {
+    override fun updateLike(questionId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            datasource.updateLike(questionId, mapOf("userId" to userId)).collect {
+            datasource.updateLike(questionId).collect {
                 when (it) {
                     is Resource.Success ->
                         Log.d("LIKE", "Success")
@@ -59,7 +62,7 @@ class BoardRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun cancelLike(questionId: Int, userId: String) {
+    override fun cancelLike(questionId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             datasource.cancelLike(questionId).collect {
                 when (it) {

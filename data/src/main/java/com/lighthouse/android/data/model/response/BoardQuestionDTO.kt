@@ -6,8 +6,8 @@ import com.lighthouse.domain.entity.response.vo.BoardQuestionVO
 data class BoardQuestionDTO(
     @SerializedName("questionId")
     val questionId: Int?,
-    @SerializedName("userId")
-    val userId: String?,
+    @SerializedName("uuid")
+    val uuid: String?,
     @SerializedName("categoryId")
     val categoryId: Int?,
     @SerializedName("profileImageUri")
@@ -20,18 +20,22 @@ data class BoardQuestionDTO(
     val contents: String?,
     @SerializedName("likes")
     val like: Int?,
-    val statusCode: Int,
-
-    ) {
+    @SerializedName("createAt")
+    val createAt: String?,
+    @SerializedName("clicked")
+    val clicked: Boolean?
+) {
     fun toVO() = BoardQuestionVO(
         questionId = questionId ?: -1,
-        userId = userId ?: "",
+        uuid = uuid ?: "",
         categoryId = categoryId ?: -1,
         contents = contents ?: " ",
         profileImageUri = profileImageUri ?: " ",
         name = name ?: " ",
         region = region ?: " ",
-        like = like ?: -1
+        like = like ?: -1,
+        createAt = createAt ?: " ",
+        clicked = clicked ?: false
     )
 
 }

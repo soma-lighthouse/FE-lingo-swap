@@ -1,6 +1,7 @@
 package com.lighthouse.auth
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.OnBackPressedCallback
@@ -13,13 +14,21 @@ import com.lighthouse.android.common_ui.dialog.showOKDialog
 import com.lighthouse.auth.databinding.ActivityAuthBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.constriant.LoginState
+import com.lighthouse.domain.i18n.supportRegions.SupportRegions
+import com.lighthouse.lighthousei18n.I18nManager
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
+import java.util.TimeZone
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth) {
     private val viewModel: AuthViewModel by viewModels()
     private lateinit var loginState: LoginState
     private lateinit var navController: NavController
+
+    @Inject
+    lateinit var i18nManager: I18nManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -31,19 +40,25 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         checkRegister()
         login()
         handleBackPressed()
+        initI18n()
     }
 
     private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                showOKDialog(
-                    this@AuthActivity,
-                    getString(com.lighthouse.android.common_ui.R.string.exit_title),
-                    getString(com.lighthouse.android.common_ui.R.string.exit_body)
-                ) { _, _ ->
+
+                if (navController.currentDestination?.id == R.id.info_fragment) {
+                    showOKDialog(
+                        this@AuthActivity,
+                        getString(com.lighthouse.android.common_ui.R.string.exit_title),
+                        getString(com.lighthouse.android.common_ui.R.string.exit_body)
+                    ) { _, _ ->
+                        navController.popBackStack()
+                    }
+                } else {
                     if (navController.currentDestination?.id == R.id.loginFragment) {
                         finish()
-                    } else if (navController.currentDestination?.id == R.id.info_fragment) {
+                    } else {
                         navController.popBackStack()
                     }
                 }
@@ -67,7 +82,13 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
             override fun onPreDraw(): Boolean {
                 return if (::loginState.isInitialized) {
                     if (loginState == LoginState.LOGIN_SUCCESS) {
-                        mainNavigator.navigateToMain(this@AuthActivity)
+                        val intent =
+                            mainNavigator.navigateToMain(
+                                this@AuthActivity,
+                                Pair("NewChat", false),
+                                Pair("ChannelId", "")
+                            )
+                        startActivity(intent)
                         finish()
                     }
                     content.viewTreeObserver.removeOnPreDrawListener(this)
@@ -77,5 +98,19 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
                 }
             }
         })
+    }
+
+    private fun initI18n() {
+        val defaultRegion = Locale.getDefault()
+
+        if (defaultRegion != Locale.KOREA) {
+            i18nManager.saveSelectedRegion(SupportRegions.US, defaultRegion)
+            i18nManager.saveTimezoneId(TimeZone.getDefault().id)
+        } else {
+            i18nManager.saveSelectedRegion(SupportRegions.KOREA, Locale.KOREA)
+            i18nManager.saveTimezoneId("Asia/Seoul")
+        }
+
+        Log.d("i18n", defaultRegion.toString())
     }
 }

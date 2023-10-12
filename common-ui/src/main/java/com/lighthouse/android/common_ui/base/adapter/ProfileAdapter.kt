@@ -9,17 +9,18 @@ import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.domain.entity.response.vo.InterestVO
+import com.lighthouse.domain.entity.request.UploadInterestVO
 
 fun makeAdapter(
     checkable: Boolean = false,
     hide: Boolean = false,
     selectedList: HashMap<String, List<String>> = hashMapOf(),
-    chip: ((List<Int>, Int) -> Unit)? = null,
+    chip: ((List<Int>, Int) -> Unit)? = null
 ) =
-    SimpleListAdapter<InterestVO, InterestListTileBinding>(diffCallBack = ItemDiffCallBack(
-        onItemsTheSame = { old, new -> old.interest == new.interest },
-        onContentsTheSame = { old, new -> old == new }),
+    SimpleListAdapter<UploadInterestVO, InterestListTileBinding>(
+        diffCallBack = ItemDiffCallBack(
+            onItemsTheSame = { old, new -> old.category == new.category },
+            onContentsTheSame = { old, new -> old == new }),
         layoutId = com.lighthouse.android.common_ui.R.layout.interest_list_tile,
         onBindCallback = { viewHolder, item ->
             val binding = viewHolder.binding
@@ -56,7 +57,8 @@ fun makeAdapter(
 
             val check = selectedList[item.category]
 
-            item.interest.forEach {
+            binding.chipInterest.removeAllViews()
+            item.interests.forEach {
                 val chip = inflater.inflate(
                     com.lighthouse.android.common_ui.R.layout.chip, binding.chipInterest, false
                 ) as Chip
@@ -65,7 +67,7 @@ fun makeAdapter(
                 chip.isCheckable = checkable
                 if (check != null && it in check) {
                     chip.isChecked = true
-                    
+
                 }
 
                 chip.setOnCheckedChangeListener { _, isChecked ->
@@ -79,8 +81,9 @@ fun makeAdapter(
             }
 
             binding.chipInterest.setOnCheckedStateChangeListener { _, checkedId ->
-                if (chip != null) {
+                if (chip != null && checkedId.size <= Constant.MAX_SELECTION) {
                     chip(checkedId, viewHolder.adapterPosition)
                 }
             }
-        })
+        },
+    )

@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
+import com.lighthouse.android.common_ui.base.selection_adapter.viewholder.CountryViewHolder
+import com.lighthouse.android.common_ui.base.selection_adapter.viewholder.LanguageLevelViewHolder
 import com.lighthouse.android.common_ui.databinding.CountryTileBinding
 import com.lighthouse.android.common_ui.databinding.LanguageLevelTileBinding
-import com.lighthouse.android.common_ui.databinding.LanguageTileBinding
 import com.lighthouse.android.common_ui.util.Constant
-
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.Selection
@@ -28,7 +28,6 @@ class SelectionAdapter(
     )
 ) {
     companion object {
-        const val LANGUAGE = 1
         const val COUNTRY = 2
         const val LEVEL = 3
     }
@@ -38,7 +37,6 @@ class SelectionAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (type) {
-            LANGUAGE -> LanguageViewHolder(LanguageTileBinding.inflate(inflater, parent, false))
             COUNTRY -> CountryViewHolder(CountryTileBinding.inflate(inflater, parent, false))
             LEVEL -> LanguageLevelViewHolder(
                 LanguageLevelTileBinding.inflate(
@@ -55,7 +53,6 @@ class SelectionAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is LanguageViewHolder -> holder.onBind(item as LanguageVO)
             is CountryViewHolder -> holder.onBind(item as CountryVO)
             is LanguageLevelViewHolder -> holder.onBind(item as LanguageVO)
         }
@@ -66,9 +63,14 @@ class SelectionAdapter(
                     if (item.select) selectCnt += 1 else selectCnt -= 1
                     listener?.onItemClick(item)
                     notifyItemChanged(position)
-                } else {
+                } else if (!multiSelection) {
                     clearSelection()
                     item.select = !item.select
+                    listener?.onItemClick(item)
+                    notifyItemChanged(position)
+                } else if (item.select && selectCnt == Constant.MAX_SELECTION) {
+                    item.select = false
+                    selectCnt -= 1
                     listener?.onItemClick(item)
                     notifyItemChanged(position)
                 }

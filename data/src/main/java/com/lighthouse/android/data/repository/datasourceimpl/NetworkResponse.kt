@@ -1,8 +1,10 @@
 package com.lighthouse.android.data.repository.datasourceimpl
 
+import android.util.Log
 import com.google.gson.Gson
 import com.lighthouse.android.data.model.response.BaseResponse
-import com.lighthouse.android.data.model.response.TestDTO
+import com.lighthouse.android.data.model.response.ErrorDTO
+import com.lighthouse.domain.constriant.ErrorTypeHandling
 import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.response.vo.LighthouseException
 import retrofit2.Response
@@ -12,28 +14,49 @@ abstract class NetworkResponse {
         if (response.isSuccessful) {
             return Resource.Success(response.body()!!.data)
         } else {
-            val errorBody = response.errorBody()?.string()
-            val errorResponse: BaseResponse<*> =
-                Gson().fromJson(errorBody, BaseResponse::class.java)
-
-            val errorMsg = errorResponse.data?.toString() ?: "{}"
-
-            throw if (errorMsg == "{}") {
-                LighthouseException(
-                    code = errorResponse.code,
-                    message = errorResponse.message
-                ).addErrorMsg()
-            } else {
-                LighthouseException(
-                    code = errorResponse.code,
-                    message = errorMsg.getErrorMsg()
-                )
-            }
+            throw errorHandler(response)
         }
     }
 
-    private fun String.getErrorMsg(): String {
-        val serverMsg = Gson().fromJson(this, TestDTO::class.java)
-        return serverMsg.msg!!
+    protected fun <R> errorHandler(response: Response<R>): LighthouseException {
+        val errorBody = response.errorBody()?.string()
+
+        return try {
+            val errorResponse: BaseResponse<*> =
+                Gson().fromJson(errorBody, BaseResponse::class.java)
+            val errorMsg = errorResponse.data?.toString() ?: "{}"
+
+            val body = errorMsg.getErrorMsg()
+            val code = errorResponse.code
+            val message = body.message ?: errorResponse.message
+
+            val errorType = ErrorTypeHandling.fromString(body.type ?: "NONE")
+            Log.d("ERROR_HANDLING_msg", code.toString())
+
+            LighthouseException(code, message, errorType).addErrorMsg()
+        } catch (e: Exception) {
+            LighthouseException(null, null).addErrorMsg()
+        }
+
+
     }
+
+    private fun String.getErrorMsg(): ErrorDTO {
+        Log.d("ERROR", this)
+
+        if (this.isEmpty()) {
+            // Handle the case of an empty error string
+            return ErrorDTO(null, null)
+        }
+
+        val keyValuePairs = this
+            .substring(1, this.length - 1) // Remove curly braces
+            .split(", ")
+            .map { it.split("=") }
+            .filter { it.size == 2 } // Filter out pairs that don't have exactly one "="
+            .associate { it[0] to it[1] }
+
+        return ErrorDTO(keyValuePairs["message"] ?: "", keyValuePairs["type"] ?: "")
+    }
+
 }

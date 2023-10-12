@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LingoTalk</string>
+    <string name="unknown_view_type">Unknown View Type!</string>
+    <!--  Home  -->
+    <string name="btn_nav_home">홈</string>
+    <string name="btn_nav_chat">채팅</string>
+    <string name="btn_nav_board">질문게시판</string>
+    <string name="btn_nav_profile">내 정보</string>
+    <string name="unknown">Error: No right viewType found</string>
+    <!--  Home-filter  -->
+    <string name="filter">필터</string>
+    <string name="prefer_country">선호 국가</string>
+    <string name="prefer_language">사용 언어</string>
+    <string name="board_title">질문게시판</string>
+    <string name="empty">empty</string>
+    <!--  Board  -->
+    <string name="cooking">요리</string>
+    <string name="game">게임</string>
+    <string name="movie">영화</string>
+    <string name="music">음악</string>
+    <string name="travel">여행</string>
+    <string name="study">공부</string>
+    <string name="sort_latest">최신 순</string>
+    <string name="sort_top_rated">최고 순</string>
+    <string name="add_title">질문 추가</string>
+    <string name="interest">관심 분야</string>
+    <string name="enter_question_here">질문을 입력하세요.</string>
+
+    <string name="enter_question">질문 입력</string>
+    <string name="add_question">추가하기</string>
+    <string name="question_size_error">10자 이상 200자 이하로 작성해주세요</string>
+    <string name="edit_profile">편집하기</string>
+    <string name="occupation">직업</string>
+    <string name="no_occupation">미설정</string>
+    <string name="language_and_level">언어 및 레벨</string>
+    <string name="interest_country">관심있는 국가</string>
+    <string name="chat_title">채팅</string>
+    <string name="hint_search">검색</string>
+    <string name="setting">설정</string>
+
+    <string name="type_here">Type here...</string>
+    <string name="enter_info">기본정보를 입력하세요 (1/3)</string>
+    <string name="basic_info">기본 정보</string>
+    <string name="name">이름</string>
+    <string name="enter_name">이름을 입력하세요</string>
+    <string name="email">이메일</string>
+    <string name="birthday">생일</string>
+    <string name="enter_birthday">예: 2019-01-01</string>
+    <string name="enter_email">이메일을 입력하세요</string>
+    <string name="nation">국적</string>
+    <string name="age">나이</string>
+    <string name="gender">성별</string>
+    <string name="male">남성</string>
+    <string name="female">여성</string>
+    <string name="rather_not_tell">선택 안함</string>
+    <string name="unselected">미선택</string>
+    <string name="introduction_optional">자기소개 (선택사항)</string>
+    <string name="introduce_yourself">자신을 소개하세요</string>
+    <string name="next">다음</string>
+    <string name="start">시작하기</string>
+    <string name="apply">적용하기</string>
+    <string name="select_language_level">언어 및 레벨을 선택해주세요 (2/3)</string>
+    <string name="language_n_level">언어 및 레벨</string>
+    <string name="select_prefer_country">선호 국가를 선택해주세요 (3/3)</string>
+
+    <string name="invalid_email">잘못된 이메일 형식 입니다</string>
+    <string name="invalid_birthday">잘못된 생일 형식 입니다</string>
+    <string name="invalid_null">필수 입력 항목 입니다</string>
+    <string name="duplicate_language">이미 선택한 언어입니다</string>
+    <string name="choose">사진 업로드</string>
+
+    <string name="delete_dialog">현재 이미지를 삭제합니까?</string>
+    <string name="delete_title">확인</string>
+    <string name="share_hint">공유</string>
+
+    <string name="level1">레벨1</string>
+    <string name="level2">레벨2</string>
+    <string name="level3">레벨3</string>
+    <string name="level4">레벨4</string>
+    <string name="level5">레벨5</string>
+    <string name="my_info">내 정보</string>
+    <string name="profile">프로필</string>
+    <string name="my_question">내 질문</string>
+    <string name="my_review">내 리뷰</string>
+    <string name="prefer_interest">관심 분야</string>
+    <string name="send_msg">채팅 시작하기</string>
+    <string name="edit">편집</string>
+
+    <string name="select_language">최대 5개 언어를 선택하세요</string>
+    <string name="add_language">언어 추가</string>
+    <string name="exit_title">나가기</string>
+    <string name="exit_body">정말로 나가시겠습니까? 정보는 저장되지 않습니다</string>
+    <string name="filter_error">필터 한개당 최소 한개 아이템을 지정해주세요</string>
+    <string name="error_title">에러 발생!</string>
+    <string name="logout">로그아웃</string>
+    <string name="logout_title">로그아웃</string>
+    <string name="logout_body">정말로 로그아웃 하시겠습니까?</string>
+
+    <string name="ok">확인</string>
+    <string name="cancel">취소</string>
+
+    <string name="profile_description">자기소개</string>
+    <string name="upload_error">업로드 에러</string>
+
+    <string name="leave_channel">채널 나가기</string>
+    <string name="turn_off_alarm">알람끄기</string>
+    <string name="turn_on_alarm">알람켜기</string>
+
+    <string name="upload_success">업로드 성공</string>
+
+    <string name="push_notification">푸시 알림</string>
+
+    <string name="home_title_1">원하는 상대의\u0020</string>
+    <string name="home_title_2">프로필</string>
+    <string name="home_title_3">을 찾아\u0020</string>
+    <string name="home_title_4">대화</string>
+    <string name="home_title_5">해 보세요 !</string>
+
+    <string name="internet_error">인터넷 연결 오류</string>
+    <string name="server_error">서버 오류 발생. 잠시 후 다시 시도해주세요.</string>
+    <string name="camera">카메라</string>
+    <string name="gallery">갤러리</string>
+    <string name="choose_image">선택</string>
+    <string name="sign_in_google">Google 계정으로 로그인</string>
+    <string name="language">언어</string>
+    <string name="language_limit">최대 5개의 언어만 선택 가능합니다</string>
+    <string name="invalid_name">잘못된 이름 형식입니다</string>
+    <string name="save">저장</string>
+
+    <string name="term_service">서비스 약관</string>
+    <string name="term_use">이용 약관</string>
+    <string name="term_personal">개인정보 수집 및 이용 동의</string>
+    <string name="empty_my_question">작성한 질문이 없습니다.\n게시판에서 질문을 작성해보세요!</string>
+
+    <string name="ad_attribution">Ad</string>
+
+    <string name="no_user">상대방이 나갔습니다</string>
+
+</resources>

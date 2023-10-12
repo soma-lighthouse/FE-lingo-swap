@@ -7,13 +7,16 @@ import com.lighthouse.domain.entity.response.vo.UserTokenVO
 data class UserTokenDTO(
     @SerializedName("uuid")
     val uuid: String?,
+    @SerializedName("userName")
+    val userName: String?,
     @SerializedName("tokens")
     val tokens: TokenDTO?,
 
     ) {
     fun toVO() = UserTokenVO(
         uuid = uuid ?: "",
-        tokens = tokens?.toVO() ?: TokenVO("", -1, "", -1)
+        tokens = tokens?.toVO() ?: TokenVO("", -1, "", -1),
+        userName = userName ?: ""
     )
 }
 

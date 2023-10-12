@@ -1,5 +1,7 @@
 package com.lighthouse.android.home.adapter
 
+import android.content.Context
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.lighthouse.android.common_ui.BR
@@ -13,7 +15,8 @@ import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 
 fun makeAdapter(
-    navigateToProfile: (userId: String) -> Unit,
+    context: Context,
+    navigateToProfile: (userId: String) -> Unit
 ) =
     SimpleListAdapter<ProfileVO, UserInfoTileBinding>(
         diffCallBack = ItemDiffCallBack(
@@ -22,6 +25,7 @@ fun makeAdapter(
         layoutId = R.layout.user_info_tile,
         onBindCallback = { viewHolder, item ->
             val binding = viewHolder.binding
+
             Glide.with(binding.ivProfileImg).load(item.profileImageUri)
                 .placeholder(R.drawable.placeholder)
                 .skipMemoryCache(false)
@@ -32,11 +36,11 @@ fun makeAdapter(
                 .into(binding.ivProfileImg)
 
             val flag = binding.root.context.resources.getIdentifier(
-                item.region, "drawable", binding.root.context.packageName
+                item.region.code, "drawable", binding.root.context.packageName
             )
 
             val adapter =
-                SimpleListAdapter<String, LanguageTabBinding>(diffCallBack = ItemDiffCallBack<String>(
+                SimpleListAdapter<String, LanguageTabBinding>(diffCallBack = ItemDiffCallBack(
                     onContentsTheSame = { old, new -> old == new },
                     onItemsTheSame = { old, new -> old == new }),
                     layoutId = R.layout.language_tab,
@@ -50,13 +54,12 @@ fun makeAdapter(
                 "${it.name}/Lv.${it.level}"
             }
 
+            Log.d("TESTING", item.toString())
+
             viewHolder.itemView.setOnClickListener {
                 navigateToProfile(item.id)
             }
 
-            Glide.with(binding.root.context)
-                .load(item.profileImageUri)
-                .into(binding.ivProfileImg)
 
             adapter.submitList(languages)
 
@@ -69,5 +72,7 @@ fun makeAdapter(
             binding.ivFlag.requestLayout()
 
             binding.setVariable(BR.item, item)
-        }
+        },
+        ads = true,
+        context = context
     )

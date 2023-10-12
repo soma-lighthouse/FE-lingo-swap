@@ -18,7 +18,6 @@ import com.lighthouse.android.common_ui.base.selection_adapter.SelectionAdapter
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.ActivityCountryBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
@@ -105,7 +104,7 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
             }
 
             is UiState.Error<*> -> {
-                applicationContext.toast(uiState.message.toString())
+                handleException(uiState)
                 binding.pbCountry.setGone()
             }
         }

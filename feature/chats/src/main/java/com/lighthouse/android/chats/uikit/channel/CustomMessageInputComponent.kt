@@ -24,9 +24,8 @@ import com.sendbird.uikit.widgets.MessageInputView
 class CustomMessageInputComponent : MessageInputComponent() {
     private lateinit var binding: CustomMessageInputBinding
     private var mode = MessageInputView.Mode.DEFAULT
-    var cameraInput: View.OnClickListener? = null
     var voiceInput: View.OnClickListener? = null
-    var rightClick: ((View, BaseMessage) -> Unit)? = null
+    var channel: GroupChannel? = null
 
     override fun onCreateView(
         context: Context,
@@ -36,9 +35,7 @@ class CustomMessageInputComponent : MessageInputComponent() {
     ): View {
         binding = CustomMessageInputBinding.inflate(inflater, parent, false)
 
-        binding.ivSend.setOnClickListener {
-            onInputRightButtonClicked(it)
-        }
+        binding.ivSend.setOnClickListener(this::onInputRightButtonClicked)
 
         binding.ivCamera.setOnClickListener {
             onInputLeftButtonClicked(it)
@@ -51,6 +48,7 @@ class CustomMessageInputComponent : MessageInputComponent() {
         binding.ivCross.setOnClickListener {
             requestInputMode(MessageInputView.Mode.DEFAULT)
         }
+
 
         binding.ivQuestion.setOnClickListener {
             binding.rvQuestionPanel.apply {
@@ -91,7 +89,8 @@ class CustomMessageInputComponent : MessageInputComponent() {
 
                 }
 
-                binding.ivSend.visibility = if (s?.isNotEmpty() != true) View.GONE else View.VISIBLE
+                binding.ivSend.visibility =
+                    if (s?.isNotEmpty() != true || (channel != null && channel?.memberCount == 1)) View.GONE else View.VISIBLE
             }
         })
         return binding.root
@@ -127,6 +126,8 @@ class CustomMessageInputComponent : MessageInputComponent() {
         } else {
             binding.etMessageInput.setText(defaultText)
         }
+
+
     }
 
     override fun requestInputMode(mode: MessageInputView.Mode) {
@@ -143,6 +144,7 @@ class CustomMessageInputComponent : MessageInputComponent() {
             binding.replyPanel.setGone()
             binding.replyPanel.setGone()
         }
+
         onInputModeChanged(before, mode)
     }
 

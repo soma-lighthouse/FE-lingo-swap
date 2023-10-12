@@ -3,6 +3,7 @@ package com.lighthouse.auth.fragment
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -11,12 +12,13 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
-import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.BuildConfig
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentLoginBinding
@@ -28,6 +30,8 @@ import kotlinx.coroutines.launch
 class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_login) {
     private val viewModel: AuthViewModel by viewModels()
     private val googleSignInClient: GoogleSignInClient by lazy { getGoogleClient() }
+
+    private var login = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,9 +48,9 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
                 val account = task.getResult(ApiException::class.java)
 
                 val idToken = account.idToken ?: ""
-                Log.d("TESTING", account.email ?: "")
                 viewModel.saveIdToken(idToken)
                 getResult.value = null
+                login = true
                 viewModel.postGoogleLogin()
             } catch (e: ApiException) {
                 Log.d("TESTING", e.stackTraceToString())
@@ -55,7 +59,12 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
     }
 
     private fun signInListener() {
-        binding.btnSignIn.setOnClickListener {
+        binding.signInButton.setSize(SignInButton.SIZE_STANDARD)
+        val btn = binding.signInButton.getChildAt(0) as TextView
+        btn.text =
+            requireContext().getString(com.lighthouse.android.common_ui.R.string.sign_in_google)
+
+        binding.signInButton1.setOnClickListener {
             requestGoogleLogin()
         }
     }
@@ -80,18 +89,25 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.result.collect { result ->
+                    Log.d("TESTING LOGIN", result.toString())
                     when (result) {
                         UiState.Loading -> {
-                            binding.pbLogin.setVisible()
+                            if (login) {
+                                binding.pbLogin.setVisible()
+                                login = false
+                            }
                         }
 
                         is UiState.Success<*> -> {
                             handleLoginSuccess()
+                            binding.pbLogin.setGone()
                         }
 
                         is UiState.Error<*> -> {
                             handleLoginFailure()
-                            context.toast(result.message.toString())
+                            binding.pbLogin.setGone()
+                            clearResult()
+                            Log.d("TESTING LOGIN", result.toString())
                         }
                     }
                 }
@@ -99,13 +115,22 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
         }
     }
 
+    private fun clearResult() {
+        viewModel.clearResult()
+    }
+
     private fun handleLoginSuccess() {
-        mainNavigator.navigateToMain(requireContext())
+        val intent = mainNavigator.navigateToMain(
+            requireContext(),
+            Pair("NewChat", false),
+            Pair("ChannelId", "")
+        )
+        startActivity(intent)
         requireActivity().finish()
     }
 
     private fun handleLoginFailure() {
-        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToInfoFragment())
+        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToTermFragment())
         googleSignInClient.signOut()
     }
 }

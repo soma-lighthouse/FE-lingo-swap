@@ -1,10 +1,10 @@
 [versions]
 # Versions
 compileSdk = "34"
-minSdk = "26"
+minSdk = "33"
 targetSdk = "34"
 appVersion = "1.0.0"
-versionCode = "100"
+versionCode = "101"
 
 # Kotlin and Serialization
 kotlin = "1.8.20"
@@ -66,6 +66,7 @@ firebase = "32.2.3"
 messaging = "16.0.1"
 
 google-login = "20.7.0"
+google-admob = "22.4.0"
 
 
 [libraries]
@@ -134,6 +135,8 @@ camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cam
 camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax_version" }
 camera-view = { module = "androidx.camera:camera-view", version.ref = "camerax_version" }
 camera-extension = { module = "androidx.camera:camera-extensions", version.ref = "camerax_version" }
+
+google-admob = { module = "com.google.android.gms:play-services-ads", version.ref = "google-admob" }
 
 
 [bundles]

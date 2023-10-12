@@ -13,8 +13,8 @@ interface BoardRepository {
         pageSize: Int?,
     ): Flow<Resource<BoardVO>>
 
-    fun uploadQuestion(info: UploadQuestionVO): Flow<Resource<String>>
-    fun updateLike(questionId: Int, userId: String)
+    fun uploadQuestion(info: UploadQuestionVO): Flow<Resource<Boolean>>
+    fun updateLike(questionId: Int)
 
-    fun cancelLike(questionId: Int, userId: String)
+    fun cancelLike(questionId: Int)
 }

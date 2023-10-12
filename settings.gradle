@@ -14,7 +14,7 @@ dependencyResolutionManagement {
         maven { url "https://repo.sendbird.com/public/maven" }
     }
 }
-rootProject.name = "lingo-swap"
+rootProject.name = "LingoTalk"
 include ':app'
 include ':domain'
 include ':data'
@@ -25,3 +25,4 @@ include ':feature:board'
 include ':feature:profile'
 include ':feature:chats'
 include ':feature:auth'
+include ':lighthousei18n'

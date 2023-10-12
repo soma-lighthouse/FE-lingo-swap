@@ -6,6 +6,8 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Patterns
@@ -22,6 +24,10 @@ import androidx.fragment.app.replace
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
+import com.lighthouse.android.common_ui.base.BaseViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -38,6 +44,14 @@ fun View.setInvisible() {
 
 fun View.setGone() {
     this.visibility = View.GONE
+}
+
+fun View.disable() {
+    this.isEnabled = false
+}
+
+fun View.enable() {
+    this.isEnabled = true
 }
 
 fun Context?.toast(text: CharSequence, duration: Int = Toast.LENGTH_LONG) =
@@ -146,4 +160,27 @@ inline fun <reified T : Fragment> AppCompatActivity.replace(@IdRes frameId: Int)
         replace<T>(frameId)
         setReorderingAllowed(true)
     }
+}
+
+
+inline fun BaseViewModel.onMain(
+    crossinline body: suspend CoroutineScope.() -> Unit
+) = viewModelScope.launch {
+    body(this)
+}
+
+inline fun BaseViewModel.onIO(
+    crossinline body: suspend CoroutineScope.() -> Unit
+) = viewModelScope.launch(io) {
+    body(this)
+}
+
+inline fun BaseViewModel.onDefault(
+    crossinline body: suspend CoroutineScope.() -> Unit
+) = viewModelScope.launch(default) {
+    body(this)
+}
+
+fun disableTabForSeconds(seconds: Long, action: () -> Unit) {
+    Handler(Looper.getMainLooper()).postDelayed(action, seconds * 1000)
 }

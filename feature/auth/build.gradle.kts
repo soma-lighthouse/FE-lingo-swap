@@ -17,7 +17,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -30,6 +30,18 @@ android {
             "String",
             "GOOGLE_CLIENT_ID",
             properties.getProperty("GOOGLE_CLIENT_ID")
+        )
+
+        buildConfigField(
+            "String",
+            "PRIVACY_TERM_URL",
+            properties.getProperty("PRIVACY_TERM_URL")
+        )
+
+        buildConfigField(
+            "String",
+            "SERVICE_TERM_URL",
+            properties.getProperty("SERVICE_TERM_URL")
         )
     }
 
@@ -49,6 +61,7 @@ dependencies {
     implementation(libs.hilt)
     implementation("androidx.core:core-splashscreen:1.0.0-beta02")
     implementation(libs.google.login)
+    implementation("com.google.guava:guava:31.0.1-android")
 
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)

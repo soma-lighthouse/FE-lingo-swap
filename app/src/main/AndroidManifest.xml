@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.lighthouse.lingo_swap">
+    package="com.lighthouse.lingo_talk">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name=".LingoApplication"
+        android:name="com.lighthouse.lingo_talk.LingoApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -26,6 +26,7 @@
         <activity
             android:name="com.lighthouse.auth.AuthActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.LingoTheme"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -37,39 +38,42 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.lighthouse.lingo_talk.MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.LingoTheme" />
 
         <activity
             android:name="com.lighthouse.profile.view.DetailProfileActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name="com.lighthouse.android.chats.view.CustomChatActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.lighthouse.auth.view.CameraActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.lighthouse.auth.view.CountryListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.lighthouse.auth.view.InterestListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.lighthouse.auth.view.LanguageListActivity"
-            android:exported="false" />
-
-        <service
-            android:name=".MyFirebaseMessagingService"
-            android:enabled="true"
             android:exported="false"
-            android:stopWithTask="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+            android:screenOrientation="portrait" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
     </application>
 
 </manifest>

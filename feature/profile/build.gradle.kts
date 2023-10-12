@@ -11,7 +11,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -27,6 +27,9 @@ android {
 dependencies {
     implementation(project(":common-ui"))
     implementation(project(":navigation"))
+
+    implementation("com.sendbird.sdk:uikit:3.+")
+
 
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.bundles.android.basic.ui)
