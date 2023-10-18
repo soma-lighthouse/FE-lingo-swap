@@ -42,11 +42,17 @@ android {
     }
 
     buildTypes {
-//        debug {
-//
-//        }
-        release {
+        debug {
             isMinifyEnabled = true // APK or AAB
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+
+        release {
+            isDebuggable = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -84,10 +90,7 @@ dependencies {
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.gson)
-    implementation(libs.bundles.room)
-    kapt(libs.room.complier)
     implementation(libs.bundles.navigation)
-//    implementation(libs.okhttp.logging.interceptor)
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
     implementation(libs.shared.preference.security)
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))

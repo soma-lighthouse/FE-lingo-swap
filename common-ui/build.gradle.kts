@@ -10,12 +10,14 @@ android {
     namespace = "com.lighthouse.android.common_ui"
 
     buildTypes {
+        debug {
+            isMinifyEnabled = true // APK or AAB
+            consumerProguardFile("proguard-rules.pro")
+        }
+
         release {
             isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            consumerProguardFile("proguard-rules.pro")
         }
     }
     buildFeatures {

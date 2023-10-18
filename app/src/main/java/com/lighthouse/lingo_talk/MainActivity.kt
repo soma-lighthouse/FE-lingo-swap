@@ -8,7 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.messaging.FirebaseMessaging
-import com.lighthouse.android.chats.uikit.CustomFragmentFactory
+import com.lighthouse.android.chats.uikit.channel.CustomChannel
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.MyFirebaseMessagingService
 import com.lighthouse.android.common_ui.util.PushUtils
@@ -22,8 +22,11 @@ import com.sendbird.android.handler.InitResultHandler
 import com.sendbird.android.params.InitParams
 import com.sendbird.uikit.SendbirdUIKit
 import com.sendbird.uikit.adapter.SendbirdUIKitAdapter
+import com.sendbird.uikit.fragments.ChannelFragment
 import com.sendbird.uikit.interfaces.UserInfo
+import com.sendbird.uikit.interfaces.providers.ChannelFragmentProvider
 import com.sendbird.uikit.model.configurations.UIKitConfig
+import com.sendbird.uikit.providers.FragmentProviders
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -198,7 +201,10 @@ class MainActivity @Inject constructor() :
         }, this)
         UIKitConfig.groupChannelConfig.enableTypingIndicator = true
         UIKitConfig.groupChannelConfig.enableReactions = false
-        SendbirdUIKit.setUIKitFragmentFactory(CustomFragmentFactory())
+        FragmentProviders.channel = ChannelFragmentProvider { url, args ->
+            ChannelFragment.Builder(url).withArguments(args).setUseHeader(true)
+                .setCustomFragment(CustomChannel()).build()
+        }
 
         PushUtils.registerPushHandler(MyFirebaseMessagingService())
     }

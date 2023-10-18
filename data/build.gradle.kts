@@ -23,12 +23,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = true // APK or AAB
+            consumerProguardFile("proguard-rules.pro")
+        }
+
         release {
             isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            consumerProguardFile("proguard-rules.pro")
         }
     }
     buildFeatures {
@@ -42,9 +44,7 @@ dependencies {
     implementation(libs.hilt)
     implementation("com.google.firebase:protolite-well-known-types:18.0.0")
     kapt(libs.hilt.kapt)
-    kapt(libs.room.complier)
     implementation(libs.bundles.basic.test)
-    implementation(libs.bundles.room)
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.okhttp)
     implementation(libs.bundles.gson)

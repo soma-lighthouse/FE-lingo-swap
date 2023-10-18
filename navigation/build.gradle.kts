@@ -8,12 +8,14 @@ android {
     namespace = "com.lighthouse.navigation"
 
     buildTypes {
+        debug {
+            isMinifyEnabled = true // APK or AAB
+            consumerProguardFile("proguard-rules.pro")
+        }
+
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isMinifyEnabled = true
+            consumerProguardFile("proguard-rules.pro")
         }
     }
 }
