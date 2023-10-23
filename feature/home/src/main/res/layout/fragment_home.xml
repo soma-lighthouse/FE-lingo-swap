@@ -31,6 +31,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:spannableText="@{viewModels}"
             tools:text="Title" />
 
         <androidx.constraintlayout.widget.Guideline

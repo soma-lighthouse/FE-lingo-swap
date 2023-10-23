@@ -9,6 +9,8 @@ import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.dialog.showOKDialog
 import com.lighthouse.auth.databinding.ActivityAuthBinding
@@ -20,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth) {
@@ -41,6 +44,7 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         login()
         handleBackPressed()
         initI18n()
+        checkGooglePlayServices()
     }
 
     private fun handleBackPressed() {
@@ -112,5 +116,16 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         }
 
         Log.d("i18n", defaultRegion.toString())
+    }
+
+    private fun checkGooglePlayServices() {
+        val googleApiAvailability = GoogleApiAvailability.getInstance()
+        val status = googleApiAvailability.isGooglePlayServicesAvailable(applicationContext)
+        if (status != ConnectionResult.SUCCESS) {
+            val dialog = googleApiAvailability.getErrorDialog(this, status, -1)
+            dialog?.setOnDismissListener { finish() }
+            dialog?.show()
+            googleApiAvailability.showErrorNotification(applicationContext, status)
+        }
     }
 }

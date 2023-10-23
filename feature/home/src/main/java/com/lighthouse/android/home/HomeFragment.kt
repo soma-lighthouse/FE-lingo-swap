@@ -19,13 +19,11 @@ import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
-import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.home.adapter.makeAdapter
 import com.lighthouse.android.home.databinding.FragmentHomeBinding
-import com.lighthouse.android.home.util.getHomeTitle
 import com.lighthouse.android.home.viewmodel.HomeViewModel
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,11 +48,11 @@ class HomeFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.viewModels = viewModel
         initAdapter()
         initScrollListener()
         initFab()
         initMatch()
-        initHomeTitle()
         checkPermission()
     }
 
@@ -70,16 +68,6 @@ class HomeFragment @Inject constructor() :
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ActivityCompat.checkSelfPermission(
             requireContext(), Manifest.permission.POST_NOTIFICATIONS
         ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun initHomeTitle() {
-        lifecycleScope.launch {
-            binding.tvHomeTitle.text =
-                SpannableStringBuilderProvider.getSpannableBuilder(
-                    getHomeTitle(requireContext()),
-                    requireContext()
-                )
-        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {

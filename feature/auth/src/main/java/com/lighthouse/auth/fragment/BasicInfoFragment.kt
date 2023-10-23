@@ -97,7 +97,7 @@ class BasicInfoFragment :
     }
 
     override fun openGallery() {
-        val intent = ImageUtils.newInstance().openGallery(requireActivity())
+        val intent = ImageUtils.newInstance().openGallery()
         resultLauncher.launch(intent)
     }
 
