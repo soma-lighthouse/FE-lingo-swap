@@ -16,7 +16,7 @@ class LingoApplication : Application() {
         super.onCreate()
         MobileAds.initialize(this)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        Thread.setDefaultUncaughtExceptionHandler { _, e -> caughtException(e) }
+//        Thread.setDefaultUncaughtExceptionHandler { _, e -> caughtException(e) }
     }
 
     private fun caughtException(e: Throwable) {

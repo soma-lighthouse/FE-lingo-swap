@@ -117,8 +117,6 @@
     <string name="home_title_4">대화</string>
     <string name="home_title_5">해 보세요 !</string>
 
-    <string name="internet_error">인터넷 연결 오류</string>
-    <string name="server_error">서버 오류 발생. 잠시 후 다시 시도해주세요.</string>
     <string name="camera">카메라</string>
     <string name="gallery">갤러리</string>
     <string name="choose_image">선택</string>
@@ -136,5 +134,8 @@
     <string name="ad_attribution">Ad</string>
 
     <string name="no_user">상대방이 나갔습니다</string>
+
+    <string name="internet_error">인터넷 연결을 확인하고 다시 시도해주세요</string>
+    <string name="server_error">서버 오류 발생, 잠시후 다시 시도해주세요</string>
 
 </resources>
