@@ -36,6 +36,7 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.viewModel
         initProfileDetail()
         initProfile()
         initMyQuestions()
@@ -44,8 +45,6 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
     }
 
     private fun initToggle() {
-        binding.toggleNotification.isChecked = viewModel.getNotification()
-
         binding.toggleNotification.setOnCheckedChangeListener { _, b ->
             viewModel.setNotification(b)
             if (b) {

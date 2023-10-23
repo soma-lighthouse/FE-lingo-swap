@@ -8,6 +8,10 @@
         <variable
             name="item"
             type="com.lighthouse.domain.entity.response.vo.ProfileVO" />
+
+        <variable
+            name="viewModel"
+            type="com.lighthouse.profile.viewmodel.ProfileViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,7 +43,6 @@
                     android:layout_marginTop="20dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-
                     tools:src="@drawable/placeholder" />
 
                 <TextView
@@ -228,6 +231,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
+            android:checked="@{viewModel.getNotification()}"
             android:textOff=""
             android:textOn=""
             app:layout_constraintBottom_toBottomOf="@id/iv_notification"

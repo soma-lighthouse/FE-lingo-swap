@@ -4,6 +4,7 @@ import android.util.Log
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.request.UploadQuestionDTO
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
+import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.entity.request.UploadQuestionVO
 import com.lighthouse.domain.entity.response.vo.BoardVO
 import com.lighthouse.domain.repository.BoardRepository
@@ -33,7 +34,7 @@ class BoardRepositoryImpl @Inject constructor(
     ): Flow<Boolean> =
         datasource.uploadQuestion(
             UploadQuestionDTO(
-                uuid = localPreferenceDataSource.getUUID().toString(),
+                uuid = localPreferenceDataSource.getString(LocalKey.USER_ID),
                 categoryId = info.categoryId,
                 content = info.content
             )

@@ -4,6 +4,7 @@ import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.mapping.toUpdateFilterDTO
 import com.lighthouse.android.data.model.mapping.toUpdateProfileDTO
 import com.lighthouse.android.data.repository.datasource.ProfileRemoteDataSource
+import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.MyQuestionsVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
@@ -23,7 +24,7 @@ class ProfileRepositoryImpl @Inject constructor(
             }
 
     override fun getMyQuestions(): Flow<List<MyQuestionsVO>> =
-        datasource.getMyQuestions(local.getUUID() ?: "")
+        datasource.getMyQuestions(local.getString(LocalKey.USER_ID) ?: "")
             .map {
                 it.myQuestionList.map { questions ->
                     questions.toVO()
@@ -31,24 +32,30 @@ class ProfileRepositoryImpl @Inject constructor(
             }
 
     override fun updateProfile(newProfile: RegisterInfoVO): Flow<Boolean> {
-        return datasource.updateProfile(local.getUUID() ?: "", newProfile.toUpdateProfileDTO())
+        return datasource.updateProfile(
+            local.getString(LocalKey.USER_ID) ?: "",
+            newProfile.toUpdateProfileDTO()
+        )
     }
 
     override fun updateFilter(newFilter: RegisterInfoVO): Flow<Boolean> {
-        return datasource.updateFilter(local.getUUID() ?: "", newFilter.toUpdateFilterDTO())
+        return datasource.updateFilter(
+            local.getString(LocalKey.USER_ID) ?: "",
+            newFilter.toUpdateFilterDTO()
+        )
             .map {
-                local.saveIfFilterUpdated(true)
+                local.save(LocalKey.FILTER_UPDATED, true)
                 true
             }
     }
 
-    override fun getUUID() = local.getUUID() ?: ""
+    override fun getUUID() = local.getString(LocalKey.USER_ID) ?: ""
 
     override fun setPushEnabled(enabled: Boolean) {
-        local.setPushEnabled(enabled)
+        local.save(LocalKey.PUSH_ENABLED, enabled)
     }
 
     override fun getPushEnabled(): Boolean {
-        return local.getPushEnabled()
+        return local.getBoolean(LocalKey.PUSH_ENABLED)
     }
 }

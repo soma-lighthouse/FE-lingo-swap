@@ -112,10 +112,7 @@ class HomeFragment @Inject constructor() :
                 if (uiState.data is List<*>) {
                     profileList.add(ProfileVO())
                     profileList.addAll(uiState.data as List<ProfileVO>)
-                    Log.d("TESTING RENDER", profileList.size.toString())
                 }
-                Log.d("MATCHING", uiState.data.toString())
-                Log.d("MATCHING", profileList.size.toString())
                 adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
                 binding.fabFilter.setVisible()

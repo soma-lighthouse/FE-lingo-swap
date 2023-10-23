@@ -1,7 +1,6 @@
 package com.lighthouse.android.home.adapter
 
 import android.content.Context
-import android.util.Log
 import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
@@ -38,8 +37,6 @@ fun makeAdapter(
             val languages = item.languages.map {
                 "${it.name}/Lv.${it.level}"
             }
-
-            Log.d("TESTING", item.toString())
 
             viewHolder.itemView.setOnClickListener {
                 navigateToProfile(item.id)

@@ -3,6 +3,7 @@ package com.lighthouse.lingo_talk
 import android.os.Build
 import android.util.Log
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
+import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.lighthousei18n.I18nManager
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -16,7 +17,7 @@ class HeaderInterceptor @Inject constructor(
         Log.d("I18n HeaderInterceptor", "intercept: ${i18nManager.getLocale().language}")
         val newRequest = request().newBuilder()
             .addHeader("Accept", "application/json")
-            .addHeader("User-Id", localPreferenceDataSource.getUUID() ?: "1")
+            .addHeader("User-Id", localPreferenceDataSource.getString(LocalKey.USER_ID))
             .addHeader("App-Version", BuildConfig.VERSION_NAME)
             .addHeader("Device-OS", Build.VERSION.SDK_INT.toString())
             .addHeader("Accept-Language", i18nManager.getLocale().language) // "ko_KR"

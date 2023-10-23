@@ -307,7 +307,6 @@ class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Cancel the coroutine when the view is destroyed
         viewLifecycleOwner.lifecycleScope.cancel()
     }
 }
