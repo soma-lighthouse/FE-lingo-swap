@@ -3,10 +3,8 @@ package com.lighthouse.android.chats.uikit.channel.viewholder
 import android.text.TextUtils
 import android.text.format.DateUtils
 import android.view.View
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.lighthouse.android.chats.databinding.QuestionOtherBinding
+import com.lighthouse.android.common_ui.util.ImageUtils
 import com.sendbird.android.channel.BaseChannel
 import com.sendbird.android.message.BaseMessage
 import com.sendbird.android.message.Reaction
@@ -17,7 +15,6 @@ import com.sendbird.uikit.consts.ClickableViewIdentifier
 import com.sendbird.uikit.interfaces.OnItemClickListener
 import com.sendbird.uikit.interfaces.OnItemLongClickListener
 import com.sendbird.uikit.model.MessageListUIParams
-import com.sendbird.uikit.utils.DrawableUtils
 import java.util.concurrent.ConcurrentHashMap
 
 class QuestionMessageOtherViewHolder(
@@ -60,14 +57,13 @@ class QuestionMessageOtherViewHolder(
             url = sender.profileUrl
         }
 
-        val errorIcon = DrawableUtils.createOvalIcon(
-            context,
-            com.sendbird.uikit.R.color.background_300,
-            com.sendbird.uikit.R.drawable.icon_user,
-            com.sendbird.uikit.R.color.ondark_01
-        )
-        Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).error(errorIcon)
-            .apply(RequestOptions.circleCropTransform()).into(binding.ivProfileView)
+//        val errorIcon = DrawableUtils.createOvalIcon(
+//            context,
+//            com.sendbird.uikit.R.color.background_300,
+//            com.sendbird.uikit.R.drawable.icon_user,
+//            com.sendbird.uikit.R.color.ondark_01
+//        )
+        ImageUtils.newInstance().setImage(binding.ivProfileView, url, context)
 
         binding.ivProfileView.setOnClickListener {
             val id = sender?.userId ?: ""

@@ -1,14 +1,12 @@
 package com.lighthouse.android.common_ui.server_driven.viewholders.viewholder
 
-import android.content.res.Resources
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
 import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
 import com.lighthouse.android.common_ui.server_driven.viewholders.default_holder.DefaultViewHolder
 import com.lighthouse.android.common_ui.server_driven.viewholders.util.InflateViewType
-import com.lighthouse.android.common_ui.util.Constant
+import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.domain.constriant.ViewType
 import com.lighthouse.domain.entity.response.server_driven.ContentVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
@@ -27,22 +25,9 @@ class HomeViewHolder(
         data as ProfileVO
 
         CoroutineScope(Dispatchers.Main).launch {
-            Glide.with(binding.ivProfileImg)
-                .load(data.profileImageUri)
-                .override(calSize(Constant.PROFILE_IMAGE_SIZE))
-                .into(binding.ivProfileImg)
-
-            val flag = binding.root.context.resources.getIdentifier(
-                data.region.code,
-                "drawable",
-                binding.root.context.packageName
-            )
-
-            binding.ivFlag.setImageResource(flag)
-
-            binding.ivFlag.layoutParams.width = calSize(Constant.PROFILE_FLAG_SIZE)
-            binding.ivFlag.layoutParams.height = calSize(Constant.PROFILE_FLAG_SIZE)
-            binding.ivFlag.requestLayout()
+            val util = ImageUtils.newInstance()
+            util.setFlagImage(binding.ivFlag, data.region.code, binding.root.context)
+            util.setImage(binding.ivProfileImg, data.profileImageUri, binding.root.context)
 
             binding.setVariable(BR.item, data)
         }
@@ -50,10 +35,4 @@ class HomeViewHolder(
     }
 
     override fun getViewType(): ViewType = ViewType.UserInfoViewHolder
-
-    private fun calSize(size: Float?): Int {
-        val density = Resources.getSystem().displayMetrics.density
-
-        return (size?.times(density) ?: 0).toInt()
-    }
 }

@@ -85,12 +85,10 @@ class DetailProfileFragment :
         }
     }
 
-
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         reloadInfo()
     }
-
 
     private fun reloadInfo() {
         initChip(binding.chipCountry, viewModel.selectedCountryName)
@@ -249,10 +247,8 @@ class DetailProfileFragment :
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.register.collect {
-                    if (it is UiState.Success<*>) {
-                        if (it.data is Boolean) {
-                            context.toast("Success")
-                        }
+                    if (it is UiState.Success<*> && it.data is Boolean) {
+                        context.toast("Success")
                     }
                 }
             }
@@ -287,27 +283,24 @@ class DetailProfileFragment :
         setErrorAndBackground(
             binding.clickInterest2,
             interestIsEmpty,
-            getString(com.lighthouse.android.common_ui.R.string.invalid_null)
         )
 
         val countryIsEmpty = viewModel.selectedCountryName.isEmpty()
         setErrorAndBackground(
             binding.clickCountry,
             countryIsEmpty,
-            getString(com.lighthouse.android.common_ui.R.string.invalid_null)
         )
 
         val languageIsEmpty = viewModel.languageList.value.isNullOrEmpty()
         setErrorAndBackground(
             binding.clickLanguage,
             languageIsEmpty,
-            getString(com.lighthouse.android.common_ui.R.string.invalid_null)
         )
 
         return interestIsEmpty || countryIsEmpty || languageIsEmpty
     }
 
-    private fun setErrorAndBackground(view: View, isValidate: Boolean, text: String) {
+    private fun setErrorAndBackground(view: View, isValidate: Boolean) {
         if (isValidate) {
             view.setBackgroundResource(com.lighthouse.android.common_ui.R.drawable.error_box)
             view.requestFocus()
@@ -464,6 +457,7 @@ class DetailProfileFragment :
     }
 
     private fun initView() {
+        val utils = ImageUtils.newInstance()
         binding.item = userProfile
         if (viewModel.description == "") {
             val description = userProfile.description.ifEmpty {
@@ -484,20 +478,10 @@ class DetailProfileFragment :
             UploadInterestVO(it.category.name, it.interests.map { interest -> interest.name })
         })
 
-
-        Glide.with(binding.ivProfileImg).load(userProfile.profileImageUri)
-            .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
-            .into(binding.ivProfileImg)
+        utils.setImage(binding.ivProfileImg, userProfile.profileImageUri, requireContext())
+        utils.setFlagImage(binding.ivFlag, userProfile.region.code, requireContext())
 
         viewModel.imageUri = Uri.parse(userProfile.profileImageUri)
-
-        val flag = binding.root.context.resources.getIdentifier(
-            userProfile.region.code, "drawable", binding.root.context.packageName
-        )
-        binding.ivFlag.setImageResource(flag)
-        binding.ivFlag.layoutParams.width = calSize(Constant.PROFILE_FLAG_SIZE)
-        binding.ivFlag.layoutParams.height = calSize(Constant.PROFILE_FLAG_SIZE)
-        binding.ivFlag.requestLayout()
     }
 
     private fun initCamera() {
@@ -587,8 +571,7 @@ class DetailProfileFragment :
     }
 
     override fun openGallery() {
-        val intent = ImageUtils.newInstance().openGallery(requireActivity())
+        val intent = ImageUtils.newInstance().openGallery()
         resultLauncher.launch(intent)
     }
-
 }
