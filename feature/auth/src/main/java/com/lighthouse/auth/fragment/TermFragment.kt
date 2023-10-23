@@ -5,14 +5,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.util.disable
 import com.lighthouse.android.common_ui.util.enable
-import com.lighthouse.auth.BuildConfig
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentTermBinding
+import javax.inject.Inject
 
 class TermFragment : BindingFragment<FragmentTermBinding>(R.layout.fragment_term) {
+
+    @Inject
+    lateinit var remoteConfig: FirebaseRemoteConfig
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,13 +34,13 @@ class TermFragment : BindingFragment<FragmentTermBinding>(R.layout.fragment_term
 
     private fun openBrowser() {
         binding.clickPrivacy.setOnClickListener {
-            val url = BuildConfig.PRIVACY_TERM_URL
+            val url = remoteConfig.getString("PRIVACY_URL")
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }
 
         binding.clickService.setOnClickListener {
-            val url = BuildConfig.SERVICE_TERM_URL
+            val url = remoteConfig.getString("SERVICE_TERM_URL")
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }

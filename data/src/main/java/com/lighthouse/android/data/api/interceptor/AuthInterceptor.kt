@@ -1,9 +1,9 @@
 package com.lighthouse.android.data.api.interceptor
 
 import android.util.Log
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.JsonParser
-import com.lighthouse.android.data.BuildConfig
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.response.BaseResponse
 import com.lighthouse.android.data.util.getDto
@@ -23,6 +23,7 @@ import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
     private val localPreferenceDataSource: LocalPreferenceDataSource,
+    private val remoteConfig: FirebaseRemoteConfig,
 ) : Interceptor {
     private val client = OkHttpClient.Builder().build()
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -72,7 +73,7 @@ class AuthInterceptor @Inject constructor(
 
         Log.d("TESTING REFRESH_TOKEN", getRefreshToken())
         val request = Request.Builder()
-            .url(BuildConfig.LIGHTHOUSE_BASE_URL + TOKEN_REQUEST)
+            .url(remoteConfig.getString("LIGHTHOUSE_BASE_URL") + TOKEN_REQUEST)
             .post(body)
             .build()
 

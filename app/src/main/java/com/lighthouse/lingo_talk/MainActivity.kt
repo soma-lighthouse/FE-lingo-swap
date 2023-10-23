@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.lighthouse.android.chats.uikit.channel.CustomChannel
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.MyFirebaseMessagingService
@@ -36,6 +37,9 @@ class MainActivity @Inject constructor() :
     @Inject
     lateinit var navigator: Navigator
 
+    @Inject
+    lateinit var remoteConfig: FirebaseRemoteConfig
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -45,7 +49,7 @@ class MainActivity @Inject constructor() :
 
         FirebaseMessaging.getInstance().token.addOnSuccessListener { task ->
 
-            SendbirdChat.registerPushToken(task) { status, e ->
+            SendbirdChat.registerPushToken(task) { _, e ->
                 if (e != null) {
                     Log.d("MESSAGING", "onInitSucceed: $e")
                 }
@@ -117,7 +121,7 @@ class MainActivity @Inject constructor() :
     private fun initSendBirdChat() {
         SendbirdChat.init(
             InitParams(
-                BuildConfig.SENDBIRD_APPLICATION_ID,
+                remoteConfig.getString("SENDBIRD_APPLICATION_ID"),
                 applicationContext,
                 useCaching = true
             ),
@@ -156,7 +160,7 @@ class MainActivity @Inject constructor() :
     private fun initSendBirdUI() {
         SendbirdUIKit.init(object : SendbirdUIKitAdapter {
             override fun getAppId(): String {
-                return BuildConfig.SENDBIRD_APPLICATION_ID
+                return remoteConfig.getString("SENDBIRD_APPLICATION_ID")
             }
 
             override fun getAccessToken(): String {

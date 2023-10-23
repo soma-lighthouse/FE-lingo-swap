@@ -2,8 +2,11 @@ package com.lighthouse.lingo_talk.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.lighthouse.android.data.api.interceptor.AuthInterceptor
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.local.LocalPreferenceDataSourceImpl
@@ -101,8 +104,10 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideAuthInterceptor(localPreferenceDataSource: LocalPreferenceDataSource): AuthInterceptor {
-        return AuthInterceptor(localPreferenceDataSource)
+    fun provideAuthInterceptor(
+        localPreferenceDataSource: LocalPreferenceDataSource, remoteConfig: FirebaseRemoteConfig
+    ): AuthInterceptor {
+        return AuthInterceptor(localPreferenceDataSource, remoteConfig)
     }
 
     @Provides
@@ -124,5 +129,22 @@ object DataModule {
     @Singleton
     fun provideLocalDataSource(sharedPreferences: SharedPreferences): LocalPreferenceDataSource {
         return LocalPreferenceDataSourceImpl(sharedPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteConfig(): FirebaseRemoteConfig {
+        val remoteConfig = FirebaseRemoteConfig.getInstance().apply {
+            val configSettings = FirebaseRemoteConfigSettings.Builder().build()
+            setConfigSettingsAsync(configSettings)
+        }
+
+        remoteConfig.fetchAndActivate().addOnCompleteListener {
+            if (it.isSuccessful) {
+                Log.d("TESTING", "Config fetch success")
+            }
+        }
+
+        return remoteConfig
     }
 }
