@@ -2,7 +2,6 @@ package com.lighthouse.android.data.repository.datasource
 
 import com.lighthouse.android.data.model.request.UploadQuestionDTO
 import com.lighthouse.android.data.model.response.BoardDTO
-import com.lighthouse.domain.constriant.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface BoardRemoteDataSource {
@@ -11,9 +10,9 @@ interface BoardRemoteDataSource {
         order: String?,
         page: Int?,
         pageSize: Int?,
-    ): Flow<Resource<BoardDTO>>
+    ): Flow<BoardDTO>
 
-    fun uploadQuestion(info: UploadQuestionDTO): Flow<Resource<Boolean>>
-    fun updateLike(questionId: Int): Flow<Resource<Boolean>>
-    fun cancelLike(questionId: Int): Flow<Resource<Boolean>>
+    fun uploadQuestion(info: UploadQuestionDTO): Flow<Boolean>
+    fun updateLike(questionId: Int): Flow<Boolean>
+    fun cancelLike(questionId: Int): Flow<Boolean>
 }

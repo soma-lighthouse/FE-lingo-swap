@@ -3,11 +3,9 @@ package com.lighthouse.android.data.repository
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.mapping.toDTO
 import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
-import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.UploadFilterVO
 import com.lighthouse.domain.entity.response.FilterVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
-import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.UserProfileVO
 import com.lighthouse.domain.repository.HomeRepository
 import kotlinx.coroutines.flow.Flow
@@ -25,39 +23,27 @@ class HomeRepositoryImpl @Inject constructor(
     override fun getMatchedUser(
         next: Int?,
         pageSize: Int?,
-    ): Flow<Resource<UserProfileVO>> {
+    ): Flow<UserProfileVO> {
         val userId = local.getUUID() ?: ""
         return datasource.getMatchedUser(userId, next, pageSize).map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data!!.toVO())
-                else -> throw LighthouseException(null, null).addErrorMsg()
-            }
+            it.toVO()
         }
     }
 
-    override fun getFilterSetting(): Flow<Resource<FilterVO>> {
+    override fun getFilterSetting(): Flow<FilterVO> {
         val userId = local.getUUID() ?: ""
         return datasource.getFilterSetting(userId)
             .map {
-                when (it) {
-                    is Resource.Success -> Resource.Success(it.data!!.toVO())
-                    else -> throw LighthouseException(null, null).addErrorMsg()
-                }
+                it.toVO()
             }
     }
 
-    override fun uploadFilterSetting(filter: UploadFilterVO): Flow<Resource<Boolean>> {
+    override fun uploadFilterSetting(filter: UploadFilterVO): Flow<Boolean> {
         val userId = local.getUUID() ?: ""
         return datasource.uploadFilterSetting(
             userId,
             filter.toDTO()
         )
-            .map {
-                when (it) {
-                    is Resource.Success -> Resource.Success(it.data!!)
-                    else -> throw LighthouseException(null, null).addErrorMsg()
-                }
-            }
     }
 
     override fun saveLanguageFilter(languages: List<LanguageVO>) {

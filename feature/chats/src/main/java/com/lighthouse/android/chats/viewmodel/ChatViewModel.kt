@@ -1,12 +1,12 @@
 package com.lighthouse.android.chats.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.lighthouse.android.common_ui.base.BaseViewModel
 import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
-import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.usecase.ManageChannelUseCase
+import com.lighthouse.domain.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,9 +16,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val chatUseCase: ManageChannelUseCase,
+    private val chatRepository: ChatRepository,
     dispatcherProvider: DispatcherProvider,
-) : BaseViewModel(dispatcherProvider) {
+    application: Application
+) : BaseViewModel(dispatcherProvider, application) {
     private val _question = MutableStateFlow<UiState>(UiState.Loading)
     val question = _question.asStateFlow()
 
@@ -28,30 +29,20 @@ class ChatViewModel @Inject constructor(
 
     fun getQuestion(category: Int) {
         onIO {
-            chatUseCase.getRecommendedQuestions(category, next[category])
+            chatRepository.getRecommendedQuestions(category, next[category])
                 .onStart {
                     _question.value = UiState.Loading
                 }
                 .catch {
                     _question.value = handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            if (it.data!!.nextId == -1) {
-                                page = -1
-                            } else {
-                                next[category] = it.data!!.nextId
-                            }
-                            _question.value = UiState.Success(it.data!!.questions)
-                        }
-
-                        is Resource.Error ->
-                            _question.value = UiState.Error(it.message ?: "Error found")
+                    if (it.nextId == -1) {
+                        page = -1
+                    } else {
+                        next[category] = it.nextId
                     }
+                    _question.value = UiState.Success(it.questions)
                 }
         }
-
     }
-
-
 }

@@ -1,25 +1,22 @@
 package com.lighthouse.profile.viewmodel
 
+import android.app.Application
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.lighthouse.android.common_ui.base.BaseViewModel
 import com.lighthouse.android.common_ui.util.DispatcherProvider
-import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
-import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
-import com.lighthouse.domain.usecase.GetAuthUseCase
-import com.lighthouse.domain.usecase.GetLanguageFilterUseCase
-import com.lighthouse.domain.usecase.GetMyQuestionsUseCase
-import com.lighthouse.domain.usecase.GetProfileUseCase
-import com.lighthouse.domain.usecase.ManageChannelUseCase
-import com.lighthouse.domain.usecase.SaveLanguageFilterUseCase
+import com.lighthouse.domain.repository.AuthRepository
+import com.lighthouse.domain.repository.ChatRepository
+import com.lighthouse.domain.repository.HomeRepository
+import com.lighthouse.domain.repository.ProfileRepository
 import com.lighthouse.domain.usecase.UpdateUserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,15 +26,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileUseCase: GetProfileUseCase,
-    private val myQuestion: GetMyQuestionsUseCase,
-    private val authUseCase: GetAuthUseCase,
-    private val saveLanguageFilterUseCase: SaveLanguageFilterUseCase,
-    private val getLanguageFilterUseCase: GetLanguageFilterUseCase,
     private val updateProfileUseCase: UpdateUserProfileUseCase,
-    private val manageChannelUseCase: ManageChannelUseCase,
-    dispatcherProvider: DispatcherProvider
-) : BaseViewModel(dispatcherProvider) {
+    private val homeRepository: HomeRepository,
+    private val chatRepository: ChatRepository,
+    private val authRepository: AuthRepository,
+    private val profileRepository: ProfileRepository,
+    dispatcherProvider: DispatcherProvider,
+    application: Application
+) : BaseViewModel(dispatcherProvider, application) {
 
     private val _detail = MutableStateFlow<UiState>(UiState.Loading)
     val detail = _detail.asStateFlow()
@@ -74,14 +70,10 @@ class ProfileViewModel @Inject constructor(
     fun getProfileDetail(userId: String) {
         onIO {
             Log.d("TESTING", userId)
-            profileUseCase.getProfileDetail(userId).catch {
+            profileRepository.getProfileDetail(userId).catch {
                 _detail.value = handleException(it)
             }.collect {
-                when (it) {
-                    is Resource.Success<*> -> _detail.emit(UiState.Success(it.data!!))
-
-                    else -> _detail.emit(UiState.Error(it.message ?: "Error found"))
-                }
+                _detail.emit(UiState.Success(it))
             }
         }
     }
@@ -101,13 +93,10 @@ class ProfileViewModel @Inject constructor(
 
     fun getPreSignedUrl(fileName: String) {
         onIO {
-            authUseCase.getPreSignedURL(fileName).catch {
+            authRepository.getPreSignedURL(fileName).catch {
                 _upload.value = handleException(it)
             }.collect {
-                when (it) {
-                    is Resource.Success -> _upload.emit(UiState.Success(it.data!!))
-                    else -> _upload.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                }
+                UiState.Success(it)
             }
         }
     }
@@ -149,13 +138,10 @@ class ProfileViewModel @Inject constructor(
 
     fun uploadImg(filePath: String) {
         onIO {
-            authUseCase.uploadImg(profileUrl!!, filePath).catch {
+            authRepository.uploadImg(profileUrl!!, filePath).catch {
                 _register.value = handleException(it)
             }.collect {
-                when (it) {
-                    is Resource.Success -> _register.value = UiState.Success(it.data!!)
-                    else -> _register.value = UiState.Error(it.message ?: StringSet.error_msg)
-                }
+                _register.value = UiState.Success(it)
             }
         }
     }
@@ -163,47 +149,36 @@ class ProfileViewModel @Inject constructor(
 
     fun getMyQuestions() {
         onIO {
-            myQuestion.invoke().catch {
+            profileRepository.getMyQuestions().catch {
                 _detail.value = handleException(it)
             }.collect {
                 Log.d("TESTING", it.toString())
-                when (it) {
-                    is Resource.Success<*> -> _detail.emit(UiState.Success(it.data!!))
-                    else -> _detail.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                }
+                _detail.emit(UiState.Success(it))
             }
         }
     }
 
     fun createChannel() {
         onIO {
-            manageChannelUseCase.createChannel(userId).catch {
+            chatRepository.createChannel(userId).catch {
                 _detail.value = handleException(it)
             }.collect {
-                when (it) {
-                    is Resource.Success<*> -> _create.emit(UiState.Success(it.data!!))
-                    else -> _detail.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                }
+                _create.emit(UiState.Success(it))
             }
         }
     }
 
     fun saveLanguageFilter(languages: List<LanguageVO>) {
         onIO {
-            saveLanguageFilterUseCase.invoke(languages)
+            homeRepository.saveLanguageFilter(languages)
         }
     }
 
-    fun getLanguageFilter() = getLanguageFilterUseCase.invoke()
+    fun getLanguageFilter() = homeRepository.getLanguageFilter()
 
-    fun getUUID() = profileUseCase.getUUID()
+    fun getUUID() = profileRepository.getUUID()
 
-    fun setNotification(b: Boolean) = profileUseCase.setNotification(b)
+    fun setNotification(b: Boolean) = profileRepository.setPushEnabled(b)
 
-    fun getNotification() = profileUseCase.getNotification()
-
-    fun resetDetail() {
-        _detail.value = UiState.Loading
-    }
-
+    fun getNotification() = profileRepository.getPushEnabled()
 }

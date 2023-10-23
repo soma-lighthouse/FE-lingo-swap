@@ -1,21 +1,18 @@
 package com.lighthouse.android.home.viewmodel
 
+import android.app.Application
+import android.text.SpannableStringBuilder
 import com.lighthouse.android.common_ui.base.BaseViewModel
+import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
 import com.lighthouse.android.common_ui.util.DispatcherProvider
-import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
-import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.android.home.util.getHomeTitle
 import com.lighthouse.domain.entity.request.UploadFilterVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
-import com.lighthouse.domain.usecase.GetFilterSettingUseCase
-import com.lighthouse.domain.usecase.GetLanguageFilterUseCase
-import com.lighthouse.domain.usecase.GetMatchedUserUseCase
-import com.lighthouse.domain.usecase.GetProfileUseCase
-import com.lighthouse.domain.usecase.ManageFilterUpdateUseCase
-import com.lighthouse.domain.usecase.SaveLanguageFilterUseCase
-import com.lighthouse.domain.usecase.UploadFilterSettingUseCase
+import com.lighthouse.domain.repository.HomeRepository
+import com.lighthouse.domain.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,19 +20,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getMatchedUserUseCase: GetMatchedUserUseCase,
-    private val getLanguageFilterUseCase: GetLanguageFilterUseCase,
-    private val getFilterSettingUseCase: GetFilterSettingUseCase,
-    private val saveLanguageFilterUseCase: SaveLanguageFilterUseCase,
-    private val uploadFilterSettingUseCase: UploadFilterSettingUseCase,
-    private val profileUseCase: GetProfileUseCase,
-    manageFilterUpdateUseCase: ManageFilterUpdateUseCase,
-    dispatcherProvider: DispatcherProvider,
-) : BaseViewModel(dispatcherProvider) {
+    private val homeRepository: HomeRepository,
+    private val profileRepository: ProfileRepository,
+    private val dispatcherProvider: DispatcherProvider,
+    application: Application
+) : BaseViewModel(dispatcherProvider, application) {
     private var userProfiles = listOf<ProfileVO>()
     var next: Int? = null
 
@@ -50,10 +44,10 @@ class HomeViewModel @Inject constructor(
     private lateinit var fetchJob: Job
 
     init {
-        val key = manageFilterUpdateUseCase.getIfFilterUpdated()
+        val key = homeRepository.getIfFilterUpdated()
         if (key) {
             userProfiles = listOf()
-            manageFilterUpdateUseCase.saveIfFilterUpdated(false)
+            homeRepository.saveIfFilterUpdated(false)
         }
     }
 
@@ -64,69 +58,53 @@ class HomeViewModel @Inject constructor(
             fetchJob.cancel()
         }
         onIO {
-            getMatchedUserUseCase.invoke(next, pageSize)
+            homeRepository.getMatchedUser(next, pageSize)
                 .onStart {
                     _filter.value = UiState.Loading
                 }
                 .catch {
                     _filter.value = handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            if (it.data!!.nextId == -1) {
-                                page = -1
-                            } else {
-                                next = it.data!!.nextId
-                            }
-                            _filter.value = UiState.Success(it.data!!.profile)
-                        }
-
-                        is Resource.Error ->
-                            _filter.value = UiState.Error(it.message ?: StringSet.error_msg)
+                    if (it.nextId == -1) {
+                        page = -1
+                    } else {
+                        next = it.nextId
                     }
+                    _filter.value = UiState.Success(it.profile)
                 }
         }
     }
 
     fun getFilterFromServer() {
         onIO {
-            getFilterSettingUseCase.invoke()
+            homeRepository.getFilterSetting()
                 .catch {
                     _filter.value = handleException(it)
                 }
                 .collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            _filter.value = UiState.Success(it.data!!)
-                        }
-
-                        is Resource.Error -> {
-                            _filter.value = UiState.Error(it.message ?: StringSet.error_msg)
-                        }
-                    }
+                    _filter.value = UiState.Success(it)
                 }
         }
     }
 
     fun uploadFilterSetting(filter: UploadFilterVO) {
         onIO {
-            uploadFilterSettingUseCase.invoke(filter)
+            homeRepository.uploadFilterSetting(filter)
                 .catch {
                     _filter.value = handleException(it)
                 }
                 .collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            _upload.value = it.data!!
-                        }
-
-                        is Resource.Error -> {
-                            _filter.value = UiState.Error(it.message ?: StringSet.error_msg)
-                        }
-                    }
+                    _upload.value = it
                 }
         }
     }
+
+    suspend fun getSpannableText(): SpannableStringBuilder {
+        return withContext(dispatcherProvider.io) {
+            SpannableStringBuilderProvider.getSpannableBuilder(getHomeTitle(context), context)
+        }
+    }
+
 
     fun saveUserProfiles(profiles: List<ProfileVO>) {
         userProfiles = profiles
@@ -134,12 +112,12 @@ class HomeViewModel @Inject constructor(
 
     fun getUserProfiles() = userProfiles
 
-    fun getLanguageFilter() = getLanguageFilterUseCase.invoke()
+    fun getLanguageFilter() = homeRepository.getLanguageFilter()
 
     fun saveLanguageFilter(languages: List<LanguageVO>) =
-        saveLanguageFilterUseCase.invoke(languages)
+        homeRepository.saveLanguageFilter(languages)
 
-    fun setNotification(b: Boolean) = profileUseCase.setNotification(b)
+    fun setNotification(b: Boolean) = profileRepository.setPushEnabled(b)
 
     fun resetUploadState() {
         _upload.value = false

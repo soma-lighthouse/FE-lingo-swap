@@ -5,12 +5,10 @@ import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.request.RegisterInfoDTO
 import com.lighthouse.android.data.model.request.UploadInterestDTO
 import com.lighthouse.android.data.repository.datasource.AuthRemoteDataSource
-import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
-import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.TokenVO
 import com.lighthouse.domain.entity.response.vo.UserTokenVO
 import com.lighthouse.domain.repository.AuthRepository
@@ -46,40 +44,28 @@ class AuthRepositoryImpl @Inject constructor(
         localPreferenceDataSource.saveExpire(expireTime)
     }
 
-    override fun getInterestList(): Flow<Resource<List<InterestVO>>> =
+    override fun getInterestList(): Flow<List<InterestVO>> =
         authRemoteDataSource.getInterestList().map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data!!.interest.map { interest ->
-                    interest.toVO()
-                })
-
-                else -> throw LighthouseException(null, null).addErrorMsg()
+            it.interest.map { interest ->
+                interest.toVO()
             }
         }
 
-    override fun getLanguageList(): Flow<Resource<List<LanguageVO>>> =
+    override fun getLanguageList(): Flow<List<LanguageVO>> =
         authRemoteDataSource.getLanguageList().map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data!!.language.map { language ->
-                    language.toVO()
-                })
-
-                else -> throw LighthouseException(null, null).addErrorMsg()
+            it.language.map { lang ->
+                lang.toVO()
             }
         }
 
-    override fun getCountryList(): Flow<Resource<List<CountryVO>>> =
+    override fun getCountryList(): Flow<List<CountryVO>> =
         authRemoteDataSource.getCountryList().map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data!!.country.map { country ->
-                    country.toVO()
-                })
-
-                else -> throw LighthouseException(null, null).addErrorMsg()
+            it.country.map { country ->
+                country.toVO()
             }
         }
 
-    override fun registerUser(info: RegisterInfoVO): Flow<Resource<Boolean>> {
+    override fun registerUser(info: RegisterInfoVO): Flow<Boolean> {
         val tmp = RegisterInfoDTO(uuid = info.uuid ?: "null",
             name = info.name ?: "null",
             birthday = info.birthday ?: "null",
@@ -94,63 +80,35 @@ class AuthRepositoryImpl @Inject constructor(
             preferredCountries = info.preferredCountries ?: listOf(),
             profileImageUri = info.profileImageUri ?: "")
         return authRemoteDataSource.registerUser(localPreferenceDataSource.getIdToken(), tmp).map {
-            when (it) {
-                is Resource.Success -> {
-                    val mapping = it.data!!.toVO()
-                    saveTokens(mapping.tokens, mapping.uuid)
-                    localPreferenceDataSource.saveUserName(mapping.userName)
-                    Resource.Success(true)
-                }
-
-                else -> Resource.Error(it.message ?: "Register failed")
-            }
+            val mapping = it.toVO()
+            saveTokens(mapping.tokens, mapping.uuid)
+            localPreferenceDataSource.saveUserName(mapping.userName)
+            true
         }
     }
 
     override fun uploadImg(
         url: String,
         profilePath: String,
-    ): Flow<Resource<Boolean>> {
+    ): Flow<Boolean> {
         Log.d("PICTURE", profilePath)
         val imageFile = File(profilePath)
         val requestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
 
-        return authRemoteDataSource.uploadImg(url, requestBody).map {
-            when (it) {
-                is Resource.Success -> Resource.Success(true)
-                else -> Resource.Error(it.message ?: "Register failed")
-            }
-        }
+        return authRemoteDataSource.uploadImg(url, requestBody)
     }
 
 
-    override fun getPreSignedURL(fileName: String): Flow<Resource<String>> =
+    override fun getPreSignedURL(fileName: String): Flow<String> =
         authRemoteDataSource.getPreSigned(fileName).map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data?.url ?: "")
-                else -> Resource.Error(it.message ?: "PreSigned URL Failed")
-            }
+            it.url ?: ""
         }
 
-    override fun postGoogleLogin(): Flow<Resource<UserTokenVO>> =
+    override fun postGoogleLogin(): Flow<UserTokenVO> =
         authRemoteDataSource.postGoogleLogin(localPreferenceDataSource.getIdToken()).map {
-            when (it) {
-                is Resource.Success -> {
-                    Log.d("TESTING before", it.data.toString())
-                    val mapping = it.data!!.toVO()
-                    saveTokens(mapping.tokens, mapping.uuid)
-                    Resource.Success(it.data!!.toVO())
-                }
-
-                else -> {
-                    Log.d("TESTING", it.message ?: "No message Found")
-                    Resource.Error(
-                        it.message ?: throw LighthouseException(
-                            null, null
-                        ).addErrorMsg()
-                    )
-                }
-            }
+            val mapping = it.toVO()
+            saveTokens(mapping.tokens, mapping.uuid)
+            it.toVO()
         }
 
     override fun saveIdToken(idToken: String) {
@@ -167,4 +125,3 @@ class AuthRepositoryImpl @Inject constructor(
         localPreferenceDataSource.saveUUID(uuid)
     }
 }
-

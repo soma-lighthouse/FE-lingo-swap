@@ -5,14 +5,13 @@ import com.google.gson.Gson
 import com.lighthouse.android.data.model.response.BaseResponse
 import com.lighthouse.android.data.model.response.ErrorDTO
 import com.lighthouse.domain.constriant.ErrorTypeHandling
-import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.response.vo.LighthouseException
 import retrofit2.Response
 
 abstract class NetworkResponse {
-    protected fun <T, R : BaseResponse<T>> changeResult(response: Response<R>): Resource<T> {
+    protected fun <T, R : BaseResponse<T>> changeResult(response: Response<R>): T {
         if (response.isSuccessful) {
-            return Resource.Success(response.body()!!.data)
+            return response.body()!!.data
         } else {
             throw errorHandler(response)
         }

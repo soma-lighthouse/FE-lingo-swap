@@ -1,18 +1,17 @@
 package com.lighthouse.auth.viewmodel
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.lighthouse.android.common_ui.base.BaseViewModel
 import com.lighthouse.android.common_ui.util.DispatcherProvider
-import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.constriant.LoginState
-import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
+import com.lighthouse.domain.repository.AuthRepository
 import com.lighthouse.domain.usecase.CheckLoginStatusUseCase
-import com.lighthouse.domain.usecase.GetAuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,10 +24,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val useCase: GetAuthUseCase,
+    private val authRepository: AuthRepository,
     private val loginStatus: CheckLoginStatusUseCase,
-    dispatcherProvider: DispatcherProvider
-) : BaseViewModel(dispatcherProvider) {
+    dispatcherProvider: DispatcherProvider,
+    application: Application
+) : BaseViewModel(dispatcherProvider, application) {
     private val _loginState: MutableLiveData<LoginState> = MutableLiveData()
     val loginState: LiveData<LoginState> = _loginState
 
@@ -61,28 +61,22 @@ class AuthViewModel @Inject constructor(
 
     fun getInterestList() {
         onIO {
-            useCase.getInterestList()
+            authRepository.getInterestList()
                 .catch {
                     _result.value = handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> _result.emit(UiState.Success(it.data!!))
-                        else -> _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                    }
+                    _result.emit(UiState.Success(it))
                 }
         }
     }
 
     fun getLanguageList() {
         onIO {
-            useCase.getLanguageList()
+            authRepository.getLanguageList()
                 .catch {
                     _result.value = handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> _result.emit(UiState.Success(it.data!!))
-                        else -> _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                    }
+                    _result.emit(UiState.Success(it))
                 }
         }
     }
@@ -90,80 +84,63 @@ class AuthViewModel @Inject constructor(
 
     fun getCountryList() {
         onIO {
-            useCase.getCountryList()
+            authRepository.getCountryList()
                 .catch {
                     _result.value = handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> _result.emit(UiState.Success(it.data!!))
-                        else -> _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                    }
+                    _result.emit(UiState.Success(it))
                 }
         }
     }
 
     fun registerUser() {
         onIO {
-            useCase.registerUser(registerInfo)
+            authRepository.registerUser(registerInfo)
                 .catch {
                     _register.value = false
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            _register.value = true
-                        }
-
-                        else -> _register.value = false
-                    }
+                    _register.value = it
                 }
         }
     }
 
     fun getPreSignedUrl(fileName: String) {
         onIO {
-            useCase.getPreSignedURL(fileName)
+            authRepository.getPreSignedURL(fileName)
                 .catch {
                     _result.value = handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> _result.emit(UiState.Success(it.data!!))
-                        else -> _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                    }
+                    _result.emit(UiState.Success(it))
                 }
         }
     }
 
     fun uploadImg(filePath: String) {
         onIO {
-            useCase.uploadImg(profileUrl!!, filePath)
+            authRepository.uploadImg(profileUrl!!, filePath)
                 .catch {
                     _upload.value = false
+                    handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> _upload.value = true
-                        else -> _upload.value = false
-                    }
+                    _upload.value = it
                 }
         }
     }
 
     fun saveIdToken(idToken: String) {
-        useCase.saveIdToken(idToken)
+        authRepository.saveIdToken(idToken)
     }
 
     fun postGoogleLogin() {
         onIO {
-            useCase.postGoogleLogin()
+            authRepository.postGoogleLogin()
                 .onStart {
                     _result.value = UiState.Loading
                 }
                 .catch {
                     _result.value = handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> _result.emit(UiState.Success(it.data!!))
-                        else -> _result.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                    }
+                    _result.emit(UiState.Success(it))
                 }
         }
     }
