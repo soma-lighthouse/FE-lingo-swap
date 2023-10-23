@@ -11,7 +11,7 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = true // APK or AAB
+            isMinifyEnabled = false // APK or AAB
             consumerProguardFile("proguard-rules.pro")
         }
 
@@ -30,14 +30,11 @@ dependencies {
     implementation(project(":common-ui"))
     implementation(project(":navigation"))
 
-    implementation("com.sendbird.sdk:uikit:3.+")
-
-
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.bundles.android.basic.ui)
     implementation(libs.kotlin.coroutines)
     implementation(libs.hilt)
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation(libs.sendbird)
     kapt(libs.hilt.kapt)
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.navigation)

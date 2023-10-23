@@ -9,7 +9,7 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = true // APK or AAB
+            isMinifyEnabled = false // APK or AAB
             consumerProguardFile("proguard-rules.pro")
         }
 

@@ -7,7 +7,7 @@ appVersion = "1.0.0"
 versionCode = "102"
 
 # Kotlin and Serialization
-kotlin = "1.8.20"
+kotlin = "1.9.0"
 kotlinx-serialization-json = "1.5.1"
 kotlinx-serialization-converter = "1.0.0"
 kotlinx-coroutines = "1.7.1"
@@ -16,16 +16,18 @@ kotlinx-datetime = "0.4.0"
 # AndroidX Libraries
 corektx = "1.12.0"
 appcompat = "1.6.1"
-activity = "1.7.2"
+activity = "1.8.0"
+fragment = "1.6.1"
 lifecycle = "2.6.2"
-navigation = "2.7.2"
+navigation = "2.7.4"
 safe-args = "2.5.3"
 constraintlayout = "2.1.4"
 room = "2.5.2"
 shared-preference-security = "1.1.0-alpha06"
 
+
 # Google Libraries
-material = "1.7.0"
+material = "1.10.0"
 accompanist = "0.30.1"
 in-app-update = "2.1.0"
 
@@ -40,9 +42,9 @@ androidx-test-espresso = "3.5.1"
 androidx-test = "1.5.2"
 
 # Build Tools and Plugins
-gradleplugin = "8.1.1"
+gradleplugin = "8.1.2"
 kspplugin = "1.8.21-1.0.11"
-camerax_version = "1.3.0-rc01"
+camerax_version = "1.4.0-alpha01"
 
 
 # Dependency Injection
@@ -58,15 +60,26 @@ gson-converter = "2.9.0"
 
 # UI
 lottie = "6.0.1"
+refresh-layout = "1.2.0-alpha01"
 
 # Firebase
 google-services = "4.3.15"
 crashlytics = "2.9.9"
-firebase = "32.2.3"
-messaging = "16.0.1"
+firebase-analytics = "21.3.0"
+firebase-bom = "32.3.1"
+firebase-config = "21.4.1"
+firebase-crashlytics = "18.4.3"
+firebase-messaging = "23.2.1"
+firebase-bug = "18.0.0"
 
 google-login = "20.7.0"
 google-admob = "22.4.0"
+
+sendbird = "3.9.2"
+
+guava = "31.0.1-android"
+splash = "1.1.0-alpha02"
+java-inject = "1"
 
 
 [libraries]
@@ -83,6 +96,8 @@ appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat"
 lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 lifecycle-livedata = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+activity = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
+fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
 
 room = { module = "androidx.room:room-runtime", version.ref = "room" }
 room-complier = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -95,6 +110,7 @@ navigation-core = { module = "androidx.navigation:navigation-ui-ktx", version.re
 
 material = { module = "com.google.android.material:material", version.ref = "material" }
 inappupdate = { module = "com.google.android.play:app-update-ktx", version.ref = "in-app-update" }
+refresh-layout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "refresh-layout" }
 
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
@@ -120,10 +136,12 @@ hilt-kapt = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger-
 
 google-services = { module = "com.google.gms:google-services", version.ref = "google-services" }
 crashlytics-plugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "crashlytics" }
-firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
+
+firebase = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebase-crashlytics" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebase-messaging" }
+firebase-config = { module = "com.google.firebase:firebase-config-ktx", version.ref = "firebase-config" }
 
 google-login = { module = "com.google.android.gms:play-services-auth", version.ref = "google-login" }
 
@@ -138,15 +156,22 @@ camera-extension = { module = "androidx.camera:camera-extensions", version.ref =
 
 google-admob = { module = "com.google.android.gms:play-services-ads", version.ref = "google-admob" }
 
+sendbird = { module = "com.sendbird.sdk:uikit", version.ref = "sendbird" }
+
+firebase-bug-fix = { module = "com.google.firebase:protolite-well-known-types", version.ref = "firebase-bug" }
+
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+splash-screen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
+java-inject = { module = "javax.inject:javax.inject", version.ref = "java-inject" }
 
 [bundles]
 
-androidx-ui-foundation = ["core-ktx", "appcompat", "lifecycle-viewmodel", "lifecycle-livedata"]
-android-basic-ui = ["material", "constraintlayout"]
+androidx-ui-foundation = ["core-ktx", "appcompat", "lifecycle-viewmodel", "lifecycle-livedata", "activity", "fragment"]
+android-basic-ui = ["material", "constraintlayout", "refresh-layout"]
 okhttp = ["okhttp", "okhttp-logging-interceptor", "okhttp-bom"]
 retrofit = ["retrofit", "retrofit-kotlin-serialization-converter"]
 gson = ["gson", "gson-converter"]
-firebase = ["firebase-analytics", "firebase-crashlytics", "firebase-messaging"]
+firebase = ["firebase", "firebase-analytics", "firebase-crashlytics", "firebase-messaging", "firebase-config"]
 accompanist = ["accompanist-systemuicontroller"]
 androidx-android-test = ["androidx-test-runner", "androidx-test-rules"]
 basic-test = ["junit", "androidx-test-junit", "androidx-test-espresso"]

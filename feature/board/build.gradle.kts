@@ -11,7 +11,7 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = true // APK or AAB
+            isMinifyEnabled = false // APK or AAB
             consumerProguardFile("proguard-rules.pro")
         }
 
@@ -29,10 +29,6 @@ android {
 dependencies {
     implementation(project(":common-ui"))
     implementation(project(":navigation"))
-
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
-    implementation("androidx.activity:activity-ktx:1.7.2")
-    implementation("androidx.fragment:fragment-ktx:1.6.0")
 
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.bundles.android.basic.ui)

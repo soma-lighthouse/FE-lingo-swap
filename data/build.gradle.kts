@@ -1,9 +1,3 @@
-import org.jetbrains.kotlin.konan.properties.Properties
-
-val lighthouseFile = rootProject.file("lighthouse.properties")
-val properties = Properties()
-properties.load(lighthouseFile.inputStream())
-
 plugins {
     kotlin("android")
     id("com.android.library")
@@ -14,17 +8,9 @@ plugins {
 android {
     namespace = "com.lighthouse.android.data"
 
-    defaultConfig {
-        buildConfigField(
-            "String",
-            "LIGHTHOUSE_BASE_URL",
-            properties.getProperty("LIGHTHOUSE_BASE_URL")
-        )
-    }
-
     buildTypes {
         debug {
-            isMinifyEnabled = true // APK or AAB
+            isMinifyEnabled = false // APK or AAB
             consumerProguardFile("proguard-rules.pro")
         }
 
@@ -42,10 +28,11 @@ dependencies {
     implementation(project(":domain"))
 
     implementation(libs.hilt)
-    implementation("com.google.firebase:protolite-well-known-types:18.0.0")
+    implementation(libs.firebase.bug.fix)
+    implementation(libs.firebase.config)
     kapt(libs.hilt.kapt)
-    implementation(libs.bundles.basic.test)
-    implementation(libs.bundles.retrofit)
-    implementation(libs.bundles.okhttp)
-    implementation(libs.bundles.gson)
+    api(libs.bundles.basic.test)
+    api(libs.bundles.retrofit)
+    api(libs.bundles.okhttp)
+    api(libs.bundles.gson)
 }
