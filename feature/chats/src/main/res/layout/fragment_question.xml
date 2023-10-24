@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.lighthouse.android.chats.viewmodel.ChatViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +28,8 @@
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_category"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:currentChipPosition="@{viewModel.position}" />
 
         </HorizontalScrollView>
 
@@ -29,6 +37,7 @@
             android:id="@+id/rv_question_panel"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/sv_category" />
@@ -44,6 +53,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
+        <tag android:id="@+id/chipListener" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

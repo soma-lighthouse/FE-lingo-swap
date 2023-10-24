@@ -22,12 +22,18 @@ class ChatViewModel @Inject constructor(
 ) : BaseViewModel(dispatcherProvider, application) {
     private val _question = MutableStateFlow<UiState>(UiState.Loading)
     val question = _question.asStateFlow()
+    private val _questionList: MutableMap<Int, MutableList<String>> = mutableMapOf()
+
+    val position = MutableLiveData(1)
 
     val sendQuestion: MutableLiveData<String> = MutableLiveData()
     var next: MutableList<Int?> = MutableList(7) { null }
-    var page = 1
 
-    fun getQuestion(category: Int) {
+    fun getQuestion() {
+        val category = position.value!!
+        if (next[category] == -1) {
+            return
+        }
         onIO {
             chatRepository.getRecommendedQuestions(category, next[category])
                 .onStart {
@@ -37,12 +43,19 @@ class ChatViewModel @Inject constructor(
                     _question.value = handleException(it)
                 }.collect {
                     if (it.nextId == -1) {
-                        page = -1
+                        next[category] = -1
                     } else {
                         next[category] = it.nextId
                     }
-                    _question.value = UiState.Success(it.questions)
+                    val questions = it.questions
+                    if (_questionList[category] == null) {
+                        _questionList[category] = mutableListOf()
+                    }
+                    _questionList[category]?.addAll(questions)
+                    _question.value = UiState.Success(_questionList[category] ?: mutableListOf())
                 }
         }
     }
+
+    fun getQuestionList() = _questionList[position.value!!]
 }

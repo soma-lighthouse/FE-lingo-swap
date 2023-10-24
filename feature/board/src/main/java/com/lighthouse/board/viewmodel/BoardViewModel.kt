@@ -1,7 +1,6 @@
 package com.lighthouse.board.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.LiveData
@@ -55,7 +54,6 @@ class BoardViewModel @Inject constructor(
     private fun setLike(questionId: Int, like: Boolean) {
         val question = _questionList[categoryId.value]?.find { it.questionId == questionId }
         val num = _questionList[categoryId.value]?.indexOf(question)
-        Log.d("TESTING LIKE1", "${categoryId.value}")
         changed.set(-1)
         changed.set(num ?: -1)
         question?.let {
@@ -67,7 +65,6 @@ class BoardViewModel @Inject constructor(
                 it.clicked = false
             }
         }
-        Log.d("TESTING LIKE", question.toString())
     }
 
     fun fetchState(order: String?, pageSize: Int? = null) {
@@ -96,14 +93,13 @@ class BoardViewModel @Inject constructor(
                 }
                 _questionList[category]?.addAll(questions)
                 isLoading.set(false)
-                _result.emit(UiState.Success(_questionList[category]!!))
+                _result.emit(UiState.Success(_questionList[category] ?: mutableListOf()))
             }
         }
     }
 
     fun uploadQuestion(upload: UploadQuestionVO) {
         onIO {
-            Log.d("TESTING UPLOAD", upload.toString())
             val text = upload.content
             if (text.length <= 10 || text.length >= 200) {
                 val msg =
