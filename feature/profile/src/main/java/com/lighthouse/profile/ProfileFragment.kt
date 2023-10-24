@@ -9,14 +9,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.lighthouse.android.common_ui.BR
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.MyFirebaseMessagingService
-import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
-import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
-import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
 import com.lighthouse.android.common_ui.dialog.showOKDialog
-import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.PushUtils
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
@@ -36,7 +31,7 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.viewModel
+        binding.viewModel = viewModel
         initProfileDetail()
         initProfile()
         initMyQuestions()
@@ -60,8 +55,8 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
                 }
 
                 override fun onError(e: SendbirdException) {
+                    viewModel.setNotification(!b)
                     context.toast(e.message.toString())
-                    binding.toggleNotification.isChecked = true
                 }
             })
         }
@@ -116,7 +111,7 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
 
             is UiState.Success<*> -> {
                 val data = uiState.data as ProfileVO
-                renderProfile(data)
+                binding.item = data
                 binding.pbProfile.setGone()
             }
 
@@ -125,35 +120,5 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
                 binding.pbProfile.setGone()
             }
         }
-    }
-
-    private fun renderProfile(data: ProfileVO) {
-        val langAdapter =
-            SimpleListAdapter<String, LanguageTabBinding>(diffCallBack = ItemDiffCallBack<String>(
-                onContentsTheSame = { old, new -> old == new },
-                onItemsTheSame = { old, new -> old == new }),
-                layoutId = com.lighthouse.android.common_ui.R.layout.language_tab,
-                onBindCallback = { v, s ->
-                    val binding = v.binding
-                    binding.tvLanguage.text = s
-                })
-
-        val languages = data.languages.map {
-            "${it.name}/Lv.${it.level}"
-        }
-
-        langAdapter.submitList(languages)
-
-        val util = ImageUtils.newInstance()
-        util.setFlagImage(binding.ivFlag, data.region.code, requireContext())
-        util.setImage(binding.ivProfileImg, data.profileImageUri, requireContext())
-
-        binding.rvLanguage.adapter = langAdapter
-
-        binding.tvDescription.text = data.description.ifEmpty {
-            getString(com.lighthouse.android.common_ui.R.string.profile_description)
-        }
-
-        binding.setVariable(BR.item, data)
     }
 }

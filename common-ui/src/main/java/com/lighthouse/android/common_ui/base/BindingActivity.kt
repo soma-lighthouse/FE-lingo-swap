@@ -55,11 +55,11 @@ abstract class BindingActivity<T : ViewDataBinding>(
     }
 
     protected fun getUUID(): String {
-        return sharedPreferences.getString("com.lighthouse.lingo-swap.UUID", null) ?: ""
+        return sharedPreferences.getString("com.lighthouse.lingo-talk.UUID", null) ?: ""
     }
 
     protected fun getUserName(): String {
-        return sharedPreferences.getString("com.lighthouse.lingo-swap.USER_NAME", null) ?: ""
+        return sharedPreferences.getString("com.lighthouse.lingo-talk.USER_NAME", null) ?: ""
     }
 
     protected fun handleException(uiState: UiState.Error<*>) {

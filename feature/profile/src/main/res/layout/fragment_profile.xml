@@ -43,6 +43,7 @@
                     android:layout_marginTop="20dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:setUpImage="@{item.profileImageUri}"
                     tools:src="@drawable/placeholder" />
 
                 <TextView
@@ -67,6 +68,8 @@
                     android:layout_marginTop="-25dp"
                     app:layout_constraintStart_toStartOf="@+id/iv_profile_img"
                     app:layout_constraintTop_toBottomOf="@+id/iv_profile_img"
+                    app:setUpFlag="@{item.region.code}"
+                    app:size="@{null}"
                     tools:layout_height="25dp"
                     tools:layout_width="25dp"
                     tools:src="@drawable/placeholder" />
@@ -77,6 +80,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="20dp"
+                    android:text="@{item.description}"
                     android:textColor="@color/brownish_grey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
@@ -97,7 +101,8 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/tv_description"
                     app:layout_constraintTop_toBottomOf="@+id/tv_description"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintVertical_bias="1.0"
+                    app:setUpLanguage="@{item.languages}" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_next"

@@ -5,6 +5,11 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <variable
+            name="country"
+            type="com.lighthouse.domain.entity.response.vo.CountryVO" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,6 +25,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:setUpFlag="@{country.code}"
+            app:size="@{null}"
             tools:background="@drawable/kr" />
 
         <TextView
@@ -28,6 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:fontFamily="@font/noto_sans_kr_medium"
+            android:text="@{country.name}"
             android:textSize="@dimen/textSize_normal"
             android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="@id/iv_flag"
@@ -43,7 +51,7 @@
             android:layout_marginHorizontal="@dimen/margin_normal"
             android:layout_marginVertical="@dimen/margin_small"
             android:background="@drawable/check"
-            android:visibility="gone"
+            android:visibility="@{country.select ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

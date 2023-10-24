@@ -1,7 +1,6 @@
 package com.lighthouse.board.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -32,17 +31,33 @@ class AddFragment : BindingFragment<FragmentAddBinding>(R.layout.fragment_add) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initBack()
-        initAddButton()
+        initTab()
         observeResult()
+        observeToast()
+        setUpBinding()
+    }
+
+    private fun initTab() {
         addChipToGroup(
             binding.chipInterest,
             resources.getStringArray(com.lighthouse.android.common_ui.R.array.tab_name).toList()
         )
     }
 
+    private fun setUpBinding() {
+        binding.upload = UploadQuestionVO(1, 1, "")
+        binding.viewModel = viewModel
+    }
+
     private fun initBack() {
         binding.btnBack.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
+        }
+    }
+
+    private fun observeToast() {
+        viewModel.toast.observe(viewLifecycleOwner) {
+            context.toast(it)
         }
     }
 
@@ -76,21 +91,6 @@ class AddFragment : BindingFragment<FragmentAddBinding>(R.layout.fragment_add) {
         }
     }
 
-    private fun initAddButton() {
-        binding.btnAdd.setOnClickListener {
-            val text = binding.etQuestion.text.toString()
-            if (text.length <= 10 || text.length >= 200) {
-                val msg =
-                    requireContext().resources.getString(com.lighthouse.android.common_ui.R.string.question_size_error)
-                context.toast(msg)
-            } else {
-                val categoryId = binding.chipInterest.checkedChipId + 1
-                Log.d("TESTING", categoryId.toString())
-                viewModel.uploadQuestion(UploadQuestionVO(1, categoryId, text))
-            }
-        }
-    }
-
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
@@ -104,7 +104,7 @@ class AddFragment : BindingFragment<FragmentAddBinding>(R.layout.fragment_add) {
             is UiState.Success<*> -> {
                 binding.apply {
                     pbAddLoading.setGone()
-                    context.toast("question uploaded!")
+                    context.toast(requireContext().getString(com.lighthouse.android.common_ui.R.string.upload_success))
                     findNavController().navigate(AddFragmentDirections.actionAddFragmentToBoardFragment())
                 }
             }

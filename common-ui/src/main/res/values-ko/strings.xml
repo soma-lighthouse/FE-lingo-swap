@@ -125,6 +125,7 @@
     <string name="language_limit">최대 5개의 언어만 선택 가능합니다</string>
     <string name="invalid_name">잘못된 이름 형식입니다</string>
     <string name="save">저장</string>
+    <string name="question_upload">질문이 성공적으로 업로드 되었습니다</string>
 
     <string name="term_service">서비스 약관</string>
     <string name="term_use">이용 약관</string>

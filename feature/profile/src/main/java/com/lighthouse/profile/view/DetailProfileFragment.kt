@@ -31,7 +31,6 @@ import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.android.common_ui.util.disable
 import com.lighthouse.android.common_ui.util.enable
 import com.lighthouse.android.common_ui.util.intentSerializable
-import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
@@ -94,7 +93,7 @@ class DetailProfileFragment :
         initChip(binding.chipCountry, viewModel.selectedCountryName)
         adapter.submitList(viewModel.interestList)
         viewModel.imageUri?.let {
-            loadImage(it)
+            binding.imageUrl = it.toString()
         }
         binding.tvDescription.setText(viewModel.description)
     }
@@ -457,29 +456,16 @@ class DetailProfileFragment :
     }
 
     private fun initView() {
-        val utils = ImageUtils.newInstance()
         binding.item = userProfile
-        if (viewModel.description == "") {
-            val description = userProfile.description.ifEmpty {
-                getString(com.lighthouse.android.common_ui.R.string.profile_description)
-            }
-            binding.tvDescription.setText(description)
-            binding.tvDescription.onCloseKeyBoard(requireContext())
-        }
-
+        binding.imageUrl = userProfile.profileImageUri
         initChip(binding.chipCountry, userProfile.countries.map { it.name })
-
         initChip(binding.chipLanguage, userProfile.languages.flatMap {
             listOf("${it.name}/LV${it.level}")
         })
 
-
         adapter.submitList(userProfile.interests.map {
             UploadInterestVO(it.category.name, it.interests.map { interest -> interest.name })
         })
-
-        utils.setImage(binding.ivProfileImg, userProfile.profileImageUri, requireContext())
-        utils.setFlagImage(binding.ivFlag, userProfile.region.code, requireContext())
 
         viewModel.imageUri = Uri.parse(userProfile.profileImageUri)
     }
@@ -488,13 +474,6 @@ class DetailProfileFragment :
         binding.clickProfile.setOnClickListener {
             getImagePicker()
         }
-    }
-
-    private fun loadImage(result: Uri) {
-        Glide.with(this).load(result).fitCenter()
-            .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
-            .error(com.lighthouse.android.common_ui.R.drawable.question)
-            .into(binding.ivProfileImg)
     }
 
     private fun observeImage() {

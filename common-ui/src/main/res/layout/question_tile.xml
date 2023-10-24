@@ -8,6 +8,10 @@
         <variable
             name="item"
             type="com.lighthouse.domain.entity.response.vo.BoardQuestionVO" />
+
+        <variable
+            name="listener"
+            type="com.lighthouse.android.common_ui.listener.LikeListener" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -29,6 +33,7 @@
                 android:layout_margin="@dimen/margin_small"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:setUpImage="@{item.profileImageUri}"
                 tools:src="@drawable/placeholder" />
 
             <ImageView
@@ -40,6 +45,8 @@
                 android:src="@drawable/kr"
                 app:layout_constraintStart_toStartOf="@+id/iv_profile"
                 app:layout_constraintTop_toBottomOf="@+id/iv_profile"
+                app:setUpFlag="@{item.region}"
+                app:size="@{20}"
                 tools:layout_height="25dp"
                 tools:layout_width="25dp"
                 tools:src="@drawable/placeholder" />
@@ -65,6 +72,8 @@
                 android:layout_height="20dp"
                 android:layout_marginEnd="5dp"
                 android:background="@drawable/like_selector"
+                android:checked="@{item.clicked}"
+                android:onClick="@{() -> listener.updateLike(item.questionId, !item.clicked)}"
                 android:textOff=""
                 android:textOn=""
                 app:layout_constraintBottom_toBottomOf="@+id/tv_like"
@@ -78,6 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/margin_small"
                 android:includeFontPadding="false"
+                android:text="@{Integer.toString(item.like)}"
                 android:textColor="@color/main"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_name"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -90,14 +100,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="@dimen/margin_small"
+                android:text="@{item.contents}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/tv_like"
                 app:layout_constraintStart_toStartOf="@+id/iv_profile"
                 app:layout_constraintTop_toBottomOf="@+id/iv_profile"
                 tools:text="dasdsadasdsadasdasdasdsasdasds" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <tag android:id="@+id/tabLayoutListener" />
+
 
     </androidx.cardview.widget.CardView>
 </layout>

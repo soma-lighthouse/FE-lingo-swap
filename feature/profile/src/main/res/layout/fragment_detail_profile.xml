@@ -7,6 +7,10 @@
     <data>
 
         <variable
+            name="imageUrl"
+            type="String" />
+
+        <variable
             name="item"
             type="com.lighthouse.domain.entity.response.vo.ProfileVO" />
     </data>
@@ -81,6 +85,7 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tb_profile"
+                    app:setUpImage="@{imageUrl}"
                     tools:src="@drawable/placeholder" />
 
 
@@ -139,6 +144,8 @@
                     android:layout_marginTop="12dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
+                    app:setUpFlag="@{item.region.code}"
+                    app:size="@{null}"
                     tools:src="@drawable/kr" />
 
                 <TextView
@@ -166,6 +173,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_flag"
+                    app:setUpDescription="@{item.description}"
                     tools:text="Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. " />
 
                 <!--                <View-->

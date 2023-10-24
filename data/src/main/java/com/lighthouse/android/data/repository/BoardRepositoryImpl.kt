@@ -11,6 +11,7 @@ import com.lighthouse.domain.repository.BoardRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,18 +43,24 @@ class BoardRepositoryImpl @Inject constructor(
 
     override fun updateLike(questionId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            datasource.updateLike(questionId).collect {
-                Log.d("LIKE", "Success")
-            }
+            datasource.updateLike(questionId)
+                .catch {
+                    Log.d("LIKE", "Failed")
+                }.collect {
+                    Log.d("LIKE", "Success")
+                }
         }
 
     }
 
     override fun cancelLike(questionId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            datasource.cancelLike(questionId).collect {
-                Log.d("LIKE", "Success")
-            }
+            datasource.cancelLike(questionId)
+                .catch {
+                    Log.d("LIKE", "Failed")
+                }.collect {
+                    Log.d("LIKE", "Success")
+                }
         }
     }
 }
