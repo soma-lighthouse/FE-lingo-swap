@@ -127,7 +127,8 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
         val intent = mainNavigator.navigateToMain(
             requireContext(),
             Pair("NewChat", false),
-            Pair("ChannelId", "")
+            Pair("ChannelId", ""),
+            Pair("url", "")
         )
         startActivity(intent)
         requireActivity().finish()
