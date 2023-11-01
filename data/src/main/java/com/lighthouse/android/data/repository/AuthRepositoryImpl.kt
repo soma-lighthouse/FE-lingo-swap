@@ -121,8 +121,6 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     private fun saveTokens(mapping: TokenVO, uuid: String) {
-        Log.d("TESTING tokens", mapping.toString())
-
         localPreferenceDataSource.save(LocalKey.ACCESS_TOKEN, mapping.accessToken)
         localPreferenceDataSource.save(LocalKey.ACCESS_TOKEN_EXPIRE, mapping.expiresIn)
         localPreferenceDataSource.save(LocalKey.REFRESH_TOKEN, mapping.refreshToken)

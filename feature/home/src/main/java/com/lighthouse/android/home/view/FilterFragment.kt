@@ -194,13 +194,10 @@ class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_
 
     private fun initCountry() {
         binding.clickCountry.setOnClickListener {
-            val intent =
-                mainNavigator.navigateToCountry(
-                    requireContext(),
-                    Pair("multiSelect", true),
-                    Pair("SelectedList", selectedCountryName)
-                )
-            resultLauncher.launch(intent)
+            mainNavigator.navigateToCountry(
+                requireContext(),
+                Pair("multiSelect", true),
+            )
         }
     }
 
@@ -223,11 +220,9 @@ class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_
                 hash[it.category] = it.interests
             }
 
-            val intent = mainNavigator.navigateToInterest(
+            mainNavigator.navigateToInterest(
                 requireContext(),
-                Pair("SelectedList", hash),
             )
-            resultLauncher.launch(intent)
         }
     }
 

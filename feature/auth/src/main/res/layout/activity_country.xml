@@ -5,6 +5,14 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.lighthouse.auth.viewmodel.AuthViewModel" />
+
+        <variable
+            name="multi"
+            type="boolean" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,6 +59,7 @@
             android:id="@+id/rv_country"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/btn_apply"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -81,7 +90,9 @@
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_result"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:closeListener="@{viewModel}"
+                app:setUpChip="@{viewModel.selectedCountry}" />
 
         </HorizontalScrollView>
 
@@ -96,6 +107,7 @@
             android:layout_marginVertical="10dp"
             android:background="@drawable/custom_button"
             android:elevation="9dp"
+            android:onClick="@{() -> viewModel.saveCountry(multi)}"
             android:text="@string/apply"
             app:layout_constraintBottom_toBottomOf="@id/bottom_rectangle"
             app:layout_constraintEnd_toEndOf="@id/bottom_rectangle"

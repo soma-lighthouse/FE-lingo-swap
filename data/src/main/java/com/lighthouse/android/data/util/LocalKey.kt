@@ -10,8 +10,12 @@ object LocalKey {
     const val ID_TOKEN = "com.lighthouse.lingo-talk.id-token"
     const val FILTER_UPDATED = "com.lighthouse.lingo-talk.filter-updated"
     const val LANGUAGE_SETTING = "com.lighthouse.lingo-talk.language-setting"
+    const val COUNTRY_SETTING = "com.lighthouse.lingo-talk.country-setting"
+    const val REGION_SETTING = "com.lighthouse.lingo-talk.region-setting"
+    const val INTEREST_SETTING = "com.lighthouse.lingo-talk.interest-setting"
     const val PUSH_ENABLED = "com.lighthouse.lingo-talk.push-enabled"
     const val SELECTED_REGION = "com.lighthouse.lingo-talk.selected-region"
     const val SELECTED_LOCALE = "com.lighthouse.lingo-talk.selected-locale"
     const val SELECTED_TIMEZONE = "com.lighthouse.lingo-talk.selected-timezone"
+    const val PUSH_TOKEN = "com.lighthouse.lingo-talk.push-token"
 }

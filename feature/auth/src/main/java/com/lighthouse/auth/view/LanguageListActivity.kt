@@ -12,13 +12,13 @@ import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
-import com.lighthouse.android.common_ui.databinding.LanguageTileBinding
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.ActivityCountryBinding
+import com.lighthouse.auth.databinding.LanguageTileBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import dagger.hilt.android.AndroidEntryPoint
@@ -116,7 +116,7 @@ class LanguageListActivity : BindingActivity<ActivityCountryBinding>(R.layout.ac
                 onItemsTheSame = { old, new -> old.name == new.name },
                 onContentsTheSame = { old, new -> old == new }
             ),
-            layoutId = com.lighthouse.android.common_ui.R.layout.language_tile,
+            layoutId = R.layout.language_tile,
             onBindCallback = { viewHolder, item ->
                 val binding = viewHolder.binding
                 binding.tvCountry.text = item.name

@@ -10,11 +10,24 @@
         <variable
             name="country"
             type="com.lighthouse.domain.entity.response.vo.CountryVO" />
+
+        <variable
+            name="viewModel"
+            type="com.lighthouse.auth.viewmodel.AuthViewModel" />
+
+        <variable
+            name="position"
+            type="int" />
+
+        <variable
+            name="multi"
+            type="boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> viewModel.getClickPosition(position, multi)}">
 
         <ImageView
             android:id="@+id/iv_flag"

@@ -1,11 +1,15 @@
 package com.lighthouse.android.data.repository
 
+import com.google.gson.reflect.TypeToken
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.mapping.toDTO
+import com.lighthouse.android.data.remote.RemoteConfigDataSource
 import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
 import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.entity.request.UploadFilterVO
 import com.lighthouse.domain.entity.response.FilterVO
+import com.lighthouse.domain.entity.response.vo.CountryVO
+import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.UserProfileVO
 import com.lighthouse.domain.repository.HomeRepository
@@ -16,6 +20,7 @@ import javax.inject.Inject
 class HomeRepositoryImpl @Inject constructor(
     private val datasource: HomeRemoteDataSource,
     private val local: LocalPreferenceDataSource,
+    private val remoteConfigDataSource: RemoteConfigDataSource
 ) : HomeRepository {
     override fun getIfFilterUpdated(): Boolean = local.getBoolean(LocalKey.FILTER_UPDATED)
 
@@ -47,11 +52,48 @@ class HomeRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun saveLanguageFilter(languages: List<LanguageVO>) {
+    override fun saveLanguageVO(languages: List<LanguageVO>) {
         local.save(LocalKey.LANGUAGE_SETTING, languages)
     }
 
-    override fun getLanguageFilter(): List<LanguageVO> {
-        return local.getList(LocalKey.LANGUAGE_SETTING)
+    override fun getLanguageVO(): List<LanguageVO> {
+        val typeToken = object : TypeToken<List<LanguageVO>>() {}
+        return local.getList(LocalKey.LANGUAGE_SETTING, typeToken)
+    }
+
+    override fun saveInterestVO(interests: List<InterestVO>) {
+        local.save(LocalKey.INTEREST_SETTING, interests)
+    }
+
+    override fun getInterestVO(): List<InterestVO> {
+        val typeToken = object : TypeToken<List<InterestVO>>() {}
+        return local.getList(LocalKey.INTEREST_SETTING, typeToken)
+    }
+
+    override fun saveCountryVO(countries: List<CountryVO>) {
+        local.save(LocalKey.COUNTRY_SETTING, countries)
+    }
+
+    override fun getCountryVO(): List<CountryVO> {
+        val typeToken = object : TypeToken<List<CountryVO>>() {}
+        return local.getList(LocalKey.COUNTRY_SETTING, typeToken)
+    }
+
+    override fun getRegion(): CountryVO {
+        val typeToken = object : TypeToken<List<CountryVO>>() {}
+        val result = local.getList(LocalKey.REGION_SETTING, typeToken)
+        return if (result.isNotEmpty()) {
+            result.first()
+        } else {
+            CountryVO("", "")
+        }
+    }
+
+    override fun saveRegion(region: CountryVO) {
+        local.save(LocalKey.REGION_SETTING, listOf(region))
+    }
+
+    override suspend fun fetchRemoteConfig(key: String): String {
+        return remoteConfigDataSource.fetchRemoteConfig(key)
     }
 }

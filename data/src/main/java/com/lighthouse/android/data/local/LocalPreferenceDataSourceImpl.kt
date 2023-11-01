@@ -3,13 +3,17 @@ package com.lighthouse.android.data.local
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.lighthouse.android.data.util.LocalKey
-import com.lighthouse.domain.entity.response.vo.LanguageVO
 import javax.inject.Inject
+
 
 class LocalPreferenceDataSourceImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences,
 ) : LocalPreferenceDataSource {
+    private val gson = Gson()
+
     override fun clearToken() {
         sharedPreferences.edit {
             remove(LocalKey.ACCESS_TOKEN)
@@ -38,11 +42,14 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
         }
     }
 
-    override fun save(key: String, value: List<LanguageVO>) {
+    override fun <T> save(key: String, value: List<T>) {
+        val gson = GsonBuilder().create()
+        val jsonArray = gson.toJsonTree(value).asJsonArray
         sharedPreferences.edit {
-            putString(key, Gson().toJson(value))
+            putString(key, jsonArray.toString())
         }
     }
+
 
     override fun getString(key: String): String {
         return sharedPreferences.getString(key, "") ?: ""
@@ -56,12 +63,7 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
         return sharedPreferences.getLong(key, -1)
     }
 
-    override fun getList(key: String): List<LanguageVO> {
-        val list = sharedPreferences.getString(key, null)
-        return if (list != null) {
-            Gson().fromJson(list, Array<LanguageVO>::class.java).toList()
-        } else {
-            emptyList()
-        }
+    override fun <T> getList(key: String, tt: TypeToken<List<T>>): List<T> {
+        return gson.fromJson(sharedPreferences.getString(key, "[]"), tt.type)
     }
 }

@@ -1,4 +1,4 @@
-package com.lighthouse.android.common_ui.base.selection_adapter.viewholder
+package com.lighthouse.auth.selection_adapter.viewholder
 
 import android.content.Context
 import android.util.Log
@@ -7,14 +7,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.R
-import com.lighthouse.android.common_ui.base.selection_adapter.SelectionAdapter
-import com.lighthouse.android.common_ui.databinding.LanguageLevelTileBinding
 import com.lighthouse.android.common_ui.util.setGone
-import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.auth.databinding.LanguageLevelTileBinding
+import com.lighthouse.auth.viewmodel.AuthViewModel
 
 class LanguageLevelViewHolder(
     private val binding: LanguageLevelTileBinding,
-    private val clickListener: SelectionAdapter.OnItemClickListenerLang?,
     private val context: Context,
 ) :
     RecyclerView.ViewHolder(binding.root) {
@@ -27,21 +25,23 @@ class LanguageLevelViewHolder(
         context.resources.getString(R.string.level5)
     )
 
-    fun onBind(language: LanguageVO) {
+    fun onBind(position: Int, listener: AuthViewModel) {
+        val language = listener.language[position]
+
         binding.tvLanguage.text = language.name
-        val position = adapterPosition
-        binding.tvLanguage.setOnClickListener {
-            clickListener?.countrySelect(position)
-        }
+        val position = absoluteAdapterPosition
+//        binding.tvLanguage.setOnClickListener {
+//            clickListener?.countrySelect(position)
+//        }
 
         binding.btnDel.apply {
             Log.d("TESTING", position.toString())
             if (position == 0) {
                 setGone()
             }
-            setOnClickListener {
-                clickListener?.deleteSelect(position)
-            }
+//            setOnClickListener {
+//                clickListener?.deleteSelect(position)
+//            }
         }
         binding.spinnerLevel.adapter = initSpinner()
         binding.spinnerLevel.setSelection(language.level - 1)
@@ -53,7 +53,7 @@ class LanguageLevelViewHolder(
                     p: Int,
                     id: Long,
                 ) {
-                    clickListener?.levelSelect(p, position)
+//                    clickListener?.levelSelect(p, position)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {

@@ -11,8 +11,10 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.dialog.showOKDialog
+import com.lighthouse.android.common_ui.dialog.showUpdateDialog
 import com.lighthouse.auth.databinding.ActivityAuthBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.constriant.LoginState
@@ -33,18 +35,20 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
     @Inject
     lateinit var i18nManager: I18nManager
 
+    @Inject
+    lateinit var remoteConfig: FirebaseRemoteConfig
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_auth) as NavHostFragment
         navController = navHostFragment.navController
-
-        checkRegister()
+        checkUpdate()
+        checkGooglePlayServices()
         login()
         handleBackPressed()
         initI18n()
-        checkGooglePlayServices()
     }
 
     private fun handleBackPressed() {
@@ -90,7 +94,8 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
                             mainNavigator.navigateToMain(
                                 this@AuthActivity,
                                 Pair("NewChat", false),
-                                Pair("ChannelId", "")
+                                Pair("ChannelId", ""),
+                                Pair("url", intent.getStringExtra("url") ?: "")
                             )
                         startActivity(intent)
                         finish()
@@ -126,6 +131,23 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
             dialog?.setOnDismissListener { finish() }
             dialog?.show()
             googleApiAvailability.showErrorNotification(applicationContext, status)
+        }
+    }
+
+    private fun checkUpdate() {
+        viewModel.error.observe(this) {
+            if (it["error"] == "true") {
+                showUpdateDialog(
+                    this,
+                    getString(com.lighthouse.android.common_ui.R.string.update_title),
+                    getString(com.lighthouse.android.common_ui.R.string.update_body),
+                    remoteConfig.getString("GOOGLE_PLAYSTORE")
+                ) {
+                    finish()
+                }
+            } else {
+                checkRegister()
+            }
         }
     }
 }

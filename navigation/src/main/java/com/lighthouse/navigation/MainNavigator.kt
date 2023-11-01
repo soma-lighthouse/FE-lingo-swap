@@ -7,7 +7,8 @@ interface MainNavigator {
     fun navigateToMain(
         context: Context,
         newChat: Pair<String, Boolean>,
-        channelId: Pair<String, String>
+        channelId: Pair<String, String>,
+        url: Pair<String, String>,
     ): Intent
 
     fun navigateToProfile(
@@ -19,14 +20,12 @@ interface MainNavigator {
 
     fun navigateToInterest(
         context: Context,
-        selectedList: Pair<String, HashMap<String, List<String>>>,
-    ): Intent
+    )
 
     fun navigateToCountry(
         context: Context,
         multiSelect: Pair<String, Boolean>,
-        selectedList: Pair<String, List<String>>,
-    ): Intent
+    )
 
     fun navigateToLanguage(
         context: Context,

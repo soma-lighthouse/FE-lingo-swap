@@ -7,18 +7,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
-import com.lighthouse.android.common_ui.base.selection_adapter.SelectionAdapter
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentLanguageBinding
+import com.lighthouse.auth.selection_adapter.SelectionAdapter
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.Selection
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragment_language),
-    SelectionAdapter.OnItemClickListenerLang {
+class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragment_language) {
     private val viewModel: AuthViewModel by activityViewModels()
     private lateinit var adapter: SelectionAdapter
     private var dataList: MutableList<LanguageVO> =
@@ -93,7 +92,7 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
             multiSelection = false,
             context = requireContext(),
             type = SelectionAdapter.LEVEL,
-            langListener = this
+            viewModel = viewModel,
         )
         adapter.submitList(dataList as List<Selection>?)
         val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)
@@ -102,25 +101,25 @@ class LanguageFragment : BindingFragment<FragmentLanguageBinding>(R.layout.fragm
         binding.rvLanguageLevel.adapter = adapter
     }
 
-    override fun countrySelect(position: Int) {
-        val intent = mainNavigator.navigateToLanguage(
-            requireContext(),
-            Pair("selected", dataList.map { it.name }),
-            Pair("position", position),
-        )
-
-        resultLauncher.launch(intent)
-    }
-
-    override fun levelSelect(level: Int, position: Int) {
-        dataList[position].level = level + 1
-    }
-
-    override fun deleteSelect(position: Int) {
-        dataList.removeAt(position)
-        adapter.notifyItemRemoved(position)
-        for (i in position until dataList.size) {
-            adapter.notifyItemChanged(i)
-        }
-    }
+//    override fun countrySelect(position: Int) {
+//        val intent = mainNavigator.navigateToLanguage(
+//            requireContext(),
+//            Pair("selected", dataList.map { it.name }),
+//            Pair("position", position),
+//        )
+//
+//        resultLauncher.launch(intent)
+//    }
+//
+//    override fun levelSelect(level: Int, position: Int) {
+//        dataList[position].level = level + 1
+//    }
+//
+//    override fun deleteSelect(position: Int) {
+//        dataList.removeAt(position)
+//        adapter.notifyItemRemoved(position)
+//        for (i in position until dataList.size) {
+//            adapter.notifyItemChanged(i)
+//        }
+//    }
 }

@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -18,6 +19,7 @@ import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.databinding.BaseObservable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
@@ -29,10 +31,10 @@ import com.lighthouse.android.common_ui.base.BaseViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.io.Serializable
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import java.net.URL
+import java.net.URLDecoder
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 fun View.setVisible() {
     this.visibility = View.VISIBLE
@@ -112,23 +114,40 @@ fun String?.isValidBirthday(): Boolean {
         return false
     }
 
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA)
-    dateFormat.isLenient = false
+    val formats = arrayOf(
+        "yyyy-MM-dd",
+        "dd/MM/yyyy",
+        "MM/dd/yyyy",
+        // Add more date formats as needed to support different regions
+    )
 
-    return try {
-        val date = dateFormat.parse(this)
+    for (format in formats) {
+        try {
+            val formatter = DateTimeFormatter.ofPattern(format)
+            val parsedDate = LocalDate.parse(this, formatter)
 
-        val minDate = Calendar.getInstance()
-        minDate.add(Calendar.YEAR, -120)
-        val maxDate = Calendar.getInstance()
-        maxDate.add(Calendar.YEAR, -1)
+            val minDate = LocalDate.now().minusYears(120)
+            val maxDate = LocalDate.now().minusYears(1)
 
-        date != null && date.after(minDate.time) && date.before(maxDate.time)
-    } catch (e: ParseException) {
-        // Parsing error, input is not in valid format
-        false
+            return !parsedDate.isBefore(minDate) && !parsedDate.isAfter(maxDate)
+        } catch (e: Exception) {
+            // Ignore and try the next format
+        }
     }
+
+    // None of the formats matched
+    return false
 }
+
+
+fun String?.isValidName(): Boolean {
+    if (isNullOrEmpty()) {
+        return false
+    }
+    val regex = "^[\\p{L}\\s'-]+$"
+    return this.matches(Regex(regex))
+}
+
 
 fun EditText.onCloseKeyBoard(context: Context) {
     this.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -183,4 +202,48 @@ inline fun BaseViewModel.onDefault(
 
 fun disableTabForSeconds(seconds: Long, action: () -> Unit) {
     Handler(Looper.getMainLooper()).postDelayed(action, seconds * 1000)
+}
+
+fun BaseObservable.observe(callBack: () -> Unit) {
+    this.addOnPropertyChangedCallback(object :
+        androidx.databinding.Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: androidx.databinding.Observable?, propertyId: Int) {
+            callBack()
+        }
+    })
+}
+
+fun String.extractUrlParts(): Pair<String, List<String>> {
+    val url = URL(this)
+    val baseUrl = "${url.protocol}://${url.host}"
+    val query = url.query?.let { "?$it" } ?: ""
+    val pathSegments = url.path + query
+    Log.d("TESTING PUSH32", pathSegments.splitPath().toString())
+    return Pair(baseUrl, pathSegments.splitPath())
+}
+
+fun String.splitPath(): List<String> {
+    val parts = this.split("/", limit = 3)
+    Log.d("TESTING PUSH23", parts.toString())
+    return if (parts.size == 3) {
+        val firstPart = parts[1]
+        val remainingPart = "/" + parts[2]
+        listOf(firstPart, remainingPart)
+    } else if (parts.size == 2) {
+        listOf(parts[1])
+    } else {
+        listOf()
+    }
+}
+
+fun String.getParams(): Map<String, String> {
+    val paramsMap = mutableMapOf<String, String>()
+    this.substringAfter("?")
+        .split("&")
+        .forEach {
+            val (key, value) = it.split("=")
+            paramsMap[URLDecoder.decode(key, "UTF-8")] = URLDecoder.decode(value, "UTF-8")
+        }
+
+    return paramsMap
 }
