@@ -9,14 +9,16 @@ plugins {
 android {
     namespace = "com.lighthouse.auth"
 
+    defaultConfig {
+        buildConfigField("String", "CURRENT_VER", "\"${libs.versions.appVersion.get()}\"")
+    }
+
     buildTypes {
         debug {
-            isMinifyEnabled = false // APK or AAB
             consumerProguardFile("proguard-rules.pro")
         }
 
         release {
-            isMinifyEnabled = true
             consumerProguardFile("proguard-rules.pro")
         }
     }

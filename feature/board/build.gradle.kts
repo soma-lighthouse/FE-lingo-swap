@@ -11,12 +11,10 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = false // APK or AAB
             consumerProguardFile("proguard-rules.pro")
         }
 
         release {
-            isMinifyEnabled = true
             consumerProguardFile("proguard-rules.pro")
         }
     }
