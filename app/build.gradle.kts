@@ -60,6 +60,7 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:auth"))
     implementation(project(":navigation"))
+    implementation(project(":swm-logging"))
 
     kapt(libs.hilt.kapt)
     implementation(libs.hilt)

@@ -55,9 +55,6 @@
 
 -keep public class com.google.gson.*
 
--keep class com.lighthouse.android.data.model.response.* { *; }
--keep class com.lighthouse.android.data.model.request.* { *; }
-
 ##---------------End: proguard configuration for Gson  ----------
 
 

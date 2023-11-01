@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.java.inject)
 
     dependencies {
-        api(project(mapOf("path" to ":lighthousei18n")))
+        api(project(":lighthousei18n"))
+        api(project(":swm-logging"))
     }
 }
