@@ -12,7 +12,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
@@ -23,7 +22,6 @@ import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.base.adapter.makeAdapter
 import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
 import com.lighthouse.android.common_ui.dialog.ImagePickerDialog
-import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.UriUtil
@@ -65,7 +63,6 @@ class DetailProfileFragment :
         initMenu()
         initAdapter()
         initCountry()
-        initLanguage()
         initInterest()
         initSave()
         initCamera()
@@ -157,32 +154,17 @@ class DetailProfileFragment :
             viewModel.interestList.forEach {
                 hash[it.category] = it.interests
             }
-            Log.d("TESTING INTEREST", hash.toString())
-            val intent = mainNavigator.navigateToInterest(
+            mainNavigator.navigateToInterest(
                 requireContext(),
-                Pair("SelectedList", hash),
             )
-            resultLauncher.launch(intent)
         }
     }
 
     private fun initCountry() {
         binding.clickCountry.setOnClickListener {
-            val intent = mainNavigator.navigateToCountry(
+            mainNavigator.navigateToCountry(
                 requireContext(),
                 Pair("multiSelect", true),
-                Pair("SelectedList", viewModel.selectedCountryName)
-            )
-            resultLauncher.launch(intent)
-        }
-    }
-
-    private fun initLanguage() {
-        binding.clickLanguage.setOnClickListener {
-            findNavController().navigate(
-                DetailProfileFragmentDirections.actionDetailFragmentToLanguageFragment(
-                    Constant.PROFILE
-                )
             )
         }
     }
@@ -420,7 +402,8 @@ class DetailProfileFragment :
                             mainNavigator.navigateToMain(
                                 requireContext(),
                                 Pair("NewChat", true),
-                                Pair("ChannelId", (it.data as ChannelVO).id)
+                                Pair("ChannelId", (it.data as ChannelVO).id),
+                                Pair("url", "")
                             )
                         startActivity(intent)
                         requireActivity().finish()

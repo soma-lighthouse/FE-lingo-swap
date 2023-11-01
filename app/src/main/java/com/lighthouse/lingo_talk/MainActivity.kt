@@ -13,10 +13,12 @@ import com.lighthouse.android.chats.uikit.channel.CustomChannel
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.MyFirebaseMessagingService
 import com.lighthouse.android.common_ui.util.PushUtils
+import com.lighthouse.android.common_ui.util.extractUrlParts
 import com.lighthouse.lingo_talk.databinding.ActivityMainBinding
 import com.lighthouse.navigation.NavigationFlow
 import com.lighthouse.navigation.Navigator
 import com.lighthouse.navigation.ToFlowNavigatable
+import com.lighthouse.swm_logging.SWMLogging
 import com.sendbird.android.SendbirdChat
 import com.sendbird.android.exception.SendbirdException
 import com.sendbird.android.handler.InitResultHandler
@@ -96,6 +98,10 @@ class MainActivity @Inject constructor() :
             return@setOnItemSelectedListener item.onNavDestinationSelected(navController)
         }
         initChatting()
+        initRedirect()
+        initLogging()
+
+        com.lighthouse.lingo_talk.MyFirebaseMessagingService().getFirebaseToken()
     }
 
     private fun initChatting() {
@@ -104,6 +110,49 @@ class MainActivity @Inject constructor() :
             navigateToFlow(NavigationFlow.ChatFlow(intent.getStringExtra("ChannelId") ?: ""))
         }
 
+    }
+
+    private fun initLogging() {
+        Log.d("LingoApplication", "initLogging: ${remoteConfig.getString("LIGHTHOUSE_BASE_URL")}")
+
+        SWMLogging.init(
+            appVersion = BuildConfig.VERSION_NAME,
+            osNameAndVersion = "$ANDROID ${android.os.Build.VERSION.SDK_INT}",
+            baseUrl = remoteConfig.getString("LIGHTHOUSE_BASE_URL"),
+            serverPath = "v1/log",
+            token = ""
+        )
+    }
+
+    private fun initRedirect() {
+        val url = intent.getStringExtra("url")
+        if (!url.isNullOrEmpty()) {
+            val (base, extract) = url.extractUrlParts()
+            if (extract.isEmpty()) {
+                return
+            }
+            Log.d("TESTING DEEP LINK", "initRedirect: ${extract.first()} ${extract.last()}")
+            when (extract.first()) {
+                "chat" ->
+                    navigateToFlow(
+                        NavigationFlow.ChatFlow(
+                            path = extract.last(),
+                            baseUrl = "${base}/${extract.first()}"
+                        )
+                    )
+
+                "board" ->
+                    navigateToFlow(NavigationFlow.BoardFlow)
+
+                "profile" ->
+                    navigateToFlow(
+                        NavigationFlow.ProfileFlow(
+                            path = extract.last(),
+                            baseUrl = "${base}/${extract.first()}"
+                        )
+                    )
+            }
+        }
     }
 
     override fun navigateToFlow(flow: NavigationFlow) {
@@ -211,5 +260,9 @@ class MainActivity @Inject constructor() :
         }
 
         PushUtils.registerPushHandler(MyFirebaseMessagingService())
+    }
+
+    companion object {
+        private const val ANDROID = "Android"
     }
 }

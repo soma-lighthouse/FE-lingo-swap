@@ -48,12 +48,17 @@ class HomeFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val intent = requireActivity().intent
         binding.viewModels = viewModel
         initAdapter()
         initScrollListener()
         initFab()
         initMatch()
         checkPermission()
+        redirectToDestination(
+            intent.getStringExtra("baseUrl") ?: "",
+            intent.getStringExtra("path") ?: ""
+        )
     }
 
     private fun checkPermission() {
@@ -78,7 +83,6 @@ class HomeFragment @Inject constructor() :
 
     private fun initMatch() {
         if (viewModel.getUserProfiles().isEmpty()) {
-            Log.d("TESTING INITMATCH", "EMPTY")
             viewModel.resetFilterState()
             viewModel.fetchNextPage()
             loading = true

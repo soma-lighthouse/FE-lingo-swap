@@ -8,6 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
@@ -26,12 +27,14 @@ import kotlinx.coroutines.launch
 class MyQuestionsFragment :
     BindingFragment<FragmentMyQuestionsBinding>(R.layout.fragment_my_questions) {
     private val viewModel: ProfileViewModel by activityViewModels()
+    private val args: MyQuestionsFragmentArgs by navArgs()
     private lateinit var adapter: SimpleListAdapter<MyQuestionsVO, MyQuestionTileBinding>
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getQuestionList()
         initAdapter()
         initBack()
+        redirectToDestination(args.baseUrl, args.remainingPath)
     }
 
     private fun initAdapter() {

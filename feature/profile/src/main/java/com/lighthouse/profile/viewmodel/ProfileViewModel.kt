@@ -170,11 +170,11 @@ class ProfileViewModel @Inject constructor(
 
     fun saveLanguageFilter(languages: List<LanguageVO>) {
         onIO {
-            homeRepository.saveLanguageFilter(languages)
+            homeRepository.saveLanguageVO(languages)
         }
     }
 
-    fun getLanguageFilter() = homeRepository.getLanguageFilter()
+    fun getLanguageFilter() = homeRepository.getLanguageVO()
 
     fun getUUID() = profileRepository.getUUID()
 

@@ -64,6 +64,11 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         binding.tabBoard.getTabAt(viewModel.categoryId.value ?: 0)?.select()
     }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        binding.pbBoardLoading.setGone()
+    }
+
     private fun observeTabChange() {
         start = true
         if (!viewModel.getQuestion().isNullOrEmpty()) {

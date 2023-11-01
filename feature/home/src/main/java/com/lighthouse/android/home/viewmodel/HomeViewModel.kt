@@ -11,8 +11,11 @@ import com.lighthouse.android.home.util.getHomeTitle
 import com.lighthouse.domain.entity.request.UploadFilterVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
+import com.lighthouse.domain.logging.HomeClickScheme
 import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.domain.repository.ProfileRepository
+import com.lighthouse.swm_logging.SWMLogging
+import com.lighthouse.swm_logging.logging_scheme.ClickScheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -112,10 +115,10 @@ class HomeViewModel @Inject constructor(
 
     fun getUserProfiles() = userProfiles
 
-    fun getLanguageFilter() = homeRepository.getLanguageFilter()
+    fun getLanguageFilter() = homeRepository.getLanguageVO()
 
     fun saveLanguageFilter(languages: List<LanguageVO>) =
-        homeRepository.saveLanguageFilter(languages)
+        homeRepository.saveLanguageVO(languages)
 
     fun setNotification(b: Boolean) = profileRepository.setPushEnabled(b)
 
@@ -125,6 +128,17 @@ class HomeViewModel @Inject constructor(
 
     fun resetFilterState() {
         _filter.value = UiState.Loading
+    }
+
+    fun sendHomeClick() {
+        val scheme = getHomeClickScheme()
+        SWMLogging.logEvent(scheme)
+    }
+
+    private fun getHomeClickScheme(): ClickScheme {
+        return HomeClickScheme.Builder()
+            .setName("HomeCard")
+            .build()
     }
 
 }

@@ -11,7 +11,15 @@
             android:name="channelUrl"
             android:defaultValue=""
             app:argType="string" />
+        <argument
+            android:name="path"
+            android:defaultValue=""
+            app:argType="string" />
 
+        <argument
+            android:name="baseUrl"
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
 
 </navigation>
