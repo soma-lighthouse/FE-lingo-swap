@@ -2,7 +2,6 @@ package com.lighthouse.lingo_talk.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -10,6 +9,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.lighthouse.android.data.api.interceptor.AuthInterceptor
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.local.LocalPreferenceDataSourceImpl
+import com.lighthouse.android.data.remote.RemoteConfigDataSource
 import com.lighthouse.android.data.repository.AuthRepositoryImpl
 import com.lighthouse.android.data.repository.BoardRepositoryImpl
 import com.lighthouse.android.data.repository.ChatRepositoryImpl
@@ -29,7 +29,10 @@ import com.lighthouse.domain.repository.DrivenRepository
 import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.domain.repository.ProfileRepository
 import com.lighthouse.lighthousei18n.I18nManager
-import com.lighthouse.lingo_talk.HeaderInterceptor
+import com.lighthouse.lingo_talk.BuildConfig
+import com.lighthouse.lingo_talk.R
+import com.lighthouse.lingo_talk.interceptor.HeaderInterceptor
+import com.lighthouse.lingo_talk.interceptor.RemoteConfigInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,8 +56,9 @@ object DataModule {
     fun provideHomeRepository(
         homeRemoteDataSource: HomeRemoteDataSource,
         local: LocalPreferenceDataSource,
+        remoteConfigDataSource: RemoteConfigDataSource
     ): HomeRepository {
-        return HomeRepositoryImpl(homeRemoteDataSource, local)
+        return HomeRepositoryImpl(homeRemoteDataSource, local, remoteConfigDataSource)
     }
 
     @Provides
@@ -112,6 +116,14 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun provideRemoteInterceptor(
+        remoteConfigDataSource: RemoteConfigDataSource
+    ): RemoteConfigInterceptor {
+        return RemoteConfigInterceptor(remoteConfigDataSource)
+    }
+
+    @Provides
+    @Singleton
     fun provideShared(@ApplicationContext context: Context): SharedPreferences {
         val masterKey = MasterKey.Builder(context, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
@@ -135,16 +147,12 @@ object DataModule {
     @Singleton
     fun provideRemoteConfig(): FirebaseRemoteConfig {
         val remoteConfig = FirebaseRemoteConfig.getInstance().apply {
-            val configSettings = FirebaseRemoteConfigSettings.Builder().build()
+            val configSettings = FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(if (BuildConfig.DEBUG) 0 else 3600)
+                .build()
+            setDefaultsAsync(R.xml.remote_default_config)
             setConfigSettingsAsync(configSettings)
         }
-
-        remoteConfig.fetchAndActivate().addOnCompleteListener {
-            if (it.isSuccessful) {
-                Log.d("TESTING", "Config fetch success")
-            }
-        }
-
         return remoteConfig
     }
 }

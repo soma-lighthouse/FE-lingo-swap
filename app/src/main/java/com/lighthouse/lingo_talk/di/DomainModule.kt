@@ -33,5 +33,4 @@ object DomainModule {
     fun provideCheckLoginStatusUseCase(authRepository: AuthRepository): CheckLoginStatusUseCase {
         return CheckLoginStatusUseCase(authRepository)
     }
-
 }

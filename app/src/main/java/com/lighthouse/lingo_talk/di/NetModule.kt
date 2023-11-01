@@ -8,10 +8,11 @@ import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.ProfileApiService
 import com.lighthouse.android.data.api.interceptor.AuthInterceptor
-import com.lighthouse.lingo_talk.HeaderInterceptor
 import com.lighthouse.lingo_talk.NullOrEmptyConverter
 import com.lighthouse.lingo_talk.di.annotation.Main
 import com.lighthouse.lingo_talk.di.annotation.Test
+import com.lighthouse.lingo_talk.interceptor.HeaderInterceptor
+import com.lighthouse.lingo_talk.interceptor.RemoteConfigInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +33,7 @@ object NetModule {
     fun provideLightHouseHttpClient(
         headerInterceptor: HeaderInterceptor,
         authInterceptor: AuthInterceptor,
+        remoteConfigInterceptor: RemoteConfigInterceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
@@ -42,6 +44,7 @@ object NetModule {
             })
             .addInterceptor(headerInterceptor)
             .addInterceptor(authInterceptor)
+            .addInterceptor(remoteConfigInterceptor)
             .build()
 
     @Provides
