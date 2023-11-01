@@ -1,10 +1,11 @@
-package com.lighthouse.lingo_talk
+package com.lighthouse.lingo_talk.interceptor
 
 import android.os.Build
 import android.util.Log
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.lighthousei18n.I18nManager
+import com.lighthouse.lingo_talk.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject

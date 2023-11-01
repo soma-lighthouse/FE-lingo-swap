@@ -139,4 +139,7 @@
     <string name="internet_error">인터넷 연결을 확인하고 다시 시도해주세요</string>
     <string name="server_error">서버 오류 발생, 잠시후 다시 시도해주세요</string>
 
+    <string name="update_title">업데이트</string>
+    <string name="update_body">필수 업데이트가 있습니다. 업데이트 하시겠습니까?</string>
+
 </resources>

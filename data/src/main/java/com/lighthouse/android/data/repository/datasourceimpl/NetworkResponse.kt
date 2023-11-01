@@ -30,7 +30,8 @@ abstract class NetworkResponse {
             val message = body.message ?: errorResponse.message
 
             val errorType = ErrorTypeHandling.fromString(body.type ?: "NONE")
-            Log.d("ERROR_HANDLING_msg", code.toString())
+            Log.d("ERROR_HANDLING_msg", errorResponse.toString())
+            Log.d("ERROR_HANDLING_type", errorType.toString())
 
             LighthouseException(code, message, errorType).addErrorMsg()
         } catch (e: Exception) {

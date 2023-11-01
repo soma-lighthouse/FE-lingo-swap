@@ -137,4 +137,7 @@
     <string name="internet_error">Please check your internet connection and try again.</string>
     <string name="server_error">Something went wrong. Please try again later.</string>
 
+    <string name="update_title">Update</string>
+    <string name="update_body">A new version is available. Please update to the latest version.</string>
+
 </resources>
