@@ -46,10 +46,9 @@ class MainNavigatorImpl : MainNavigator {
 
     override fun navigateToLanguage(
         context: Context,
-        selectedList: Pair<String, List<String>>,
         position: Pair<String, Int>,
     ) =
-        context.buildIntent<LanguageListActivity>(selectedList, position)
+        context.navigateActivity<LanguageListActivity>(position)
 
     override fun navigateToLogin(context: Context) =
         context.navigateActivity<AuthActivity>()

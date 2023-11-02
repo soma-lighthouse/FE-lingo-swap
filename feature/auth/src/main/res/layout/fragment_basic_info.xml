@@ -393,11 +393,9 @@
                                 android:id="@+id/rv_interest"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                app:getAdapterValue="@{viewModel.registerInfo}"
                                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:setUpObserver="@{viewModel.collect}"
                                 tools:itemCount="3"
                                 tools:listitem="@layout/interest_list_tile" />
 
@@ -439,6 +437,7 @@
                     android:background="@drawable/edit_box"
                     android:hint="@string/introduce_yourself"
                     android:padding="14dp"
+                    android:text="@={viewModel.registerInfo.description}"
                     android:textColorHint="@color/brown_grey"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"

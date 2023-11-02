@@ -34,11 +34,7 @@ class SelectionAdapter(
         return when (type) {
             COUNTRY -> CountryViewHolder(CountryTileBinding.inflate(inflater, parent, false))
             LEVEL -> LanguageLevelViewHolder(
-                LanguageLevelTileBinding.inflate(
-                    inflater,
-                    parent,
-                    false
-                ), context
+                LanguageLevelTileBinding.inflate(inflater, parent, false)
             )
 
             else -> throw IllegalArgumentException("invalid item Type")

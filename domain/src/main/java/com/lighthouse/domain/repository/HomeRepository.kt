@@ -30,5 +30,7 @@ interface HomeRepository {
     fun getIfFilterUpdated(): Boolean
     fun saveIfFilterUpdated(update: Boolean)
 
+    fun clearAllData()
+
     suspend fun fetchRemoteConfig(key: String): String
 }

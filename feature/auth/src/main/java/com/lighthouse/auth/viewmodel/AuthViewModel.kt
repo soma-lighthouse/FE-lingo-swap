@@ -7,6 +7,7 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.base.BaseViewModel
 import com.lighthouse.android.common_ui.listener.InterestListener
 import com.lighthouse.android.common_ui.util.Constant
@@ -49,12 +50,13 @@ class AuthViewModel @Inject constructor(
     val loginState: LiveData<LoginState> = _loginState
 
     private val _error = MutableLiveData<Map<String, String>>()
-    val error = _error
+    val error: LiveData<Map<String, String>> = _error
 
     val collapse = ObservableInt(0)
 
-    val language = listOf(LanguageVO("english", 1, "en"))
     val selectedCountry = MutableLiveData<List<CountryVO>>()
+    override val selectedInterest = MutableLiveData<List<InterestVO>>()
+    val selectedLanguage = MutableLiveData(listOf(LanguageVO("English", 1, "en")))
 
     val loading = ObservableBoolean(false)
 
@@ -62,12 +64,19 @@ class AuthViewModel @Inject constructor(
     val country
         get() = _country
 
-    override var highLight = false
+    private var _language = listOf<LanguageVO>()
+    val language
+        get() = _language
 
     private var _interest = listOf<InterestVO>()
 
     private val _changes = MutableLiveData<Int>()
     val changes: LiveData<Int> = _changes
+
+    private val _remove = MutableLiveData<Int>()
+    val remove: LiveData<Int> = _remove
+
+    private var _selectedPosition: Int = 0
 
     val userId: UUID = UUID.randomUUID()
     val registerInfo = RegisterInfoVO()
@@ -86,8 +95,20 @@ class AuthViewModel @Inject constructor(
     private val _register = MutableStateFlow(false)
     val register: StateFlow<Boolean> = _register.asStateFlow()
 
+    val languageLevel = arrayListOf(
+        context.resources.getString(R.string.level1),
+        context.resources.getString(R.string.level2),
+        context.resources.getString(R.string.level3),
+        context.resources.getString(R.string.level4),
+        context.resources.getString(R.string.level5)
+    )
+
     init {
         checkUpdate()
+    }
+
+    fun clearAllData() {
+        homeRepository.clearAllData()
     }
 
     private fun checkUpdate() {
@@ -138,6 +159,7 @@ class AuthViewModel @Inject constructor(
             authRepository.getLanguageList().catch {
                 _result.value = handleException(it)
             }.collect {
+                _language = it
                 _result.emit(UiState.Success(it))
             }
         }
@@ -163,7 +185,7 @@ class AuthViewModel @Inject constructor(
                     _register.value = false
                 }.collect {
                     loading.set(false)
-                    _changes.value = registered
+                    _register.value = true
                 }
         }
     }
@@ -171,9 +193,15 @@ class AuthViewModel @Inject constructor(
     fun registerBasicInfo() {
         collect.set(true)
         registerInfo.region = selectedCountry.value?.first()?.code
+        registerInfo.preferredInterests = selectedInterest.value?.map {
+            UploadInterestVO(it.category.code, it.interests.map { c -> c.code })
+        }
         validateInputs()
-        if (!errorNumber.value!!.containsAll(listOf(1, 2, 3, 4, 5, 6))) {
+        val intersect =
+            errorNumber.value?.intersect(setOf(1, 2, 3, 4, 5, 6)) ?: listOf()
+        if (intersect.isEmpty()) {
             _changes.value = next
+            _changes.value = none
             return
         }
     }
@@ -236,7 +264,7 @@ class AuthViewModel @Inject constructor(
             if (registerInfo.region.isNullOrEmpty()) {
                 add(5)
             }
-            if (registerInfo.preferredInterests.isNullOrEmpty()) {
+            if (selectedInterest.value.isNullOrEmpty()) {
                 add(6)
             }
             if (selectedCountry.value.isNullOrEmpty()) {
@@ -290,7 +318,6 @@ class AuthViewModel @Inject constructor(
         } else {
             homeRepository.saveRegion(selectedCountry.value?.first() ?: CountryVO("", ""))
             registerInfo.region = selectedCountry.value?.first()?.code
-            Log.d("TESTING REGION2", registerInfo.region.toString())
         }
         _changes.value = finish
     }
@@ -317,19 +344,16 @@ class AuthViewModel @Inject constructor(
     fun startRegister() {
         validateInputs()
         if (errorNumber.value!!.size == 1 && errorNumber.value!!.first() == 0) {
-            Log.d("TESTING REGISTER", "startRegister: ")
-            return
-        }
-        return
-        loading.set(true)
-        if (filePath != "") {
-            uploadImg(filePath)
-        } else {
-            registerUser()
+            registerInfo.uuid = userId.toString()
+            registerInfo.preferredCountries = selectedCountry.value?.map { it.code }
+            loading.set(true)
+            if (filePath != "") {
+                uploadImg(filePath)
+            } else {
+                registerUser()
+            }
         }
     }
-
-    override val selectedInterest = MutableLiveData<List<InterestVO>>()
 
     fun uploadInterest() {
         var interest = selectedInterest.value
@@ -337,14 +361,9 @@ class AuthViewModel @Inject constructor(
             interest = it.filter {
                 it.interests.isNotEmpty()
             }
-            val final =
-                it.map { i -> UploadInterestVO(i.category.code, i.interests.map { c -> c.code }) }
+            homeRepository.saveInterestVO(it)
+            _changes.value = finish
 
-            if (final.isNotEmpty()) {
-                registerInfo.preferredInterests = final
-                homeRepository.saveInterestVO(it)
-                _changes.value = finish
-            }
         }
     }
 
@@ -352,9 +371,61 @@ class AuthViewModel @Inject constructor(
         selectedInterest.value = homeRepository.getInterestVO()
     }
 
+    fun checkLanguageUpdate() {
+        val list = homeRepository.getLanguageVO()
+        if (list.isNotEmpty()) {
+            selectedLanguage.value = list
+        }
+    }
+
+    fun onLanguageClick(item: LanguageVO) {
+        val languages = selectedLanguage.value?.toMutableList()
+        languages?.let {
+            languages[_selectedPosition].name = item.name
+            languages[_selectedPosition].code = item.code
+            selectedLanguage.value = languages
+        }
+        _changes.value = finish
+    }
+
+    fun removeLanguage(item: LanguageVO, position: Int) {
+        val selected = selectedLanguage.value?.toMutableList()
+        selected?.let {
+            selected.remove(item)
+            selectedLanguage.value = selected
+        }
+        _remove.value = position
+    }
+
+    fun selectLanguage(position: Int) {
+        _selectedPosition = position
+        _changes.value = direct
+    }
+
+    fun addLanguage() {
+        if (selectedLanguage.value?.size == 5) {
+            return
+        }
+        selectedLanguage.value =
+            selectedLanguage.value?.plus(LanguageVO(context.getString(R.string.language), 1, ""))
+    }
+
+    fun updateLanguage() {
+        val list = selectedLanguage.value
+        list?.let {
+            val final = it.filter { l -> l.name != context.getString(R.string.language) }
+            homeRepository.saveLanguageVO(final)
+            registerInfo.languages = final.map { l -> mapOf("code" to l.code, "level" to l.level) }
+            _changes.value = next
+            _changes.value = none
+        }
+    }
+
     companion object {
         const val finish = -1
         const val registered = -2
         const val next = -3
+        const val direct = -4
+        const val none = -99
     }
 }

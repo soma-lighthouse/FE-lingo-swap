@@ -1,58 +1,48 @@
-package com.lighthouse.auth.view
+package com.lighthouse.auth.fragment
 
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import androidx.activity.viewModels
+import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.lighthouse.android.common_ui.base.BindingActivity
+import androidx.navigation.fragment.findNavController
+import com.lighthouse.android.common_ui.base.BindingFragment
+import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
+import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.ActivityCountryBinding
-import com.lighthouse.auth.selection_adapter.SelectionAdapter
+import com.lighthouse.auth.databinding.LanguageTileBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
-import com.lighthouse.domain.entity.response.vo.CountryVO
+import com.lighthouse.domain.entity.response.vo.LanguageVO
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.activity_country) {
-    private val viewModel: AuthViewModel by viewModels()
-    private lateinit var adapter: SelectionAdapter
-    private var multiSelection = false
+class LanguagesFragment : BindingFragment<ActivityCountryBinding>(R.layout.activity_country) {
+    private val viewModel: AuthViewModel by activityViewModels()
+    private lateinit var adapter: SimpleListAdapter<LanguageVO, LanguageTileBinding>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        multiSelection = intent.getBooleanExtra("multiSelect", false)
-        binding.viewModel = viewModel
-        binding.multi = multiSelection
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initBack()
         initAdapter()
         initSearch()
-        getCountryList()
-        observeClick()
-    }
-
-    private fun observeClick() {
-        viewModel.changes.observe(this) {
-            if (it == -1) {
-                finish()
-            } else {
-                adapter.notifyItemChanged(it)
-            }
-        }
+        getLanguageList()
+        observeResult()
     }
 
 
-    private fun getCountryList() {
+    private fun getLanguageList() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getCountryList(multiSelection)
+                viewModel.getLanguageList()
                 viewModel.result.collect {
                     render(it)
                 }
@@ -70,9 +60,9 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
 
             is UiState.Success<*> -> {
                 binding.rvCountry.setVisible()
-                Log.d("TESTING DATA", uiState.data.toString())
-                adapter.submitList(uiState.data as List<CountryVO>)
-                viewModel.updateSelectedCountry()
+                if (uiState.data is List<*>) {
+                    adapter.submitList(uiState.data as List<LanguageVO>)
+                }
                 binding.pbCountry.setGone()
             }
 
@@ -80,6 +70,12 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
                 handleException(uiState)
                 binding.pbCountry.setGone()
             }
+        }
+    }
+
+    private fun initBack() {
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
         }
     }
 
@@ -96,25 +92,34 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
             override fun afterTextChanged(s: Editable?) {
                 val query = s.toString().trim().lowercase()
                 val filteredItems =
-                    viewModel.country.filter { it.name.lowercase().contains(query) }
+                    viewModel.language.filter { it.name.lowercase().contains(query) }
                 adapter.submitList(filteredItems)
             }
+
         })
     }
 
     private fun initAdapter() {
-        adapter = SelectionAdapter(
-            multiSelection = multiSelection,
-            viewModel = viewModel,
-            context = applicationContext,
-            type = SelectionAdapter.COUNTRY,
+        adapter = SimpleListAdapter(
+            diffCallBack = ItemDiffCallBack(
+                onItemsTheSame = { old, new -> old.code == new.code },
+                onContentsTheSame = { old, new -> old == new }
+            ),
+            layoutId = R.layout.language_tile,
+            onBindCallback = { viewHolder, item ->
+                val binding = viewHolder.binding
+                binding.item = item
+                binding.viewModel = viewModel
+            }
         )
         binding.rvCountry.adapter = adapter
     }
 
-    private fun initBack() {
-        binding.btnBack.setOnClickListener {
-            finish()
+    private fun observeResult() {
+        viewModel.changes.observe(viewLifecycleOwner) {
+            if (it == -1) {
+                findNavController().popBackStack()
+            }
         }
     }
 }

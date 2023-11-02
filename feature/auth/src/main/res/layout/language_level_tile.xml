@@ -5,6 +5,20 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.lighthouse.auth.viewmodel.AuthViewModel" />
+
+        <variable
+            name="item"
+            type="com.lighthouse.domain.entity.response.vo.LanguageVO" />
+
+        <variable
+            name="position"
+            type="int" />
+
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -39,7 +53,9 @@
                 android:layout_marginEnd="4dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/edit_box"
+                android:onClick="@{() -> viewModel.selectLanguage(position)}"
                 android:padding="14dp"
+                android:text="@{item.name}"
                 android:textColor="@color/brown_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/guideline4"
@@ -78,6 +94,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/guideline4"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
+                app:level="@{item.level}"
+                app:onLanguageLevelSelected="@{position}"
+                app:setUpSpinner="@{viewModel.languageLevel}"
+                app:viewModel="@{viewModel}"
                 tools:text="testing" />
 
             <ImageView
@@ -95,6 +115,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:background="@drawable/cross"
+                android:onClick="@{() -> viewModel.removeLanguage(item, position)}"
+                android:visibility="@{position == 0 ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

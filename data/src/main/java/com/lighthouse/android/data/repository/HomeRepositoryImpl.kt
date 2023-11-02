@@ -96,4 +96,8 @@ class HomeRepositoryImpl @Inject constructor(
     override suspend fun fetchRemoteConfig(key: String): String {
         return remoteConfigDataSource.fetchRemoteConfig(key)
     }
+
+    override fun clearAllData() {
+        local.clearAllData()
+    }
 }

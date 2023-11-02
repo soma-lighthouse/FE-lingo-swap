@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/language_nav_graph"
+    app:startDestination="@id/languageLevelFragment">
+
+    <fragment
+        android:id="@+id/languageLevelFragment"
+        android:name="com.lighthouse.auth.fragment.LanguageLevelFragment"
+        android:label="LanguageLevelFragment"
+        tools:layout="@layout/fragment_language_level">
+        <action
+            android:id="@+id/action_languageLevelFragment_to_languagesFragment"
+            app:destination="@id/languagesFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/languagesFragment"
+        android:name="com.lighthouse.auth.fragment.LanguagesFragment"
+        android:label="LanguagesFragment"
+        tools:layout="@layout/activity_country" />
+
+    <action
+        android:id="@+id/action_global_countryFragment"
+        app:destination="@id/countryFragment"
+        app:enterAnim="@anim/nav_default_pop_enter_anim"
+        app:exitAnim="@anim/nav_default_pop_exit_anim" />
+
+    <action
+        android:id="@+id/action_pop_language_nav_graph"
+        app:destination="@id/info_fragment"
+        app:popUpTo="@+id/auth_nav_graph" />
+
+</navigation>

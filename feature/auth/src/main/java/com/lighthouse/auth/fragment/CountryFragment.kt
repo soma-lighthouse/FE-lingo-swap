@@ -7,7 +7,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.lighthouse.android.common_ui.base.BindingFragment
-import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentCountryBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
@@ -75,8 +74,6 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
     }
 
     private fun registerComplete(result: Boolean) {
-        binding.groupCountry.isClickable = true
-        binding.pbStart.setGone()
         if (result) {
             val intent = mainNavigator.navigateToMain(
                 requireContext(),
@@ -91,9 +88,6 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
 
 
     private fun initCountry() {
-        binding.btnCountry.setOnClickListener {
-            selectionList()
-        }
         binding.clickRectangle.setOnClickListener {
             selectionList()
         }

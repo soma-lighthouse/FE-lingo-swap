@@ -14,6 +14,10 @@ class RemoteConfigInterceptor @Inject constructor(
         val originalRequest = chain.request()
         val originalUrl = originalRequest.url
 
+        if (originalUrl.host == "lingoswap.s3.ap-northeast-2.amazonaws.com") {
+            return chain.proceed(originalRequest)
+        }
+
         // Fetch the updated base URL from Remote Config
         val fullUrl = runBlocking {
             remoteConfigDataSource.fetchRemoteConfig("LIGHTHOUSE_BASE_URL")

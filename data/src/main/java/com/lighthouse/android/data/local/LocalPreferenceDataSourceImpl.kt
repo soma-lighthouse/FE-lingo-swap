@@ -66,4 +66,13 @@ class LocalPreferenceDataSourceImpl @Inject constructor(
     override fun <T> getList(key: String, tt: TypeToken<List<T>>): List<T> {
         return gson.fromJson(sharedPreferences.getString(key, "[]"), tt.type)
     }
+
+    override fun clearAllData() {
+        sharedPreferences.edit {
+            remove(LocalKey.LANGUAGE_SETTING)
+            remove(LocalKey.INTEREST_SETTING)
+            remove(LocalKey.COUNTRY_SETTING)
+            remove(LocalKey.REGION_SETTING)
+        }
+    }
 }

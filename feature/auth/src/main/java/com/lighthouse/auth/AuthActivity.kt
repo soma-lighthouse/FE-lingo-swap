@@ -49,6 +49,7 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         login()
         handleBackPressed()
         initI18n()
+        viewModel.clearAllData()
     }
 
     private fun handleBackPressed() {

@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.lighthouse.auth.viewmodel.AuthViewModel" />
     </data>
 
     <RelativeLayout
@@ -18,7 +21,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".fragment.LanguageFragment">
+                tools:context=".fragment.LanguageLevelFragment">
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/tb_info"
@@ -54,6 +57,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_normal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_language_title"
@@ -68,6 +72,7 @@
                     android:layout_marginTop="@dimen/margin_normal"
                     android:layout_marginBottom="110dp"
                     android:background="@drawable/custom_button_silver"
+                    android:onClick="@{() -> viewModel.addLanguage()}"
                     android:text="@string/add_question"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -97,6 +102,7 @@
             android:layout_marginVertical="10dp"
             android:background="@drawable/custom_button"
             android:elevation="9dp"
+            android:onClick="@{() -> viewModel.updateLanguage()}"
             android:text="@string/next"
             app:layout_constraintBottom_toBottomOf="@id/bottom_rectangle"
             app:layout_constraintEnd_toEndOf="@id/bottom_rectangle"

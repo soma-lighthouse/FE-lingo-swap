@@ -20,7 +20,6 @@ import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.UriUtil
 import com.lighthouse.android.common_ui.util.calSize
-import com.lighthouse.android.common_ui.util.observeOnce
 import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.auth.databinding.FragmentBasicInfoBinding
 import com.lighthouse.auth.view.makeInterestAdapter
@@ -194,9 +193,9 @@ class BasicInfoFragment :
     }
 
     private fun initNext() {
-        viewModel.changes.observeOnce(viewLifecycleOwner) {
+        viewModel.changes.observe(viewLifecycleOwner) {
             if (it == -3) {
-                findNavController().navigate(BasicInfoFragmentDirections.actionInfoFragmentToLanguageFragment())
+                findNavController().navigate(BasicInfoFragmentDirections.actionGlobalLanguageNavGraph())
             }
         }
     }

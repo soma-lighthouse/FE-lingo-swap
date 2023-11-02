@@ -14,4 +14,6 @@ interface LocalPreferenceDataSource {
     fun getBoolean(key: String): Boolean
     fun getLong(key: String): Long
     fun <T> getList(key: String, tt: TypeToken<List<T>>): List<T>
+
+    fun clearAllData()
 }

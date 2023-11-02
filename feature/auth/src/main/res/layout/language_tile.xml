@@ -3,9 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="item"
+            type="com.lighthouse.domain.entity.response.vo.LanguageVO" />
+
+        <variable
+            name="viewModel"
+            type="com.lighthouse.auth.viewmodel.AuthViewModel" />
+
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> viewModel.onLanguageClick(item)}">
 
         <TextView
             android:id="@+id/tv_country"
@@ -15,6 +28,7 @@
             android:layout_marginVertical="15dp"
             android:fontFamily="@font/noto_sans_kr_medium"
             android:gravity="left"
+            android:text="@{item.name}"
             android:textSize="16sp"
             android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="parent"
