@@ -1,14 +1,13 @@
 package com.lighthouse.auth.view
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.lighthouse.android.common_ui.base.BindingActivity
-import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
+import com.lighthouse.android.common_ui.base.adapter.makeInterestAdapter
 import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
@@ -84,22 +83,4 @@ class InterestListActivity : BindingActivity<ActivityInterestBinding>(R.layout.a
             }
         }
     }
-
 }
-
-fun makeInterestAdapter(viewModel: AuthViewModel, highLight: Boolean) =
-    SimpleListAdapter<InterestVO, InterestListTileBinding>(
-        diffCallBack = ItemDiffCallBack(
-            onItemsTheSame = { old, new -> old.category == new.category },
-            onContentsTheSame = { old, new -> old == new }),
-        layoutId = com.lighthouse.android.common_ui.R.layout.interest_list_tile,
-        onBindCallback = { viewHolder, item ->
-            val binding = viewHolder.binding
-            Log.d("TESTING INTEREST", item.toString())
-            binding.item = item
-            binding.clicked = viewModel.collapse
-            binding.position = viewHolder.absoluteAdapterPosition
-            binding.listener = viewModel
-            binding.highLight = highLight
-        }
-    )

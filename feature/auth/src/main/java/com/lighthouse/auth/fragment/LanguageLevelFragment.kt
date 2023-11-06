@@ -9,6 +9,7 @@ import com.lighthouse.auth.LanguageNavGraphDirections
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentLanguageLevelBinding
 import com.lighthouse.auth.selection_adapter.SelectionAdapter
+import com.lighthouse.auth.view.LanguageListActivity
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,10 +18,13 @@ class LanguageLevelFragment :
     BindingFragment<FragmentLanguageLevelBinding>(R.layout.fragment_language_level) {
     private val viewModel: AuthViewModel by activityViewModels()
     private lateinit var adapter: SelectionAdapter
+    private var isRegister: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
+        isRegister = (requireActivity() as LanguageListActivity).isRegister
+        binding.isRegister = isRegister
         initBack()
         initAdapter()
         observeClick()
@@ -28,6 +32,9 @@ class LanguageLevelFragment :
 
     private fun observeClick() {
         viewModel.changes.observe(viewLifecycleOwner) {
+            if (it == -1) {
+                requireActivity().finish()
+            }
             if (it == -3) {
                 findNavController().navigate(LanguageNavGraphDirections.actionGlobalCountryFragment())
             }
@@ -44,7 +51,11 @@ class LanguageLevelFragment :
 
     private fun initBack() {
         binding.btnBack.setOnClickListener {
-            findNavController().navigate(LanguageNavGraphDirections.actionPopLanguageNavGraph())
+            if (isRegister) {
+                findNavController().navigate(LanguageNavGraphDirections.actionPopLanguageNavGraph())
+            } else {
+                requireActivity().finish()
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import com.lighthouse.android.data.remote.RemoteConfigDataSource
 import com.lighthouse.android.data.repository.datasource.HomeRemoteDataSource
 import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.entity.request.UploadFilterVO
+import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.FilterVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
@@ -44,8 +45,17 @@ class HomeRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun uploadFilterSetting(filter: UploadFilterVO): Flow<Boolean> {
+    override fun uploadFilterSetting(): Flow<Boolean> {
         val userId = local.getString(LocalKey.USER_ID)
+        val filter = UploadFilterVO(
+            getCountryVO().map { it.code },
+            getLanguageVO().map { mapOf("code" to it.code, "level" to it.level) },
+            getInterestVO().map {
+                UploadInterestVO(
+                    it.category.code,
+                    it.interests.map { i -> i.code })
+            },
+        )
         return datasource.uploadFilterSetting(
             userId,
             filter.toDTO()

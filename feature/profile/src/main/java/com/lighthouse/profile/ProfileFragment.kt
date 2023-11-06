@@ -15,10 +15,7 @@ import com.lighthouse.android.common_ui.base.MyFirebaseMessagingService
 import com.lighthouse.android.common_ui.dialog.showOKDialog
 import com.lighthouse.android.common_ui.util.PushUtils
 import com.lighthouse.android.common_ui.util.UiState
-import com.lighthouse.android.common_ui.util.setGone
-import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.common_ui.util.toast
-import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.profile.databinding.FragmentProfileBinding
 import com.lighthouse.profile.viewmodel.ProfileViewModel
 import com.sendbird.android.exception.SendbirdException
@@ -35,11 +32,16 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
         initProfileDetail()
-        initProfile()
         initMyQuestions()
         initLogout()
         initToggle()
+        observeError()
         redirectToDestination(args.baseUrl, args.path)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getProfileDetail()
     }
 
     private fun initToggle() {
@@ -78,17 +80,6 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         }
     }
 
-    private fun initProfile() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getProfileDetail(viewModel.getUUID())
-                viewModel.detail.collect {
-                    render(it)
-                }
-            }
-        }
-    }
-
     private fun initProfileDetail() {
         binding.cvProfile.setOnClickListener {
             mainNavigator.navigateToProfile(
@@ -106,21 +97,14 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         }
     }
 
-    private fun render(uiState: UiState) {
-        when (uiState) {
-            is UiState.Loading -> {
-                binding.pbProfile.setVisible()
-            }
-
-            is UiState.Success<*> -> {
-                val data = uiState.data as ProfileVO
-                binding.item = data
-                binding.pbProfile.setGone()
-            }
-
-            is UiState.Error<*> -> {
-                handleException(uiState)
-                binding.pbProfile.setGone()
+    private fun observeError() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.error.collect {
+                    if (it is UiState.Error<*>) {
+                        handleException(it)
+                    }
+                }
             }
         }
     }

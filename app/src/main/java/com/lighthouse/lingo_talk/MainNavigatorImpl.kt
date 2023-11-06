@@ -46,9 +46,9 @@ class MainNavigatorImpl : MainNavigator {
 
     override fun navigateToLanguage(
         context: Context,
-        position: Pair<String, Int>,
+        isRegister: Pair<String, Boolean>
     ) =
-        context.navigateActivity<LanguageListActivity>(position)
+        context.navigateActivity<LanguageListActivity>(isRegister)
 
     override fun navigateToLogin(context: Context) =
         context.navigateActivity<AuthActivity>()

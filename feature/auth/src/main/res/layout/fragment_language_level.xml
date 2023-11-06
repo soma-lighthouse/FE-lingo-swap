@@ -8,6 +8,10 @@
         <variable
             name="viewModel"
             type="com.lighthouse.auth.viewmodel.AuthViewModel" />
+
+        <variable
+            name="isRegister"
+            type="boolean" />
     </data>
 
     <RelativeLayout
@@ -46,7 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_normal"
-                    android:text="@string/select_language_level"
+                    android:text="@{isRegister ? @string/select_language_level : @string/update_language_level}"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -102,7 +106,7 @@
             android:layout_marginVertical="10dp"
             android:background="@drawable/custom_button"
             android:elevation="9dp"
-            android:onClick="@{() -> viewModel.updateLanguage()}"
+            android:onClick="@{() -> viewModel.updateLanguage(isRegister)}"
             android:text="@string/next"
             app:layout_constraintBottom_toBottomOf="@id/bottom_rectangle"
             app:layout_constraintEnd_toEndOf="@id/bottom_rectangle"

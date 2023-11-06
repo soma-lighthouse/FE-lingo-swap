@@ -13,7 +13,10 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.databinding.BindingAdapter
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import androidx.databinding.ObservableList
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,6 +28,7 @@ import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.base.adapter.ItemDiffCallBack
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.LanguageTabBinding
+import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.request.UploadQuestionVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
@@ -97,17 +101,39 @@ fun setUpLanguage(recycler: RecyclerView, languages: List<LanguageVO>?) {
     recycler.adapter = adapter
 }
 
-@BindingAdapter("setUpDescription")
-fun setUpDescription(text: TextView, description: String?) {
-    description?.let {
+@BindingAdapter(value = ["setUpDescription", "observer"], requireAll = false)
+fun setUpDescription(
+    text: TextView,
+    profile: ObservableField<RegisterInfoVO>?,
+    observer: ObservableBoolean?
+) {
+    profile?.get()?.let { r ->
         val context = text.context
-        val description = description.ifEmpty {
-            context.getString(R.string.profile_description)
+        r.description?.ifEmpty {
+            text.hint = context.getString(R.string.profile_description)
+        }?.let {
+            text.text = r.description
         }
-        text.setText(description)
+
         if (text is EditText) {
             text.onCloseKeyBoard(context)
         }
+
+        observer?.observe {
+            if (observer.get()) {
+                r.description = text.text.toString()
+            }
+        }
+    }
+}
+
+@BindingAdapter("setUpText")
+fun setUpText(
+    text: TextView,
+    s: String
+) {
+    text.text = s.ifEmpty {
+        text.context.getString(R.string.profile_description)
     }
 }
 
@@ -226,5 +252,56 @@ fun setInterestChip(
 
 
         chipGroup.addView(chip)
+    }
+}
+
+@BindingAdapter("setUpChip")
+fun setUpChip(chipGroup: ChipGroup, value: ObservableList<String>) {
+    chipGroup.removeAllViews()
+    val inflater = LayoutInflater.from(chipGroup.context)
+    value.forEach {
+
+    }
+    value.forEach {
+        val chip = inflater.inflate(
+            R.layout.home_chip, chipGroup, false
+        ) as Chip
+        chip.text = it
+        chip.isCloseIconVisible = false
+        chip.isCheckable = false
+        chipGroup.addView(chip)
+    }
+}
+
+@BindingAdapter(value = ["isValid", "number", "onError"], requireAll = true)
+fun isValid(view: View, tagNumber: Int, number: MutableLiveData<List<Int>>, errorMessage: String) {
+    if (number.value?.contains(tagNumber) == true) {
+        setErrorAndBackground(view, false, errorMessage)
+    } else {
+        setErrorAndBackground(view, true, errorMessage)
+    }
+}
+
+private fun setErrorAndBackground(
+    view: View,
+    isValid: Boolean,
+    errorMessage: String,
+) {
+    if (view is EditText) {
+        if (!isValid) {
+            view.error = errorMessage
+            view.setBackgroundResource(R.drawable.error_box)
+            view.requestFocus()
+        } else {
+            view.error = null
+            view.setBackgroundResource(R.drawable.edit_box)
+        }
+    } else {
+        if (!isValid) {
+            view.setBackgroundResource(R.drawable.error_box)
+            view.requestFocus()
+        } else {
+            view.setBackgroundResource(R.drawable.edit_box)
+        }
     }
 }

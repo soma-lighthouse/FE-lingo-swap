@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.lighthouse.android.home.viewmodel.HomeViewModel" />
+    </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -81,6 +88,7 @@
                     app:layout_constraintEnd_toEndOf="@+id/btn_select_language"
                     app:layout_constraintStart_toStartOf="@+id/tv_prefer_country"
                     app:layout_constraintTop_toBottomOf="@+id/tv_prefer_country"
+                    app:setUpChip="@{viewModel.countryNameList}"
                     app:singleSelection="true" />
 
                 <TextView
@@ -132,7 +140,8 @@
                     app:flow_wrapMode="aligned"
                     app:layout_constraintEnd_toEndOf="@+id/btn_select_country"
                     app:layout_constraintStart_toStartOf="@+id/tv_prefer_language"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_prefer_language" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_prefer_language"
+                    app:setUpChip="@{viewModel.languageNameList}" />
 
                 <ImageButton
                     android:id="@+id/btn_select_hobby"
@@ -156,6 +165,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginBottom="80dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.4"
@@ -188,6 +198,7 @@
             android:layout_marginVertical="10dp"
             android:background="@drawable/custom_button"
             android:elevation="9dp"
+            android:onClick="@{() -> viewModel.uploadFilterSetting()}"
             android:text="@string/apply" />
 
 

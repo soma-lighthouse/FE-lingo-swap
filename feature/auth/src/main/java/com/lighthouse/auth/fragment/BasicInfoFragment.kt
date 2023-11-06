@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
+import com.lighthouse.android.common_ui.base.adapter.makeInterestAdapter
 import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
 import com.lighthouse.android.common_ui.dialog.ImagePickerDialog
 import com.lighthouse.android.common_ui.util.ImageUtils
@@ -22,7 +23,6 @@ import com.lighthouse.android.common_ui.util.UriUtil
 import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.auth.databinding.FragmentBasicInfoBinding
-import com.lighthouse.auth.view.makeInterestAdapter
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO

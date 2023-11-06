@@ -18,9 +18,8 @@ class DetailProfileActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.userId = intent.getStringExtra("userId") ?: ""
-        viewModel.isMe = intent.getBooleanExtra("isMe", false)
-        viewModel.chat = intent.getBooleanExtra("isChat", false)
+        viewModel.isMe.set(intent.getBooleanExtra("isMe", false))
+        viewModel.chat.set(intent.getBooleanExtra("isChat", false))
 
         handleBackPressed()
     }

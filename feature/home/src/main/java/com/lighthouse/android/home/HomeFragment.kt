@@ -16,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.base.BindingFragment
-import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
 import com.lighthouse.android.common_ui.util.UiState
@@ -38,6 +37,14 @@ class HomeFragment @Inject constructor() :
     private var profileList = mutableListOf<ProfileVO>()
     private var next: Int? = null
     private var loading = false
+    private var startTime: Double = 0.0
+    private var clickTime: Double = 0.0
+    private var clickCount: Int = 0
+
+    override fun onStart() {
+        super.onStart()
+        startTime = System.currentTimeMillis().toDouble()
+    }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -133,17 +140,17 @@ class HomeFragment @Inject constructor() :
 
 
     private fun initAdapter() {
-        adapter = makeAdapter(requireContext()) { userId ->
+        adapter = makeAdapter(requireContext()) { userId, name, region ->
             mainNavigator.navigateToProfile(
                 context = requireContext(),
                 userId = Pair("userId", userId),
                 isMe = Pair("isMe", false),
                 isChat = Pair("isChat", false)
             )
+            clickCount += 1
+            clickTime = System.currentTimeMillis().toDouble()
+            viewModel.sendHomeClick(name, region, clickTime - startTime, clickCount)
         }
-        val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        binding.rvHome.layoutManager = linearLayoutManager
         binding.rvHome.adapter = adapter
     }
 

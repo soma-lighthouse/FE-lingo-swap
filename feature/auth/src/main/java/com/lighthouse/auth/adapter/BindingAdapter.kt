@@ -22,15 +22,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@BindingAdapter(value = ["isValid", "number", "onError"], requireAll = true)
-fun isValid(view: View, tagNumber: Int, number: MutableLiveData<List<Int>>, errorMessage: String) {
-    if (number.value?.contains(tagNumber) == true) {
-        setErrorAndBackground(view, false, errorMessage)
-    } else {
-        setErrorAndBackground(view, true, errorMessage)
-    }
-}
-
 @BindingAdapter(value = ["getSpinnerValue", "setUpObserver"], requireAll = true)
 fun getSpinnerValue(
     spinner: AppCompatSpinner,
@@ -80,30 +71,6 @@ fun setUpSelectChip(
             chip.isCloseIconVisible = false
         }
         chipGroup.addView(chip)
-    }
-}
-
-private fun setErrorAndBackground(
-    view: View,
-    isValid: Boolean,
-    errorMessage: String,
-) {
-    if (view is EditText) {
-        if (!isValid) {
-            view.error = errorMessage
-            view.setBackgroundResource(R.drawable.error_box)
-            view.requestFocus()
-        } else {
-            view.error = null
-            view.setBackgroundResource(R.drawable.edit_box)
-        }
-    } else {
-        if (!isValid) {
-            view.setBackgroundResource(R.drawable.error_box)
-            view.requestFocus()
-        } else {
-            view.setBackgroundResource(R.drawable.edit_box)
-        }
     }
 }
 

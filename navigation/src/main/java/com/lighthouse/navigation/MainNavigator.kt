@@ -29,7 +29,7 @@ interface MainNavigator {
 
     fun navigateToLanguage(
         context: Context,
-        position: Pair<String, Int>,
+        isRegister: Pair<String, Boolean>
     )
 
     fun navigateToCamera(

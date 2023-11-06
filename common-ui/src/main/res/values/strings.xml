@@ -56,6 +56,7 @@
     <string name="start">Start</string>
     <string name="apply">Apply</string>
     <string name="select_language_level">Select language and level (2/3)</string>
+    <string name="update_language_level">Update language and level</string>
     <string name="language_n_level">Language and level</string>
     <string name="select_prefer_country">Select prefer country (3/3)</string>
     <string name="invalid_email">Wrong email format</string>

@@ -10,7 +10,7 @@ import com.lighthouse.domain.entity.response.vo.ProfileVO
 
 fun makeAdapter(
     context: Context,
-    navigateToProfile: (userId: String) -> Unit
+    navigateToProfile: (userId: String, name: String, region: String) -> Unit
 ) =
     SimpleListAdapter<ProfileVO, UserInfoTileBinding>(
         diffCallBack = ItemDiffCallBack(
@@ -21,7 +21,7 @@ fun makeAdapter(
             val binding = viewHolder.binding
 
             viewHolder.itemView.setOnClickListener {
-                navigateToProfile(item.id)
+                navigateToProfile(item.id, item.name, item.region.name)
             }
 
             binding.setVariable(BR.item, item)

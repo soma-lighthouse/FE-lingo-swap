@@ -28,7 +28,6 @@ class LanguagesFragment : BindingFragment<ActivityCountryBinding>(R.layout.activ
     private val viewModel: AuthViewModel by activityViewModels()
     private lateinit var adapter: SimpleListAdapter<LanguageVO, LanguageTileBinding>
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initBack()
