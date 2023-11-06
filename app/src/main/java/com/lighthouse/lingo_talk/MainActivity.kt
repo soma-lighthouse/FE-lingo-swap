@@ -118,9 +118,10 @@ class MainActivity @Inject constructor() :
         SWMLogging.init(
             appVersion = BuildConfig.VERSION_NAME,
             osNameAndVersion = "$ANDROID ${android.os.Build.VERSION.SDK_INT}",
-            baseUrl = remoteConfig.getString("LIGHTHOUSE_BASE_URL"),
-            serverPath = "v1/log",
-            token = ""
+            baseUrl = remoteConfig.getString("LOG_SERVER_URL"),
+            serverPath = "log",
+            token = "",
+            uuid = getUUID()
         )
     }
 

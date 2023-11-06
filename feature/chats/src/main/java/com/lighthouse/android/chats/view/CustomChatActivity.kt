@@ -14,16 +14,33 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CustomChatActivity @Inject constructor() : ChannelActivity(), ToFlowNavigatable {
     private val viewModel: ChatViewModel by viewModels()
+    private var startTime: Double = 0.0
+    private var endTime: Double = 0.0
 
     @Inject
     lateinit var navigator: Navigator
 
+    override fun onStart() {
+        super.onStart()
+        startTime = System.currentTimeMillis().toDouble()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_custom_chat)
+        observeFirstQuestion()
     }
 
     override fun navigateToFlow(flow: NavigationFlow) {
         navigator.navigateToFlow(flow)
+    }
+
+    private fun observeFirstQuestion() {
+        viewModel.sendQuestion.observe(this) {
+            if (it != null && endTime == 0.0) {
+                endTime = System.currentTimeMillis().toDouble()
+                viewModel.sendQuestionInteractLogging(endTime - startTime)
+            }
+        }
     }
 }

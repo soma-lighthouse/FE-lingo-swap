@@ -24,9 +24,11 @@ import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.logging.RegisterExposureLogger
 import com.lighthouse.domain.repository.AuthRepository
 import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.domain.usecase.CheckLoginStatusUseCase
+import com.lighthouse.swm_logging.SWMLogging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,7 +54,7 @@ class AuthViewModel @Inject constructor(
     private val _error = MutableLiveData<Map<String, String>>()
     val error: LiveData<Map<String, String>> = _error
 
-    val collapse = ObservableInt(0)
+    override val collapse = ObservableInt(0)
 
     val selectedCountry = MutableLiveData<List<CountryVO>>()
     override val selectedInterest = MutableLiveData<List<InterestVO>>()
@@ -386,6 +388,7 @@ class AuthViewModel @Inject constructor(
             selectedLanguage.value = languages
         }
         _changes.value = finish
+        _changes.value = none
     }
 
     fun removeLanguage(item: LanguageVO, position: Int) {
@@ -410,20 +413,30 @@ class AuthViewModel @Inject constructor(
             selectedLanguage.value?.plus(LanguageVO(context.getString(R.string.language), 1, ""))
     }
 
-    fun updateLanguage() {
+    fun updateLanguage(isRegister: Boolean) {
         val list = selectedLanguage.value
         list?.let {
             val final = it.filter { l -> l.name != context.getString(R.string.language) }
             homeRepository.saveLanguageVO(final)
             registerInfo.languages = final.map { l -> mapOf("code" to l.code, "level" to l.level) }
-            _changes.value = next
+            _changes.value = if (isRegister) next else finish
             _changes.value = none
         }
     }
 
+    fun sendRegisterExposureLogging(stayTime: Double) {
+        val scheme = getRegisterExposureLogging(stayTime)
+        SWMLogging.logEvent(scheme)
+    }
+
+    private fun getRegisterExposureLogging(stayTime: Double): RegisterExposureLogger {
+        return RegisterExposureLogger.Builder()
+            .setStayTime(stayTime)
+            .build()
+    }
+
     companion object {
         const val finish = -1
-        const val registered = -2
         const val next = -3
         const val direct = -4
         const val none = -99

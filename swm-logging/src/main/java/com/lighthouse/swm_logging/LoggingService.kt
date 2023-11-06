@@ -9,8 +9,8 @@ import retrofit2.http.Path
 interface LoggingService {
 
     @POST("{loggingPath}")
-    fun postLogging(
-        @Path("loggingPath", encoded = true) loggingPath: String,
+    suspend fun postLogging(
+        @Path("loggingPath") loggingPath: String,
         @Body loggingScheme: SWMLoggingScheme
     ): Response<BaseDTO>
 }
