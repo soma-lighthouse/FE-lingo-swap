@@ -1,15 +1,16 @@
 package com.lighthouse.profile
 
 import androidx.databinding.BindingAdapter
-import androidx.databinding.ObservableBoolean
 import com.google.android.material.appbar.MaterialToolbar
+import com.lighthouse.profile.viewmodel.ProfileViewModel
 
 @BindingAdapter("setUpMenu")
-fun setUpMenu(toolBar: MaterialToolbar, editMode: ObservableBoolean) {
+fun setUpMenu(toolBar: MaterialToolbar, viewModel: ProfileViewModel) {
     toolBar.setOnMenuItemClickListener {
         when (it.itemId) {
             R.id.item_edit -> {
-                editMode.set(true)
+                viewModel.isEdit.set(true)
+                viewModel.startTime = System.currentTimeMillis().toDouble()
                 true
             }
 
@@ -19,7 +20,7 @@ fun setUpMenu(toolBar: MaterialToolbar, editMode: ObservableBoolean) {
         }
     }
 
-    if (editMode.get()) {
+    if (viewModel.isEdit.get() || !viewModel.isMe.get()) {
         toolBar.menu.clear()
     } else if (toolBar.menu.size() == 0) {
         toolBar.menu.add(

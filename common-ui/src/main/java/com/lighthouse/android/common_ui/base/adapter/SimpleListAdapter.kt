@@ -1,6 +1,7 @@
 package com.lighthouse.android.common_ui.base.adapter
 
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,8 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.databinding.NativeAdBinding
 
@@ -72,7 +75,13 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
 
                 }.withAdListener(object : AdListener() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
-                        Log.d("TESTING ADS", adError.toString())
+                        val firebase = Firebase.analytics
+
+                        val params = Bundle()
+                        params.putString("error_code", adError.code.toString())
+                        params.putString("error_message", adError.message)
+                        params.putString("error_domain", adError.domain)
+                        firebase.logEvent("ad_error", params)
                     }
                 }).withNativeAdOptions(
                     NativeAdOptions.Builder().build()

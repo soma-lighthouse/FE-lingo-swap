@@ -18,9 +18,8 @@ import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @BindingAdapter(value = ["getSpinnerValue", "setUpObserver"], requireAll = true)
 fun getSpinnerValue(
@@ -75,24 +74,28 @@ fun setUpSelectChip(
 }
 
 private fun convertToStandardDateFormat(inputDate: String): String {
-    val inputFormat = listOf(
-        SimpleDateFormat("yyyy-M-d", Locale.getDefault()),
-        SimpleDateFormat("yyyy-MM-d", Locale.getDefault()),
-        SimpleDateFormat("yyyy-M-dd", Locale.getDefault()),
-        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()),
-        SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    val formats = arrayOf(
+        "ddMMyyyy",
+        "dd/MM/yyyy",
+        "dd-MM-yyyy"
     )
-    val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    var parsedDate: LocalDate? = null
 
-    inputFormat.forEach {
+    for (format in formats) {
         try {
-            val parsedDate: Date = it.parse(inputDate) as Date
-            return outputFormat.format(parsedDate)
+            val sdf = DateTimeFormatter.ofPattern(format)
+            parsedDate = LocalDate.parse(inputDate, sdf)
+            if (parsedDate != null) {
+                break // Successfully parsed the date
+            }
         } catch (e: Exception) {
-            // Ignore and try the next format
+            // Parsing with this format failed, try the next format
         }
     }
-    return ""
+
+    Log.d("TESTING BIRTHDAY", parsedDate.toString())
+
+    return parsedDate.toString()
 }
 
 @BindingAdapter("updateInterestChip")

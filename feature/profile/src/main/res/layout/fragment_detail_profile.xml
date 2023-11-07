@@ -32,13 +32,13 @@
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/tb_profile"
-                    setUpMenu="@{viewModel.isEdit}"
                     android:layout_width="0dp"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:menu="@menu/profile_toolbar_menu" />
+                    app:menu="@menu/profile_toolbar_menu"
+                    app:setUpMenu="@{viewModel}" />
 
                 <TextView
                     android:id="@+id/btn_save"

@@ -171,7 +171,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@drawable/edit_box"
                     android:hint="@string/enter_birthday"
-                    android:inputType="text"
+                    android:inputType="date"
                     android:padding="14dp"
                     android:textColorHint="@color/brown_grey"
                     android:textSize="14sp"
@@ -440,10 +440,13 @@
                     android:text="@={viewModel.registerInfo.description}"
                     android:textColorHint="@color/brown_grey"
                     android:textSize="14sp"
+                    app:isValid="@{8}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_introduction" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_introduction"
+                    app:number="@{viewModel.errorNumber}"
+                    app:onError="@{@string/invalid_name}" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

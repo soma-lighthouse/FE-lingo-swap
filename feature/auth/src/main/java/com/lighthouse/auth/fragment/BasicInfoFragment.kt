@@ -17,6 +17,7 @@ import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.base.adapter.makeInterestAdapter
 import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
 import com.lighthouse.android.common_ui.dialog.ImagePickerDialog
+import com.lighthouse.android.common_ui.util.DateTextWatcher
 import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.UriUtil
@@ -24,12 +25,13 @@ import com.lighthouse.android.common_ui.util.calSize
 import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.auth.databinding.FragmentBasicInfoBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
-import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
+import com.lighthouse.lighthousei18n.I18nManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -38,7 +40,10 @@ class BasicInfoFragment :
     ImagePickerDialog.CameraDialogListener {
     private val viewModel: AuthViewModel by activityViewModels()
     private lateinit var interestAdapter: SimpleListAdapter<InterestVO, InterestListTileBinding>
-    private var selectedCountry: CountryVO? = null
+
+    @Inject
+    lateinit var i18nManager: I18nManager
+
     private lateinit var imagePicker: ImagePickerDialog
     private lateinit var imageUri: Uri
 
@@ -56,6 +61,8 @@ class BasicInfoFragment :
         observeImage()
         initBack()
         setUpBinding()
+
+        binding.etBirthday.addTextChangedListener(DateTextWatcher(binding.etBirthday))
     }
 
     override fun onResume() {
@@ -168,7 +175,7 @@ class BasicInfoFragment :
 
     private fun initCalender() {
         binding.btnCalendar.setOnClickListener {
-            val datePickerFragment = DatePickerFragment()
+            val datePickerFragment = DatePickerFragment(i18nManager)
             val supportFragment = requireActivity().supportFragmentManager
 
             supportFragment.setFragmentResultListener(

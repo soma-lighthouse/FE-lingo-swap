@@ -55,9 +55,11 @@ class ProfileViewModel @Inject constructor(
     val saveObserver: ObservableBoolean = ObservableBoolean(false)
 
     val isEdit = ObservableBoolean(false)
+    var startTime: Double = 0.0
     val isLoading = ObservableBoolean(true)
     var isMe = ObservableBoolean(false)
     var chat = ObservableBoolean(false)
+    var opUid: String = ""
 
     var userProfile: ObservableField<RegisterInfoVO> = ObservableField()
 
@@ -71,7 +73,7 @@ class ProfileViewModel @Inject constructor(
 
     fun getProfileDetail() {
         onIO {
-            profileRepository.getProfileDetail(getUUID()).catch {
+            profileRepository.getProfileDetail(opUid.ifEmpty { getUUID() }).catch {
                 _error.value = handleException(it)
             }.collect {
                 curProfile.set(it)
@@ -154,7 +156,7 @@ class ProfileViewModel @Inject constructor(
 
     private fun saveUserDetail() {
         saveObserver.set(true)
-
+        val endTime = System.currentTimeMillis().toDouble()
         newFilePath?.let {
             val change = userProfile.get()
             change?.let { r ->
@@ -172,7 +174,11 @@ class ProfileViewModel @Inject constructor(
                     }
                     userProfile.set(change)
                 }
-                updateProfileUseCase.invoke(curProfile.get()!!, userProfile.get()!!)
+                updateProfileUseCase.invoke(
+                    curProfile.get()!!,
+                    userProfile.get()!!,
+                    endTime - startTime
+                )
             } catch (e: Exception) {
                 _error.value = handleException(e)
             } finally {
@@ -214,7 +220,7 @@ class ProfileViewModel @Inject constructor(
 
     fun createChannel() {
         onIO {
-            chatRepository.createChannel(getUUID()).catch {
+            chatRepository.createChannel(opUid).catch {
                 _detail.value = handleException(it)
             }.collect {
                 _create.emit(UiState.Success(it))

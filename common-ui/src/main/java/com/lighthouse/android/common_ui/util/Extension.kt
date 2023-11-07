@@ -115,10 +115,9 @@ fun String?.isValidBirthday(): Boolean {
     }
 
     val formats = arrayOf(
-        "yyyy-MM-dd",
         "dd/MM/yyyy",
-        "MM/dd/yyyy",
-        // Add more date formats as needed to support different regions
+        "dd-MM-yyyy",
+        "ddMMyyyy"
     )
 
     for (format in formats) {

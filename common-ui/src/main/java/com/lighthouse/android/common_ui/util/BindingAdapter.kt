@@ -260,9 +260,6 @@ fun setUpChip(chipGroup: ChipGroup, value: ObservableList<String>) {
     chipGroup.removeAllViews()
     val inflater = LayoutInflater.from(chipGroup.context)
     value.forEach {
-
-    }
-    value.forEach {
         val chip = inflater.inflate(
             R.layout.home_chip, chipGroup, false
         ) as Chip

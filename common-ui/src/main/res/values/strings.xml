@@ -41,7 +41,7 @@
     <string name="enter_name">Enter your name</string>
     <string name="email">Email</string>
     <string name="birthday">Birthday</string>
-    <string name="enter_birthday">e.g. 2019-01-01</string>
+    <string name="enter_birthday">e.g. 23/04/2019, 23042019</string>
     <string name="enter_email">Enter your email</string>
     <string name="nation">Nation</string>
     <string name="age">Age</string>
@@ -50,7 +50,7 @@
     <string name="female">Female</string>
     <string name="rather_not_tell">Rather not tell</string>
     <string name="unselected">Unselected</string>
-    <string name="introduction_optional">Introduction (optional)</string>
+    <string name="introduction_optional">Introduction</string>
     <string name="introduce_yourself">Introduce yourself</string>
     <string name="next">Next</string>
     <string name="start">Start</string>
@@ -123,6 +123,7 @@
     <string name="language_limit">Only up to maximum 5 Language</string>
 
     <string name="invalid_name">Invalid name</string>
+    <string name="invalid_introduction">At least 5 letter</string>
 
     <string name="save">Save</string>
     <string name="term_service">Terms of service</string>

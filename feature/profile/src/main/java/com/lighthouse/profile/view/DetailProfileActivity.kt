@@ -20,7 +20,7 @@ class DetailProfileActivity :
 
         viewModel.isMe.set(intent.getBooleanExtra("isMe", false))
         viewModel.chat.set(intent.getBooleanExtra("isChat", false))
-
+        viewModel.opUid = intent.getStringExtra("userId") ?: ""
         handleBackPressed()
     }
 

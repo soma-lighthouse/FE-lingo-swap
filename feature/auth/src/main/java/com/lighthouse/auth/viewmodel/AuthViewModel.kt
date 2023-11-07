@@ -272,6 +272,9 @@ class AuthViewModel @Inject constructor(
             if (selectedCountry.value.isNullOrEmpty()) {
                 add(7)
             }
+            if (registerInfo.description.isNullOrEmpty()) {
+                add(8)
+            }
         }
         collect.set(false)
         errorNumber.value = tmp

@@ -46,7 +46,7 @@
     <string name="enter_name">이름을 입력하세요</string>
     <string name="email">이메일</string>
     <string name="birthday">생일</string>
-    <string name="enter_birthday">예: 2019-01-01</string>
+    <string name="enter_birthday">예: 20190423, 2019/04/23</string>
     <string name="enter_email">이메일을 입력하세요</string>
     <string name="nation">국적</string>
     <string name="age">나이</string>
@@ -55,7 +55,7 @@
     <string name="female">여성</string>
     <string name="rather_not_tell">선택 안함</string>
     <string name="unselected">미선택</string>
-    <string name="introduction_optional">자기소개 (선택사항)</string>
+    <string name="introduction_optional">자기소개</string>
     <string name="introduce_yourself">자신을 소개하세요</string>
     <string name="next">다음</string>
     <string name="start">시작하기</string>
@@ -134,6 +134,7 @@
     <string name="empty_my_question">작성한 질문이 없습니다.\n게시판에서 질문을 작성해보세요!</string>
 
     <string name="ad_attribution">Ad</string>
+    <string name="invalid_introduction">최소 5자 이상 작성해주세요</string>
 
     <string name="no_user">상대방이 나갔습니다</string>
 

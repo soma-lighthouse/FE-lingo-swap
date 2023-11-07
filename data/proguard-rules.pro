@@ -21,3 +21,5 @@
 #-renamesourcefileattribute SourceFile
 -dontobfuscate
 -keepattributes SourceFile,LineNumberTable
+
+-keep class com.lighthouse.android.data.model.** { *;}
