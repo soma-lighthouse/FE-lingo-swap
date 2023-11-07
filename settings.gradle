@@ -10,12 +10,20 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://jitpack.io" }
+        maven { url "https://repo.sendbird.com/public/maven" }
     }
 }
-rootProject.name = "lingo-swap"
+rootProject.name = "LingoTalk"
 include ':app'
 include ':domain'
 include ':data'
 include ':feature:home'
-include ':shared'
 include ':common-ui'
+include ':navigation'
+include ':feature:board'
+include ':feature:profile'
+include ':feature:chats'
+include ':feature:auth'
+include ':lighthousei18n'
+include ':swm-logging'

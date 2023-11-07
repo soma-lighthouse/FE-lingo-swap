@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LingoTalk</string>
+    <string name="unknown_view_type">Unknown View Type!</string>
+    <string name="btn_nav_home">home</string>
+    <string name="btn_nav_chat">chat</string>
+    <string name="btn_nav_board">board</string>
+    <string name="btn_nav_profile">profile</string>
+    <string name="unknown">Error: No right viewType found</string>
+    <string name="filter">Filter</string>
+    <string name="prefer_country">Prefer country</string>
+    <string name="prefer_language">Prefer language</string>
+    <string name="board_title">Question board</string>
+    <string name="empty">Empty</string>
+    <string name="cooking">Cooking</string>
+    <string name="game">Game</string>
+    <string name="movie">Movie</string>
+    <string name="music">Music</string>
+    <string name="travel">Travel</string>
+    <string name="study">Study</string>
+    <string name="sort_latest">Latest</string>
+    <string name="sort_top_rated">Top rated</string>
+    <string name="add_title">Add question</string>
+    <string name="interest">Interest</string>
+    <string name="enter_question_here">Enter question here</string>
+    <string name="enter_question">Enter question</string>
+    <string name="add_question">Add question</string>
+    <string name="question_size_error">Please enter question between 10 to 200 characters</string>
+    <string name="edit_profile">Edit</string>
+    <string name="occupation">Occupation</string>
+    <string name="no_occupation">Not selected</string>
+    <string name="language_and_level">Language and level</string>
+    <string name="interest_country">Prefer country</string>
+    <string name="chat_title">Chat</string>
+    <string name="hint_search">Search</string>
+    <string name="setting">Setting</string>
+    <string name="type_here">Type here…</string>
+    <string name="enter_info">Enter basic information (1/3)</string>
+    <string name="basic_info">Basic information</string>
+    <string name="name">Name</string>
+    <string name="enter_name">Enter your name</string>
+    <string name="email">Email</string>
+    <string name="birthday">Birthday</string>
+    <string name="enter_birthday">e.g. 23/04/2019</string>
+    <string name="enter_email">Enter your email</string>
+    <string name="nation">Nation</string>
+    <string name="age">Age</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="rather_not_tell">Rather not tell</string>
+    <string name="unselected">Unselected</string>
+    <string name="introduction_optional">Introduction</string>
+    <string name="introduce_yourself">Introduce yourself</string>
+    <string name="next">Next</string>
+    <string name="start">Start</string>
+    <string name="apply">Apply</string>
+    <string name="select_language_level">Select language and level (2/3)</string>
+    <string name="update_language_level">Update language and level</string>
+    <string name="language_n_level">Language and level</string>
+    <string name="select_prefer_country">Select prefer country (3/3)</string>
+    <string name="invalid_email">Wrong email format</string>
+    <string name="invalid_birthday">Wrong birthday format</string>
+    <string name="invalid_null">Required entry</string>
+    <string name="duplicate_language">You have already selected this language</string>
+    <string name="add_language">Add language</string>
+    <string name="choose">Upload image</string>
+    <string name="delete_dialog">Delete current image?</string>
+    <string name="delete_title">Ok</string>
+    <string name="share_hint">Share</string>
+    <string name="level1">Level1</string>
+    <string name="level2">Level2</string>
+    <string name="level3">Level3</string>
+    <string name="level4">Level4</string>
+    <string name="level5">Level5</string>
+    <string name="my_info">My information</string>
+    <string name="profile">Profile</string>
+    <string name="my_question">My questions</string>
+    <string name="my_review">My reviews</string>
+    <string name="prefer_interest">Interest</string>
+    <string name="send_msg">Start chatting</string>
+    <string name="edit">Edit</string>
+    <string name="exit_title">Exit</string>
+    <string name="exit_body">Are you sure? entry will not be saved</string>
+
+    <string name="select_language">Select up to 5 languages</string>
+    <string name="filter_error">At least one item per filter</string>
+
+    <string name="error_title">Error Occurred!</string>
+    <string name="logout">Logout</string>
+    <string name="logout_title">Confirm Logout</string>
+    <string name="logout_body">Are you sure you want to Logout?</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="profile_description">Description</string>
+    <string name="upload_error">Upload error</string>
+
+    <string name="leave_channel">Leave channel</string>
+    <string name="turn_off_alarm">Turn off alarm</string>
+    <string name="turn_on_alarm">Turn on alarm</string>
+
+    <string name="upload_success">Upload success</string>
+
+    <string name="push_notification">Push notification</string>
+    Find the profile of the person you want and talk to him
+    <string name="home_title_1">Find the\u0020</string>
+    <string name="home_title_2">profile\u0020</string>
+    <string name="home_title_3">of the person you want and start\u0020</string>
+    <string name="home_title_4">chatting</string>
+    <string name="home_title_5">!</string>
+
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+
+    <string name="choose_image">Choose</string>
+
+    <string name="sign_in_google">Sign in with Google</string>
+
+    <string name="language">Language</string>
+
+    <string name="language_limit">Only up to maximum 5 Language</string>
+
+    <string name="invalid_name">Invalid name</string>
+    <string name="invalid_introduction">At least 5 letter</string>
+
+    <string name="save">Save</string>
+    <string name="term_service">Terms of service</string>
+    <string name="term_use">Terms and Conditions</string>
+    <string name="term_personal">Privacy Policy</string>
+    <string name="question_upload">question uploaded!</string>
+
+    <string name="empty_my_question">Questions have not been uploaded yet!\nPlease begin the process of uploading your question on the board.</string>
+
+    <string name="ad_attribution">Ad</string>
+    <string name="no_user">User has left the channel</string>
+
+    <string name="internet_error">Please check your internet connection and try again.</string>
+    <string name="server_error">Something went wrong. Please try again later.</string>
+
+    <string name="update_title">Update</string>
+    <string name="update_body">A new version is available. Please update to the latest version.</string>
+
+</resources>

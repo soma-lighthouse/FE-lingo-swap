@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.dagger.hilt) apply false
     alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.safe.args) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.crashlytics) apply false
 }
 
 subprojects {

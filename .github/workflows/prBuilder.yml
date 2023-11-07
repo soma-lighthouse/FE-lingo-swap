@@ -16,6 +16,7 @@ jobs:
     name: PR Checker
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -44,7 +45,6 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_COLOR: '#53A551'
-          SLACK_ICON: https://github.com/hellokitty-coding-club/LGTM-Android/assets/59546818/603efae5-02ba-4065-ba7b-ea36bc88acb6
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_TITLE: '[Lighthouse] PR Check SUCCESS ✅'
           MSG_MINIMAL: true
@@ -58,7 +58,6 @@ jobs:
           status: ${{ job.status }}
         env:
           SLACK_COLOR: '#ff0000'
-          SLACK_ICON: https://github.com/hellokitty-coding-club/LGTM-Android/assets/59546818/603efae5-02ba-4065-ba7b-ea36bc88acb6
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_TITLE: '[Lighthouse] Android Build Fail❌'
           MSG_MINIMAL: ref,actions url,event,commit

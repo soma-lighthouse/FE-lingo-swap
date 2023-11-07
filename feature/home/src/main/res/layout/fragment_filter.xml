@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.lighthouse.android.home.viewmodel.HomeViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/filter_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context=".view.FilterFragment">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_back"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/arrow"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/filter_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids=",tv_filter,tv_prefer_country,btn_select_country,click_country,chip_prefer_country,tv_prefer_language,btn_select_language,click_language,tv_prefer_interest,chip_prefer_language,btn_select_hobby,click_interest,rv_interest" />
+
+                <TextView
+                    android:id="@+id/tv_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/filter"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/btn_back"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_back" />
+
+                <TextView
+                    android:id="@+id/tv_prefer_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/prefer_country"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/tv_filter"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_filter" />
+
+                <ImageButton
+                    android:id="@+id/btn_select_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/next_btn"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_prefer_country"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_prefer_country" />
+
+                <View
+                    android:id="@+id/click_country"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toTopOf="@id/tv_prefer_country" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_prefer_country"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toEndOf="@+id/btn_select_language"
+                    app:layout_constraintStart_toStartOf="@+id/tv_prefer_country"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_prefer_country"
+                    app:setUpChip="@{viewModel.countryNameList}"
+                    app:singleSelection="true" />
+
+                <TextView
+                    android:id="@+id/tv_prefer_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/prefer_language"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/chip_prefer_country"
+                    app:layout_constraintTop_toBottomOf="@+id/chip_prefer_country" />
+
+                <ImageButton
+                    android:id="@+id/btn_select_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/next_btn"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_prefer_language"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_prefer_language" />
+
+                <View
+                    android:id="@+id/click_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toTopOf="@id/tv_prefer_language" />
+
+                <TextView
+                    android:id="@+id/tv_prefer_interest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/prefer_interest"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/chip_prefer_language"
+                    app:layout_constraintTop_toBottomOf="@+id/chip_prefer_language" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_prefer_language"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    app:flow_horizontalStyle="spread_inside"
+                    app:flow_wrapMode="aligned"
+                    app:layout_constraintEnd_toEndOf="@+id/btn_select_country"
+                    app:layout_constraintStart_toStartOf="@+id/tv_prefer_language"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_prefer_language"
+                    app:setUpChip="@{viewModel.languageNameList}" />
+
+                <ImageButton
+                    android:id="@+id/btn_select_hobby"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/next_btn"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_prefer_interest"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_prefer_interest" />
+
+                <View
+                    android:id="@+id/click_interest"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    app:layout_constraintTop_toTopOf="@id/tv_prefer_interest" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_interest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginBottom="80dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_prefer_interest"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:itemCount="10"
+                    tools:listitem="@layout/interest_list_tile" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <View
+            android:id="@+id/bottom_rectangle"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="16dp"
+            android:background="@color/white" />
+
+        <Button
+            android:id="@+id/btn_apply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/custom_button"
+            android:elevation="9dp"
+            android:onClick="@{() -> viewModel.uploadFilterSetting()}"
+            android:text="@string/apply" />
+
+
+        <ProgressBar
+            android:id="@+id/pb_filter"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+</layout>

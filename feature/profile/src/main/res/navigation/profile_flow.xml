@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/profile_flow"
+    app:startDestination="@id/profileFragment">
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.lighthouse.profile.ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_myQuestionsFragment"
+            app:destination="@id/myQuestionsFragment"
+            app:enterAnim="@anim/nav_default_pop_enter_anim"
+            app:exitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <argument
+            android:name="path"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="baseUrl"
+            android:defaultValue=""
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/myQuestionsFragment"
+        android:name="com.lighthouse.profile.view.MyQuestionsFragment"
+        tools:layout="@layout/fragment_my_questions">
+        <deepLink
+            android:id="@+id/deepLink"
+            android:autoVerify="true"
+            app:uri="https://lingoswap.net/profile/myQuestions?remainingPath={remainingPath}&amp;baseUrl={baseUrl}" />
+        <argument
+            android:name="remainingPath"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="baseUrl"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
+
+</navigation>

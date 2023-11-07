@@ -8,6 +8,9 @@ build/
 
 # Local configuration file (sdk path, etc)
 local.properties
+lighthouse.properties
+credentials.json
+output-metadata.json
 
 # Log/OS Files
 *.log

@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.lighthouse.profile.viewmodel.ProfileViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                tools:context=".view.DetailProfileFragment">
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/tb_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:menu="@menu/profile_toolbar_menu"
+                    app:setUpMenu="@{viewModel}" />
+
+                <TextView
+                    android:id="@+id/btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:onClick="@{() -> viewModel.saveProfile()}"
+                    android:text="@string/save"
+                    android:textColor="@color/main"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_name_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_name_title" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_back"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/arrow"
+                    android:enabled="@{!viewModel.isLoading()}"
+                    app:layout_constraintStart_toStartOf="@id/tb_profile"
+                    app:layout_constraintTop_toTopOf="@id/tb_profile" />
+
+                <TextView
+                    android:id="@+id/tv_name_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewModel.userProfile.name}"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tb_profile"
+                    app:layout_constraintEnd_toEndOf="@id/tb_profile"
+                    app:layout_constraintStart_toStartOf="@id/tb_profile"
+                    app:layout_constraintTop_toTopOf="@id/tb_profile"
+                    tools:text="Lousie" />
+
+
+                <ImageView
+                    android:id="@+id/iv_profile_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="56dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tb_profile"
+                    app:setUpImage="@{viewModel.userProfile.profileImageUri}"
+                    tools:src="@drawable/placeholder" />
+
+
+                <RelativeLayout
+                    android:id="@+id/rl_camera"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="20dp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_profile_img"
+                    app:layout_constraintEnd_toEndOf="@id/guideline2">
+
+                    <View
+                        android:id="@+id/colorOverlay2"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/stroke_circle"
+                        app:civ_border_color="@color/black"
+                        app:civ_border_width="1dp" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/iv_camera"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/camera_fill" />
+
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/click_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_profile_img"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_profile_img" />
+
+                <TextView
+                    android:id="@+id/tv_profile_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@{viewModel.userProfile.name}"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_profile_img"
+                    tools:text="testing" />
+
+                <ImageView
+                    android:id="@+id/iv_flag"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
+                    app:setUpFlag="@{viewModel.userProfile.region}"
+                    app:size="@{null}"
+                    tools:src="@drawable/kr" />
+
+                <TextView
+                    android:id="@+id/tv_nation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="@{viewModel.userProfile.region}"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_flag"
+                    app:layout_constraintStart_toEndOf="@+id/iv_flag"
+                    app:layout_constraintTop_toTopOf="@+id/iv_flag"
+                    tools:text="Korea" />
+
+                <EditText
+                    android:id="@+id/tv_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:background="@drawable/edit_box"
+                    android:enabled="@{viewModel.isEdit}"
+                    android:padding="10dp"
+                    android:textColor="#7b7b7b"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_flag"
+                    app:observer="@{viewModel.saveObserver}"
+                    app:setUpDescription="@{viewModel.userProfile}"
+                    tools:text="Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. " />
+
+                <!--                <View-->
+                <!--                    android:id="@+id/line1"-->
+                <!--                    android:layout_width="0dp"-->
+                <!--                    android:layout_height="1dp"-->
+                <!--                    android:layout_margin="20dp"-->
+                <!--                    android:background="#f5f5f5"-->
+                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+                <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@id/tv_description" />-->
+
+                <!--                <TextView-->
+                <!--                    android:id="@+id/tv_occupation_title"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_margin="20dp"-->
+                <!--                    android:text="@string/occupation"-->
+                <!--                    android:textSize="14sp"-->
+                <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@id/line1" />-->
+
+                <!--                <TextView-->
+                <!--                    android:id="@+id/tv_occupation"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginHorizontal="20dp"-->
+                <!--                    android:layout_marginVertical="10dp"-->
+                <!--                    android:text="@string/no_occupation"-->
+                <!--                    android:textColor="@color/brown_grey"-->
+                <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@id/tv_occupation_title" />-->
+
+                <View
+                    android:id="@+id/line2"
+                    android:layout_width="0dp"
+                    android:layout_height="4dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/very_light_pink"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.4"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_description" />
+
+                <TextView
+                    android:id="@+id/tv_language_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/language_and_level"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/line2" />
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_edit_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/side_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_language_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_language_title" />
+
+                <View
+                    android:id="@+id/click_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_language_title"
+                    app:layout_constraintTop_toTopOf="@id/tv_language_title" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_language_title"
+                    app:setUpChip="@{viewModel.languageList}" />
+
+                <View
+                    android:id="@+id/line3"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_margin="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="#f5f5f5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chip_language" />
+
+
+                <TextView
+                    android:id="@+id/tv_country_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="@string/interest_country"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/line3" />
+
+                <View
+                    android:id="@+id/click_country"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@android:color/transparent"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_country_title"
+                    app:layout_constraintTop_toTopOf="@id/tv_country_title" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_edit_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/side_arrow"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_country_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_country_title" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_country"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_country_title"
+                    app:setUpChip="@{viewModel.countryList}" />
+
+                <View
+                    android:id="@+id/line4"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_margin="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="#f5f5f5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chip_country" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/line4">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/collapse_interest"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="80dp"
+                        app:layout_constraintBottom_toTopOf="@id/bottom_rectangle"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/line4">
+
+                        <TextView
+                            android:id="@+id/tv_interest"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:text="@string/interest"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <View
+                            android:id="@+id/click_interest"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:background="@android:color/transparent"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_interest"
+                            app:layout_constraintTop_toTopOf="@id/tv_interest" />
+
+                        <View
+                            android:id="@+id/click_interest2"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:background="@android:color/transparent"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_interest"
+                            app:layout_constraintTop_toTopOf="@id/tv_interest" />
+
+                        <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/btn_interest"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:background="@drawable/side_arrow"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_interest"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/tv_interest" />
+
+                        <androidx.appcompat.widget.AppCompatImageButton
+                            android:id="@+id/btn_fold_interest"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="20dp"
+                            android:background="@drawable/up_arrow"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/tv_interest" />
+
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cv_interest"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="20dp"
+                            android:layout_marginEnd="20dp"
+                            app:cardCornerRadius="10dp"
+                            app:cardElevation="0dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@id/tv_interest"
+                            app:layout_constraintTop_toBottomOf="@id/tv_interest"
+                            app:strokeColor="@color/very_light_pink"
+                            app:strokeWidth="1dp">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/rv_interest"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:itemCount="2"
+                                    tools:listitem="@layout/interest_list_tile" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <androidx.constraintlayout.widget.Group
+                            android:id="@+id/interest_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="@{viewModel.isEdit ? View.VISIBLE : View.GONE}"
+                            app:constraint_referenced_ids="click_interest2, btn_interest" />
+
+                        <androidx.constraintlayout.widget.Group
+                            android:id="@+id/interest_fold_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="@{viewModel.isEdit ? View.GONE : View.VISIBLE}"
+                            app:constraint_referenced_ids="click_interest, btn_fold_interest" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{viewModel.isLoading ? View.GONE : View.VISIBLE}"
+                    app:constraint_referenced_ids="tv_nation,chip_language,tv_country_title,tv_description,iv_profile_img,line3,line2,iv_flag,chip_country,line4,,tv_profile_name,tv_name_title,tv_language_title,cardView" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/edit_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{viewModel.isEdit ? View.VISIBLE : View.GONE}"
+                    app:constraint_referenced_ids="rl_camera, btn_save, click_profile, click_country, click_language, btn_edit_country, btn_edit_language" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.9" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <View
+            android:id="@+id/bottom_rectangle"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:visibility="@{!viewModel.isLoading &amp;&amp; !viewModel.isMe &amp;&amp; !viewModel.chat ? View.VISIBLE : View.GONE}" />
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            android:background="@drawable/custom_button"
+            android:elevation="9dp"
+            android:text="@string/send_msg"
+            android:visibility="@{!viewModel.isLoading &amp;&amp; !viewModel.isMe &amp;&amp; !viewModel.chat ? View.VISIBLE : View.GONE}" />
+
+        <ProgressBar
+            android:id="@+id/pb_detail_loading"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}" />
+
+    </RelativeLayout>
+</layout>

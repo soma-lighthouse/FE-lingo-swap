@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <style name="SpinnerArrow" parent="Widget.AppCompat.Spinner">
+        <item name="overlapAnchor">true</item>
+        <item name="android:background">@drawable/down_arrow</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+</resources>

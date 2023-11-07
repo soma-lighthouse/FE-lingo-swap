@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/home_flow">
+
+    <include app:graph="@navigation/home_flow" />
+    <include app:graph="@navigation/chats_flow" />
+    <include app:graph="@navigation/board_flow" />
+    <include app:graph="@navigation/profile_flow" />
+    <include app:graph="@navigation/profile_detail_flow" />
+
+    <action
+        android:id="@+id/action_global_home_flow"
+        app:destination="@id/home_flow"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popUpTo="@id/main_nav_graph"
+        app:popUpToSaveState="true"
+        app:restoreState="true" />
+
+    <action
+        android:id="@+id/action_global_chat_flow"
+        app:destination="@id/chats_flow"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popUpTo="@id/main_nav_graph">
+        <argument
+            android:name="channelUrl"
+            app:argType="string" />
+
+        <argument
+            android:name="path"
+            app:argType="string" />
+
+        <argument
+            android:name="baseUrl"
+            app:argType="string" />
+
+    </action>
+
+    <action
+        android:id="@+id/action_global_board_flow"
+        app:destination="@id/board_flow"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popUpTo="@id/main_nav_graph" />
+
+    <action
+        android:id="@+id/action_global_profile_flow"
+        app:destination="@id/profile_flow"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popUpTo="@id/main_nav_graph">
+        <argument
+            android:name="path"
+            app:argType="string" />
+        <argument
+            android:name="baseUrl"
+            app:argType="string" />
+    </action>
+
+</navigation>

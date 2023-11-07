@@ -9,13 +9,16 @@ android {
     namespace = "com.lighthouse.android.data"
 
     buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+        debug {
+            consumerProguardFile("proguard-rules.pro")
         }
+
+        release {
+            consumerProguardFile("proguard-rules.pro")
+        }
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -23,9 +26,11 @@ dependencies {
     implementation(project(":domain"))
 
     implementation(libs.hilt)
+    implementation(libs.firebase.bug.fix)
+    implementation(libs.firebase.config)
     kapt(libs.hilt.kapt)
-    implementation(libs.bundles.basic.test)
-    implementation(libs.bundles.retrofit)
-    implementation(libs.bundles.okhttp)
-    implementation(libs.bundles.gson)
+    api(libs.bundles.basic.test)
+    api(libs.bundles.retrofit)
+    api(libs.bundles.okhttp)
+    api(libs.bundles.gson)
 }

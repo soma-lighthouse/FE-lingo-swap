@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?><!-- custom_dialog_layout.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/turnOffAlarmButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00FFFFFF"
+        android:text="Turn off alarm"
+        android:textColor="@color/black"
+        android:textStyle="normal" />
+
+    <Button
+        android:id="@+id/leaveChannelButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00FFFFFF"
+        android:text="Leave channel"
+        android:textColor="@color/black"
+        android:textStyle="normal" />
+
+</LinearLayout>
