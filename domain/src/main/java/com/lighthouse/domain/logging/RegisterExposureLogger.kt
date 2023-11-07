@@ -8,11 +8,11 @@ class RegisterExposureLogger(
 ) : ExposureScheme() {
     init {
         setLoggingScheme(
-            eventLogName = "exposure_log",
+            eventLogName = "login_time",
             screenName = "register_screen",
             logVersion = 1,
             logData = mutableMapOf(
-                "stayTime" to stayTime
+                "duration" to stayTime
             )
         )
     }

@@ -21,7 +21,7 @@ fun makeAdapter(
             val binding = viewHolder.binding
 
             viewHolder.itemView.setOnClickListener {
-                navigateToProfile(item.id, item.name, item.region.name)
+                navigateToProfile(item.id, item.name, item.region.code)
             }
 
             binding.setVariable(BR.item, item)

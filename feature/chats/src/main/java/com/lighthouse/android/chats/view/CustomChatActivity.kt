@@ -39,7 +39,7 @@ class CustomChatActivity @Inject constructor() : ChannelActivity(), ToFlowNaviga
         viewModel.sendQuestion.observe(this) {
             if (it != null && endTime == 0.0) {
                 endTime = System.currentTimeMillis().toDouble()
-                viewModel.sendQuestionInteractLogging(endTime - startTime)
+                viewModel.sendQuestionInteractLogging(endTime - startTime, it)
             }
         }
     }

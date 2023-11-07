@@ -27,6 +27,8 @@ import kotlinx.coroutines.launch
 class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_filter) {
     private val viewModel: HomeViewModel by activityViewModels()
     private var first = true
+    private var startTime: Double = 0.0
+    private var endTime: Double = 0.0
 
     private lateinit var adapter: SimpleListAdapter<InterestVO, InterestListTileBinding>
 
@@ -42,13 +44,24 @@ class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_
         observeResult()
     }
 
+    override fun onStart() {
+        super.onStart()
+        startTime = System.currentTimeMillis().toDouble()
+    }
+
     private fun observeResult() {
-        viewModel.changes.observe(viewLifecycleOwner) {
-            if (it) {
-                context.toast(getString(com.lighthouse.android.common_ui.R.string.upload_success))
-                findNavController().popBackStack()
-            } else {
-                context.toast(getString(com.lighthouse.android.common_ui.R.string.filter_error))
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.changes.collect {
+                    if (it) {
+                        context.toast(getString(com.lighthouse.android.common_ui.R.string.upload_success))
+                        endTime = System.currentTimeMillis().toDouble()
+                        viewModel.sendFilterClick(endTime - startTime)
+                        findNavController().popBackStack()
+                    } else {
+                        context.toast(getString(com.lighthouse.android.common_ui.R.string.filter_error))
+                    }
+                }
             }
         }
     }

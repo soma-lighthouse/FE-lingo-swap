@@ -120,11 +120,11 @@ class HomeFragment @Inject constructor() :
 
             is UiState.Success<*> -> {
                 binding.rvHome.setVisible()
-                if (uiState.data is List<*>) {
+                if (uiState.data is List<*> && (uiState.data as List<*>).all { it is ProfileVO }) {
                     profileList.add(ProfileVO())
                     profileList.addAll(uiState.data as List<ProfileVO>)
+                    adapter.submitList(profileList)
                 }
-                adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
                 binding.fabFilter.setVisible()
                 viewModel.resetFilterState()
@@ -148,8 +148,11 @@ class HomeFragment @Inject constructor() :
                 isChat = Pair("isChat", false)
             )
             clickCount += 1
+
+
             clickTime = System.currentTimeMillis().toDouble()
-            viewModel.sendHomeClick(name, region, clickTime - startTime, clickCount)
+            viewModel.sendHomeClick(userId, name, region, clickTime - startTime, clickCount)
+
         }
         binding.rvHome.adapter = adapter
     }

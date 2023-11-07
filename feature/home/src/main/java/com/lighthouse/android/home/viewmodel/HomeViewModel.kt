@@ -5,7 +5,6 @@ import android.text.SpannableStringBuilder
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableInt
 import androidx.databinding.ObservableList
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.lighthouse.android.common_ui.base.BaseViewModel
 import com.lighthouse.android.common_ui.listener.InterestListener
@@ -14,8 +13,10 @@ import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.android.home.util.getHomeTitle
+import com.lighthouse.domain.entity.response.FilterVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
+import com.lighthouse.domain.logging.FilterInteractLogger
 import com.lighthouse.domain.logging.MatchingTimeAndCountLogger
 import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.domain.repository.ProfileRepository
@@ -23,8 +24,11 @@ import com.lighthouse.swm_logging.SWMLogging
 import com.lighthouse.swm_logging.logging_scheme.ClickScheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
@@ -39,13 +43,14 @@ class HomeViewModel @Inject constructor(
     application: Application
 ) : BaseViewModel(dispatcherProvider, application), InterestListener {
     private var userProfiles = listOf<ProfileVO>()
+    private lateinit var prevFilter: FilterVO
     var next: Int? = null
 
     private val _filter: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val filter: StateFlow<UiState> = _filter.asStateFlow()
 
-    private val _changes = MutableLiveData<Boolean>()
-    val changes: LiveData<Boolean> = _changes
+    private val _changes = MutableSharedFlow<Boolean>()
+    val changes: SharedFlow<Boolean> = _changes.asSharedFlow()
 
     val countryNameList: ObservableList<String> = ObservableArrayList()
 
@@ -97,25 +102,29 @@ class HomeViewModel @Inject constructor(
                     homeRepository.saveLanguageVO(it.languages)
                     homeRepository.saveCountryVO(it.countries)
                     homeRepository.saveInterestVO(it.interests)
+                    languageNameList.clear()
+                    countryNameList.clear()
                     languageNameList.addAll(it.languages.map { "${it.name}/LV${it.level}" })
                     countryNameList.addAll(it.countries.map { it.name })
+                    prevFilter = it
                     _filter.value = UiState.Success(it.interests)
                 }
         }
     }
 
     fun uploadFilterSetting() {
-        if (checkFilter()) {
-            _changes.value = false
-            return
-        }
         onIO {
+            if (checkFilter()) {
+                _changes.emit(false)
+                return@onIO
+            }
+
             homeRepository.uploadFilterSetting()
                 .catch {
                     _filter.value = handleException(it)
                 }
                 .collect {
-                    _changes.value = it
+                    _changes.emit(it)
                     if (it) {
                         next = null
                         userProfiles = emptyList()
@@ -158,12 +167,21 @@ class HomeViewModel @Inject constructor(
         _filter.value = UiState.Loading
     }
 
-    fun sendHomeClick(name: String, region: String, clickTime: Double, clickCount: Int) {
-        val scheme = getHomeClickScheme(name, region, clickTime, clickCount)
-        SWMLogging.logEvent(scheme)
+    fun sendHomeClick(
+        opUid: String,
+        name: String,
+        region: String,
+        clickTime: Double,
+        clickCount: Int
+    ) {
+        onIO {
+            val scheme = getHomeClickScheme(opUid, name, region, clickTime, clickCount)
+            SWMLogging.logEvent(scheme)
+        }
     }
 
     private fun getHomeClickScheme(
+        opUid: String,
         name: String,
         region: String,
         clickTime: Double,
@@ -174,6 +192,63 @@ class HomeViewModel @Inject constructor(
             .setRegion(region)
             .setClickTime(clickTime)
             .setClickCount(clickCount)
+            .setOpUid(opUid)
+            .build()
+    }
+
+    fun sendFilterClick(
+        stayTime: Double,
+    ) {
+        onIO {
+            val changedFilter = checkChanges()
+            val scheme = getFilterClickScheme(stayTime, changedFilter)
+            SWMLogging.logEvent(scheme)
+        }
+    }
+
+    private fun checkChanges(): List<String> {
+        val currentFilter = homeRepository.getInterestVO()
+        val changedFilter = mutableListOf<String>()
+        if (currentFilter.size != prevFilter.interests.size) {
+            changedFilter.add("interest")
+        } else {
+            for (i in currentFilter.indices) {
+                if (currentFilter[i].interests != prevFilter.interests[i].interests) {
+                    changedFilter.add("interest")
+                    break
+                }
+            }
+        }
+        if (countryNameList.size != prevFilter.countries.size) {
+            changedFilter.add("country")
+        } else {
+            for (i in countryNameList.indices) {
+                if (countryNameList[i] != prevFilter.countries[i].name) {
+                    changedFilter.add("country")
+                    break
+                }
+            }
+        }
+        if (languageNameList.size != prevFilter.languages.size) {
+            changedFilter.add("language")
+        } else {
+            for (i in languageNameList.indices) {
+                if (languageNameList[i] != "${prevFilter.languages[i].name}/LV${prevFilter.languages[i].level}") {
+                    changedFilter.add("language")
+                    break
+                }
+            }
+        }
+        return changedFilter
+    }
+
+    private fun getFilterClickScheme(
+        stayTime: Double,
+        changedFilter: List<String>,
+    ): FilterInteractLogger {
+        return FilterInteractLogger.Builder()
+            .setStayTime(stayTime)
+            .setChangedFilter(changedFilter)
             .build()
     }
 

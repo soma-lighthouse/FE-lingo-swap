@@ -3,6 +3,7 @@ package com.lighthouse.domain.logging
 import com.lighthouse.swm_logging.logging_scheme.ClickScheme
 
 class MatchingTimeAndCountLogger(
+    opUid: String,
     name: String,
     region: String,
     clickTime: Double,
@@ -10,14 +11,15 @@ class MatchingTimeAndCountLogger(
 ) : ClickScheme() {
     init {
         setLoggingScheme(
-            eventLogName = "normalClick",
+            eventLogName = "profileClick",
             screenName = "home",
             logVersion = 1,
             logData = mutableMapOf(
+                "opUuid" to opUid,
                 "name" to name,
                 "region" to region,
-                "clickTime" to clickTime,
-                "clickCount" to clickCount
+                "duration" to clickTime,
+                "count" to clickCount
             )
         )
     }
@@ -25,6 +27,7 @@ class MatchingTimeAndCountLogger(
     class Builder {
         private lateinit var name: String
         private lateinit var region: String
+        private lateinit var opUid: String
         private var clickTime: Double = 0.0
         private var clickCount: Int = 0
 
@@ -48,8 +51,14 @@ class MatchingTimeAndCountLogger(
             return this
         }
 
+        fun setOpUid(opUid: String): Builder {
+            this.opUid = opUid
+            return this
+        }
+
         fun build(): ClickScheme {
             return MatchingTimeAndCountLogger(
+                opUid,
                 name,
                 region,
                 clickTime,

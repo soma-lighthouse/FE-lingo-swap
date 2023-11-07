@@ -59,14 +59,20 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun getQuestionInteractLogging(stayTime: Double): ChatQuestionInteractLogger {
+    private fun getQuestionInteractLogging(
+        stayTime: Double,
+        question: String,
+        position: Int
+    ): ChatQuestionInteractLogger {
         return ChatQuestionInteractLogger.Builder()
             .setStayTime(stayTime)
+            .setQuestion(question)
+            .setCategory(position)
             .build()
     }
 
-    fun sendQuestionInteractLogging(stayTime: Double) {
-        val scheme = getQuestionInteractLogging(stayTime)
+    fun sendQuestionInteractLogging(stayTime: Double, question: String) {
+        val scheme = getQuestionInteractLogging(stayTime, question, position.value!!)
         SWMLogging.logEvent(scheme)
     }
 
