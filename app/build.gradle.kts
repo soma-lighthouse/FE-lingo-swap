@@ -13,13 +13,11 @@ android {
 
     defaultConfig {
         applicationId = "com.lighthouse.lingo_talk"
-        versionCode = libs.versions.versionCode.get().toInt()
-        versionName = libs.versions.appVersion.get()
     }
 
     buildTypes {
         debug {
-            isMinifyEnabled = false // APK or AAB
+            isMinifyEnabled = true // APK or AAB
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

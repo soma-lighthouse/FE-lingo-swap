@@ -55,6 +55,8 @@
 
 -keep public class com.google.gson.*
 
+-keep class com.lighthouse.domain.entity.** { *;}
+
 ##---------------End: proguard configuration for Gson  ----------
 
 

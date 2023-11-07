@@ -41,7 +41,7 @@
     <string name="enter_name">Enter your name</string>
     <string name="email">Email</string>
     <string name="birthday">Birthday</string>
-    <string name="enter_birthday">e.g. 23/04/2019, 23042019</string>
+    <string name="enter_birthday">e.g. 23/04/2019</string>
     <string name="enter_email">Enter your email</string>
     <string name="nation">Nation</string>
     <string name="age">Age</string>

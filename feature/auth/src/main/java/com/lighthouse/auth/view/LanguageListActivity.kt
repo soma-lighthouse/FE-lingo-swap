@@ -14,7 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class LanguageListActivity : BindingActivity<ActivityLanguageBinding>(R.layout.activity_language) {
     private lateinit var navController: NavController
     private val viewModel: AuthViewModel by viewModels()
-    var isRegister: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +21,7 @@ class LanguageListActivity : BindingActivity<ActivityLanguageBinding>(R.layout.a
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_language) as NavHostFragment
         navController = navHostFragment.navController
 
-        isRegister = intent.getBooleanExtra("isRegister", false)
+        viewModel.isRegister = intent.getBooleanExtra("isRegister", false)
         viewModel.checkLanguageUpdate()
     }
 }

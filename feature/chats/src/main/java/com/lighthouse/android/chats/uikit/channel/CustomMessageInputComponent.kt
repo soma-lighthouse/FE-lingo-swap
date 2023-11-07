@@ -70,6 +70,15 @@ class CustomMessageInputComponent : MessageInputComponent() {
             }
         }
 
+        binding.etMessageInput.setOnClickListener {
+            binding.rvQuestionPanel.setGone()
+            binding.ivQuestion.setColorFilter(
+                ContextCompat.getColor(
+                    context, com.lighthouse.android.common_ui.R.color.brown_grey
+                )
+            )
+        }
+
         binding.etMessageInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // TODO("Not yet implemented")

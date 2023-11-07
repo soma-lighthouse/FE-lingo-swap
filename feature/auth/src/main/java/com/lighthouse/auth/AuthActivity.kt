@@ -20,6 +20,7 @@ import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.constriant.LoginState
 import com.lighthouse.domain.i18n.supportRegions.SupportRegions
 import com.lighthouse.lighthousei18n.I18nManager
+import com.lighthouse.swm_logging.SWMLogging
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import java.util.TimeZone
@@ -56,6 +57,7 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         login()
         handleBackPressed()
         initI18n()
+        initLogging()
         viewModel.clearAllData()
     }
 
@@ -117,6 +119,19 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         })
     }
 
+    private fun initLogging() {
+        Log.d("LingoApplication", "initLogging: ${remoteConfig.getString("LIGHTHOUSE_BASE_URL")}")
+
+        SWMLogging.init(
+            appVersion = BuildConfig.CURRENT_VER,
+            osNameAndVersion = "$ANDROID ${android.os.Build.VERSION.SDK_INT}",
+            baseUrl = remoteConfig.getString("LOG_SERVER_URL"),
+            serverPath = "log",
+            token = "",
+            uuid = getUUID()
+        )
+    }
+
     private fun initI18n() {
         val defaultRegion = Locale.getDefault()
 
@@ -165,5 +180,9 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
             endTime = System.currentTimeMillis().toDouble()
             viewModel.sendRegisterExposureLogging(endTime - startTime)
         }
+    }
+
+    companion object {
+        private const val ANDROID = "Android"
     }
 }

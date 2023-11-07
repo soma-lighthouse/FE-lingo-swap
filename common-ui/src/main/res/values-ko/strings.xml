@@ -46,7 +46,7 @@
     <string name="enter_name">이름을 입력하세요</string>
     <string name="email">이메일</string>
     <string name="birthday">생일</string>
-    <string name="enter_birthday">예: 20190423, 2019/04/23</string>
+    <string name="enter_birthday">예: 23/04/2019</string>
     <string name="enter_email">이메일을 입력하세요</string>
     <string name="nation">국적</string>
     <string name="age">나이</string>

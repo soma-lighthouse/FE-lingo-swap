@@ -18,7 +18,6 @@ import com.lighthouse.lingo_talk.databinding.ActivityMainBinding
 import com.lighthouse.navigation.NavigationFlow
 import com.lighthouse.navigation.Navigator
 import com.lighthouse.navigation.ToFlowNavigatable
-import com.lighthouse.swm_logging.SWMLogging
 import com.sendbird.android.SendbirdChat
 import com.sendbird.android.exception.SendbirdException
 import com.sendbird.android.handler.InitResultHandler
@@ -99,8 +98,6 @@ class MainActivity @Inject constructor() :
         }
         initChatting()
         initRedirect()
-        initLogging()
-
         com.lighthouse.lingo_talk.MyFirebaseMessagingService().getFirebaseToken()
     }
 
@@ -109,20 +106,6 @@ class MainActivity @Inject constructor() :
         if (new) {
             navigateToFlow(NavigationFlow.ChatFlow(intent.getStringExtra("ChannelId") ?: ""))
         }
-
-    }
-
-    private fun initLogging() {
-        Log.d("LingoApplication", "initLogging: ${remoteConfig.getString("LIGHTHOUSE_BASE_URL")}")
-
-        SWMLogging.init(
-            appVersion = BuildConfig.VERSION_NAME,
-            osNameAndVersion = "$ANDROID ${android.os.Build.VERSION.SDK_INT}",
-            baseUrl = remoteConfig.getString("LOG_SERVER_URL"),
-            serverPath = "log",
-            token = "",
-            uuid = getUUID()
-        )
     }
 
     private fun initRedirect() {
@@ -261,9 +244,5 @@ class MainActivity @Inject constructor() :
         }
 
         PushUtils.registerPushHandler(MyFirebaseMessagingService())
-    }
-
-    companion object {
-        private const val ANDROID = "Android"
     }
 }

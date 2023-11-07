@@ -88,6 +88,8 @@ class AuthViewModel @Inject constructor(
     val errorNumber: MutableLiveData<List<Int>> = MutableLiveData()
     val collect: ObservableBoolean = ObservableBoolean()
 
+    var isRegister: Boolean = true
+
     private val _result = MutableStateFlow<UiState>(UiState.Loading)
     val result: StateFlow<UiState> = _result.asStateFlow()
 
@@ -200,7 +202,7 @@ class AuthViewModel @Inject constructor(
         }
         validateInputs()
         val intersect =
-            errorNumber.value?.intersect(setOf(1, 2, 3, 4, 5, 6)) ?: listOf()
+            errorNumber.value?.intersect(setOf(1, 2, 3, 4, 5, 6, 8)) ?: listOf()
         if (intersect.isEmpty()) {
             _changes.value = next
             _changes.value = none
@@ -385,6 +387,9 @@ class AuthViewModel @Inject constructor(
 
     fun onLanguageClick(item: LanguageVO) {
         val languages = selectedLanguage.value?.toMutableList()
+        if (item.code in (languages?.map { it.code } ?: listOf())) {
+            return
+        }
         languages?.let {
             languages[_selectedPosition].name = item.name
             languages[_selectedPosition].code = item.code

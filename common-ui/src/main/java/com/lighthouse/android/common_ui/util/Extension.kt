@@ -108,16 +108,14 @@ fun String.setColor(color: Int): SpannableString {
 }
 
 fun String?.isValidEmail() = !isNullOrEmpty() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
-
 fun String?.isValidBirthday(): Boolean {
     if (isNullOrEmpty()) {
         return false
     }
 
     val formats = arrayOf(
-        "dd/MM/yyyy",
-        "dd-MM-yyyy",
-        "ddMMyyyy"
+        "yyyy-MM-dd",
+        "yyyy/MM/dd"
     )
 
     for (format in formats) {
@@ -127,7 +125,7 @@ fun String?.isValidBirthday(): Boolean {
 
             val minDate = LocalDate.now().minusYears(120)
             val maxDate = LocalDate.now().minusYears(1)
-
+            Log.d("TESTING DATE", parsedDate.toString())
             return !parsedDate.isBefore(minDate) && !parsedDate.isAfter(maxDate)
         } catch (e: Exception) {
             // Ignore and try the next format
