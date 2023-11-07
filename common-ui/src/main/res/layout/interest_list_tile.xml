@@ -5,12 +5,30 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <variable
+            name="item"
+            type="com.lighthouse.domain.entity.response.vo.InterestVO" />
+
+        <variable
+            name="position"
+            type="int" />
+
+        <variable
+            name="listener"
+            type="com.lighthouse.android.common_ui.listener.InterestListener" />
+
+        <variable
+            name="highLight"
+            type="boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/collapse_interest"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:collapseView="@{listener.collapse}">
 
         <TextView
             android:id="@+id/tv_interest_title"
@@ -18,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
+            android:text="@{item.category.name}"
             android:textColor="@color/brownish_grey"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,11 +58,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
+            android:visibility="@{listener.collapse == position ? View.VISIBLE : View.GONE}"
             app:chipSpacingVertical="0dp"
+            app:highLight="@{highLight}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.6"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/top_line" />
+            app:layout_constraintTop_toBottomOf="@+id/top_line"
+            app:selectedInterestVO="@{listener.selectedInterest}"
+            app:setInterestChip="@{item}" />
 
         <View
             android:id="@+id/bottom_line"
@@ -51,11 +74,12 @@
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
             android:background="@color/very_light_pink"
+            android:visibility="@{listener.collapse == position ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chip_interest" />
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_interest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,13 +87,17 @@
             android:background="@drawable/up_arrow"
             app:layout_constraintBottom_toBottomOf="@id/tv_interest_title"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_interest_title" />
+            app:layout_constraintTop_toTopOf="@id/tv_interest_title"
+            app:position="@{position}"
+            app:setAnimation="@{listener.collapse}" />
 
         <View
             android:id="@+id/click_rectangle"
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            app:layout_constraintTop_toTopOf="@id/tv_interest_title" />
+            app:clickCollapse="@{listener.collapse}"
+            app:layout_constraintTop_toTopOf="@id/tv_interest_title"
+            app:position="@{position}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

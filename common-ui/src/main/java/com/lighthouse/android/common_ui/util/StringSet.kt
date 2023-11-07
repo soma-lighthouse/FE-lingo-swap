@@ -12,7 +12,8 @@ class StringSet {
         const val message = "message"
         const val sender = "sender"
         const val name = "name"
-        const val CHANNEL_ID = "CHANNEL_ID"
-        const val CHANNEL_NAME = "CHANNEL_NAME"
+        const val CHANNEL_ID = "com.lighthouse.lingo_talk"
+        const val CHANNEL_NAME = "Lingo_Talk"
+        const val CHANNEL_DESCRIPTION = "Lingo_Talk"
     }
 }

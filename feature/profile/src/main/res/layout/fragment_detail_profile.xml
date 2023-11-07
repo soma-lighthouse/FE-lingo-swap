@@ -6,9 +6,11 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
-            name="item"
-            type="com.lighthouse.domain.entity.response.vo.ProfileVO" />
+            name="viewModel"
+            type="com.lighthouse.profile.viewmodel.ProfileViewModel" />
     </data>
 
     <RelativeLayout
@@ -35,13 +37,15 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:menu="@menu/profile_toolbar_menu" />
+                    app:menu="@menu/profile_toolbar_menu"
+                    app:setUpMenu="@{viewModel}" />
 
                 <TextView
                     android:id="@+id/btn_save"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/margin_small"
+                    android:onClick="@{() -> viewModel.saveProfile()}"
                     android:text="@string/save"
                     android:textColor="@color/main"
                     android:textSize="16sp"
@@ -56,6 +60,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/arrow"
+                    android:enabled="@{!viewModel.isLoading()}"
                     app:layout_constraintStart_toStartOf="@id/tb_profile"
                     app:layout_constraintTop_toTopOf="@id/tb_profile" />
 
@@ -63,7 +68,7 @@
                     android:id="@+id/tv_name_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{item.name}"
+                    android:text="@{viewModel.userProfile.name}"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="@id/tb_profile"
                     app:layout_constraintEnd_toEndOf="@id/tb_profile"
@@ -81,6 +86,7 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tb_profile"
+                    app:setUpImage="@{viewModel.userProfile.profileImageUri}"
                     tools:src="@drawable/placeholder" />
 
 
@@ -124,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
-                    android:text="@{item.name}"
+                    android:text="@{viewModel.userProfile.name}"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -139,6 +145,8 @@
                     android:layout_marginTop="12dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
+                    app:setUpFlag="@{viewModel.userProfile.region}"
+                    app:size="@{null}"
                     tools:src="@drawable/kr" />
 
                 <TextView
@@ -146,7 +154,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:text="@{item.region.name}"
+                    android:text="@{viewModel.userProfile.region}"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_flag"
                     app:layout_constraintStart_toEndOf="@+id/iv_flag"
@@ -159,13 +167,15 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
                     android:background="@drawable/edit_box"
-                    android:enabled="false"
+                    android:enabled="@{viewModel.isEdit}"
                     android:padding="10dp"
                     android:textColor="#7b7b7b"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_flag"
+                    app:observer="@{viewModel.saveObserver}"
+                    app:setUpDescription="@{viewModel.userProfile}"
                     tools:text="Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. " />
 
                 <!--                <View-->
@@ -248,7 +258,8 @@
                     android:layout_marginVertical="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_language_title" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_language_title"
+                    app:setUpChip="@{viewModel.languageList}" />
 
                 <View
                     android:id="@+id/line3"
@@ -299,7 +310,8 @@
                     android:layout_marginVertical="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_country_title" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_country_title"
+                    app:setUpChip="@{viewModel.countryList}" />
 
                 <View
                     android:id="@+id/line4"
@@ -357,7 +369,7 @@
                             app:layout_constraintBottom_toBottomOf="@id/tv_interest"
                             app:layout_constraintTop_toTopOf="@id/tv_interest" />
 
-                        <ImageButton
+                        <androidx.appcompat.widget.AppCompatImageButton
                             android:id="@+id/btn_interest"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -368,7 +380,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@id/tv_interest" />
 
-                        <ImageButton
+                        <androidx.appcompat.widget.AppCompatImageButton
                             android:id="@+id/btn_fold_interest"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -401,6 +413,7 @@
                                     android:id="@+id/rv_interest"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     tools:itemCount="2"
@@ -413,13 +426,14 @@
                             android:id="@+id/interest_group"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:visibility="gone"
+                            android:visibility="@{viewModel.isEdit ? View.VISIBLE : View.GONE}"
                             app:constraint_referenced_ids="click_interest2, btn_interest" />
 
                         <androidx.constraintlayout.widget.Group
                             android:id="@+id/interest_fold_group"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:visibility="@{viewModel.isEdit ? View.GONE : View.VISIBLE}"
                             app:constraint_referenced_ids="click_interest, btn_fold_interest" />
 
 
@@ -430,14 +444,14 @@
                     android:id="@+id/group1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
+                    android:visibility="@{viewModel.isLoading ? View.GONE : View.VISIBLE}"
                     app:constraint_referenced_ids="tv_nation,chip_language,tv_country_title,tv_description,iv_profile_img,line3,line2,iv_flag,chip_country,line4,,tv_profile_name,tv_name_title,tv_language_title,cardView" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/edit_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:visibility="@{viewModel.isEdit ? View.VISIBLE : View.GONE}"
                     app:constraint_referenced_ids="rl_camera, btn_save, click_profile, click_country, click_language, btn_edit_country, btn_edit_language" />
 
                 <androidx.constraintlayout.widget.Guideline
@@ -455,7 +469,8 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/white" />
+            android:background="@color/white"
+            android:visibility="@{!viewModel.isLoading &amp;&amp; !viewModel.isMe &amp;&amp; !viewModel.chat ? View.VISIBLE : View.GONE}" />
 
         <Button
             android:id="@+id/btn_start"
@@ -468,7 +483,8 @@
             android:layout_marginVertical="10dp"
             android:background="@drawable/custom_button"
             android:elevation="9dp"
-            android:text="@string/send_msg" />
+            android:text="@string/send_msg"
+            android:visibility="@{!viewModel.isLoading &amp;&amp; !viewModel.isMe &amp;&amp; !viewModel.chat ? View.VISIBLE : View.GONE}" />
 
         <ProgressBar
             android:id="@+id/pb_detail_loading"
@@ -476,8 +492,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="gone" />
-
+            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}" />
 
     </RelativeLayout>
 </layout>

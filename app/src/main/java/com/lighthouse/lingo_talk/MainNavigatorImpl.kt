@@ -16,9 +16,10 @@ class MainNavigatorImpl : MainNavigator {
     override fun navigateToMain(
         context: Context,
         newChat: Pair<String, Boolean>,
-        channelId: Pair<String, String>
+        channelId: Pair<String, String>,
+        url: Pair<String, String>,
     ): Intent {
-        val intent = context.buildIntent<MainActivity>(newChat, channelId)
+        val intent = context.buildIntent<MainActivity>(newChat, channelId, url)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         return intent
     }
@@ -34,23 +35,20 @@ class MainNavigatorImpl : MainNavigator {
 
     override fun navigateToInterest(
         context: Context,
-        selectedList: Pair<String, HashMap<String, List<String>>>,
     ) =
-        context.buildIntent<InterestListActivity>(selectedList)
+        context.navigateActivity<InterestListActivity>()
 
     override fun navigateToCountry(
         context: Context,
         multiSelect: Pair<String, Boolean>,
-        selectedList: Pair<String, List<String>>,
     ) =
-        context.buildIntent<CountryListActivity>(multiSelect, selectedList)
+        context.navigateActivity<CountryListActivity>(multiSelect)
 
     override fun navigateToLanguage(
         context: Context,
-        selectedList: Pair<String, List<String>>,
-        position: Pair<String, Int>,
+        isRegister: Pair<String, Boolean>
     ) =
-        context.buildIntent<LanguageListActivity>(selectedList, position)
+        context.navigateActivity<LanguageListActivity>(isRegister)
 
     override fun navigateToLogin(context: Context) =
         context.navigateActivity<AuthActivity>()

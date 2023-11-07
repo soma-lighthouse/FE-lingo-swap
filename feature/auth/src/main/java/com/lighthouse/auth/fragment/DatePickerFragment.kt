@@ -6,18 +6,22 @@ import android.os.Bundle
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
+import com.lighthouse.lighthousei18n.I18nManager
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
-class DatePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
+class DatePickerFragment(
+    private val i18nManager: I18nManager
+) : DialogFragment(), DatePickerDialog.OnDateSetListener {
+
     private val calender = Calendar.getInstance()
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         calender[Calendar.YEAR] = year
         calender[Calendar.MONTH] = month
         calender[Calendar.DAY_OF_MONTH] = dayOfMonth
 
-        val selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).format(calender.time)
+        val selectedDate =
+            SimpleDateFormat("dd-MM-yyyy", i18nManager.getLocale()).format(calender.time)
 
         val selectedDateBundle = Bundle()
         selectedDateBundle.putSerializable("Birthday", selectedDate)

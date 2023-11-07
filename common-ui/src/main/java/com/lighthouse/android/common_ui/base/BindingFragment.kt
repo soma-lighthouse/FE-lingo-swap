@@ -15,14 +15,18 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.dialog.showOKDialog
 import com.lighthouse.android.common_ui.util.Injector
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.splitPath
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.domain.constriant.ErrorTypeHandling
 import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.navigation.MainNavigator
+import com.lighthouse.navigation.deepLinkNavigateTo
+import com.lighthouse.navigation.findClassByPath
 import dagger.hilt.android.EntryPointAccessors
 import java.lang.ref.WeakReference
 
@@ -58,24 +62,23 @@ abstract class BindingFragment<T : ViewDataBinding>(
 
     val mainNavigator: MainNavigator by lazy {
         EntryPointAccessors.fromActivity(
-            requireActivity(),
-            Injector.MainNavigatorInjector::class.java
+            requireActivity(), Injector.MainNavigatorInjector::class.java
         ).mainNavigator()
     }
 
     private val sharedPreferences: SharedPreferences by lazy {
         EntryPointAccessors.fromActivity(
-            requireActivity(),
-            Injector.SharedPreferencesInjector::class.java
+            requireActivity(), Injector.SharedPreferencesInjector::class.java
         ).sharedPreferences()
     }
 
     protected fun handleException(uiState: UiState.Error<*>) {
         val exception = uiState.message
-        Log.d("ERROR", "enter handle exception")
+        Log.d("ERROR", uiState.toString())
         if (exception is LighthouseException) {
             when (exception.errorType) {
                 ErrorTypeHandling.TOAST -> {
+                    Log.d("ERROR", "enter toast")
                     context.toast(exception.message.toString())
                 }
 
@@ -114,6 +117,18 @@ abstract class BindingFragment<T : ViewDataBinding>(
         sharedPreferences.edit().clear().apply()
         mainNavigator.navigateToLogin(requireContext())
         requireActivity().finish()
+    }
+
+    protected fun redirectToDestination(base: String, path: String) {
+        Log.d("TESTING PUSH0", path)
+        val split = path.splitPath()
+
+        Log.d("TESTING PUSH1", split.toString())
+        if (split.isEmpty()) return
+        Log.d("TESTING PUSH2", "$base/${split.first()}")
+        val viewType =
+            findClassByPath("$base/${split.first()}", "$base/${split.first()}", split.last())
+        findNavController().deepLinkNavigateTo(viewType)
     }
 
     override fun onDestroyView() {

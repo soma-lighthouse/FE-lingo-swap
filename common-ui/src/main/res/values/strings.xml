@@ -41,7 +41,7 @@
     <string name="enter_name">Enter your name</string>
     <string name="email">Email</string>
     <string name="birthday">Birthday</string>
-    <string name="enter_birthday">e.g. 2019-01-01</string>
+    <string name="enter_birthday">e.g. 23/04/2019</string>
     <string name="enter_email">Enter your email</string>
     <string name="nation">Nation</string>
     <string name="age">Age</string>
@@ -50,12 +50,13 @@
     <string name="female">Female</string>
     <string name="rather_not_tell">Rather not tell</string>
     <string name="unselected">Unselected</string>
-    <string name="introduction_optional">Introduction (optional)</string>
+    <string name="introduction_optional">Introduction</string>
     <string name="introduce_yourself">Introduce yourself</string>
     <string name="next">Next</string>
     <string name="start">Start</string>
     <string name="apply">Apply</string>
     <string name="select_language_level">Select language and level (2/3)</string>
+    <string name="update_language_level">Update language and level</string>
     <string name="language_n_level">Language and level</string>
     <string name="select_prefer_country">Select prefer country (3/3)</string>
     <string name="invalid_email">Wrong email format</string>
@@ -110,8 +111,6 @@
     <string name="home_title_4">chatting</string>
     <string name="home_title_5">!</string>
 
-    <string name="internet_error">No Internet connection</string>
-    <string name="server_error">Something went wrong. Please try again later.</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
 
@@ -124,15 +123,23 @@
     <string name="language_limit">Only up to maximum 5 Language</string>
 
     <string name="invalid_name">Invalid name</string>
+    <string name="invalid_introduction">At least 5 letter</string>
 
     <string name="save">Save</string>
     <string name="term_service">Terms of service</string>
     <string name="term_use">Terms and Conditions</string>
     <string name="term_personal">Privacy Policy</string>
+    <string name="question_upload">question uploaded!</string>
 
     <string name="empty_my_question">Questions have not been uploaded yet!\nPlease begin the process of uploading your question on the board.</string>
 
     <string name="ad_attribution">Ad</string>
     <string name="no_user">User has left the channel</string>
+
+    <string name="internet_error">Please check your internet connection and try again.</string>
+    <string name="server_error">Something went wrong. Please try again later.</string>
+
+    <string name="update_title">Update</string>
+    <string name="update_body">A new version is available. Please update to the latest version.</string>
 
 </resources>

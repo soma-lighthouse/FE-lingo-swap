@@ -14,11 +14,35 @@
             app:destination="@id/myQuestionsFragment"
             app:enterAnim="@anim/nav_default_pop_enter_anim"
             app:exitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <argument
+            android:name="path"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="baseUrl"
+            android:defaultValue=""
+            app:argType="string" />
+
     </fragment>
 
     <fragment
         android:id="@+id/myQuestionsFragment"
         android:name="com.lighthouse.profile.view.MyQuestionsFragment"
-        tools:layout="@layout/fragment_my_questions" />
+        tools:layout="@layout/fragment_my_questions">
+        <deepLink
+            android:id="@+id/deepLink"
+            android:autoVerify="true"
+            app:uri="https://lingoswap.net/profile/myQuestions?remainingPath={remainingPath}&amp;baseUrl={baseUrl}" />
+        <argument
+            android:name="remainingPath"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="baseUrl"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
 
 </navigation>

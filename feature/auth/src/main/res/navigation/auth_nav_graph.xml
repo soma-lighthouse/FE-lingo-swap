@@ -8,24 +8,7 @@
     <fragment
         android:id="@+id/info_fragment"
         android:name="com.lighthouse.auth.fragment.BasicInfoFragment"
-        tools:layout="@layout/fragment_basic_info">
-        <action
-            android:id="@+id/action_info_fragment_to_languageFragment"
-            app:destination="@id/languageFragment"
-            app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/languageFragment"
-        android:name="com.lighthouse.auth.fragment.LanguageFragment"
-        tools:layout="@layout/fragment_language">
-        <action
-            android:id="@+id/action_languageFragment_to_countryFragment"
-            app:destination="@id/countryFragment"
-            app:enterAnim="@anim/nav_default_pop_enter_anim"
-            app:exitAnim="@anim/nav_default_pop_exit_anim" />
-    </fragment>
+        tools:layout="@layout/fragment_basic_info" />
 
     <fragment
         android:id="@+id/countryFragment"
@@ -55,5 +38,13 @@
             app:exitAnim="@anim/nav_default_pop_exit_anim" />
 
     </fragment>
+
+    <include app:graph="@navigation/language_nav_graph" />
+
+    <action
+        android:id="@+id/action_global_language_nav_graph"
+        app:destination="@id/language_nav_graph"
+        app:enterAnim="@anim/nav_default_pop_enter_anim"
+        app:exitAnim="@anim/nav_default_pop_exit_anim" />
 
 </navigation>

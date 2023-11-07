@@ -1,12 +1,14 @@
 package com.lighthouse.android.chats.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.lighthouse.android.common_ui.base.BaseViewModel
 import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
-import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.usecase.ManageChannelUseCase
+import com.lighthouse.domain.logging.ChatQuestionInteractLogger
+import com.lighthouse.domain.repository.ChatRepository
+import com.lighthouse.swm_logging.SWMLogging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,42 +18,63 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    private val chatUseCase: ManageChannelUseCase,
+    private val chatRepository: ChatRepository,
     dispatcherProvider: DispatcherProvider,
-) : BaseViewModel(dispatcherProvider) {
+    application: Application
+) : BaseViewModel(dispatcherProvider, application) {
     private val _question = MutableStateFlow<UiState>(UiState.Loading)
     val question = _question.asStateFlow()
+    private val _questionList: MutableMap<Int, MutableList<String>> = mutableMapOf()
+
+    val position = MutableLiveData(1)
 
     val sendQuestion: MutableLiveData<String> = MutableLiveData()
     var next: MutableList<Int?> = MutableList(7) { null }
-    var page = 1
 
-    fun getQuestion(category: Int) {
+    fun getQuestion() {
+        val category = position.value!!
+        if (next[category] == -1) {
+            return
+        }
         onIO {
-            chatUseCase.getRecommendedQuestions(category, next[category])
+            chatRepository.getRecommendedQuestions(category, next[category])
                 .onStart {
                     _question.value = UiState.Loading
                 }
                 .catch {
                     _question.value = handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            if (it.data!!.nextId == -1) {
-                                page = -1
-                            } else {
-                                next[category] = it.data!!.nextId
-                            }
-                            _question.value = UiState.Success(it.data!!.questions)
-                        }
-
-                        is Resource.Error ->
-                            _question.value = UiState.Error(it.message ?: "Error found")
+                    if (it.nextId == -1) {
+                        next[category] = -1
+                    } else {
+                        next[category] = it.nextId
                     }
+                    val questions = it.questions
+                    if (_questionList[category] == null) {
+                        _questionList[category] = mutableListOf()
+                    }
+                    _questionList[category]?.addAll(questions)
+                    _question.value = UiState.Success(_questionList[category] ?: mutableListOf())
                 }
         }
-
     }
 
+    private fun getQuestionInteractLogging(
+        stayTime: Double,
+        question: String,
+        position: Int
+    ): ChatQuestionInteractLogger {
+        return ChatQuestionInteractLogger.Builder()
+            .setStayTime(stayTime)
+            .setQuestion(question)
+            .setCategory(position)
+            .build()
+    }
 
+    fun sendQuestionInteractLogging(stayTime: Double, question: String) {
+        val scheme = getQuestionInteractLogging(stayTime, question, position.value!!)
+        SWMLogging.logEvent(scheme)
+    }
+
+    fun getQuestionList() = _questionList[position.value!!]
 }

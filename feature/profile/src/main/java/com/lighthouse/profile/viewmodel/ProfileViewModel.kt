@@ -1,25 +1,27 @@
 package com.lighthouse.profile.viewmodel
 
+import android.app.Application
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.LiveData
+import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
+import androidx.databinding.ObservableList
 import androidx.lifecycle.MutableLiveData
 import com.lighthouse.android.common_ui.base.BaseViewModel
+import com.lighthouse.android.common_ui.listener.InterestListener
 import com.lighthouse.android.common_ui.util.DispatcherProvider
-import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
-import com.lighthouse.domain.constriant.Resource
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.request.UploadInterestVO
-import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
-import com.lighthouse.domain.usecase.GetAuthUseCase
-import com.lighthouse.domain.usecase.GetLanguageFilterUseCase
-import com.lighthouse.domain.usecase.GetMyQuestionsUseCase
-import com.lighthouse.domain.usecase.GetProfileUseCase
-import com.lighthouse.domain.usecase.ManageChannelUseCase
-import com.lighthouse.domain.usecase.SaveLanguageFilterUseCase
+import com.lighthouse.domain.repository.AuthRepository
+import com.lighthouse.domain.repository.ChatRepository
+import com.lighthouse.domain.repository.HomeRepository
+import com.lighthouse.domain.repository.ProfileRepository
 import com.lighthouse.domain.usecase.UpdateUserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,133 +31,177 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val profileUseCase: GetProfileUseCase,
-    private val myQuestion: GetMyQuestionsUseCase,
-    private val authUseCase: GetAuthUseCase,
-    private val saveLanguageFilterUseCase: SaveLanguageFilterUseCase,
-    private val getLanguageFilterUseCase: GetLanguageFilterUseCase,
     private val updateProfileUseCase: UpdateUserProfileUseCase,
-    private val manageChannelUseCase: ManageChannelUseCase,
-    dispatcherProvider: DispatcherProvider
-) : BaseViewModel(dispatcherProvider) {
+    private val homeRepository: HomeRepository,
+    private val chatRepository: ChatRepository,
+    private val authRepository: AuthRepository,
+    private val profileRepository: ProfileRepository,
+    dispatcherProvider: DispatcherProvider,
+    application: Application
+) : BaseViewModel(dispatcherProvider, application), InterestListener {
+    val curProfile = ObservableField<ProfileVO>()
 
     private val _detail = MutableStateFlow<UiState>(UiState.Loading)
     val detail = _detail.asStateFlow()
 
-    private val _upload = MutableStateFlow<UiState>(UiState.Loading)
-    val upload = _upload.asStateFlow()
-
-    private val _register = MutableStateFlow<UiState>(UiState.Loading)
-    val register = _register.asStateFlow()
-
     private val _create = MutableStateFlow<UiState>(UiState.Loading)
     val create = _create.asStateFlow()
 
-    private var _languageList: MutableLiveData<List<LanguageVO>> = MutableLiveData(listOf())
-    var languageList: LiveData<List<LanguageVO>> = _languageList
+    private val _error = MutableStateFlow<UiState>(UiState.Loading)
+    val error = _error.asStateFlow()
 
-    var registerInfo = RegisterInfoVO()
-    var profilePath: String? = null
-    var profileUrl: String? = null
-    var userId: String = ""
-    var isMe: Boolean = false
-    var chat: Boolean = false
+    val languageList: ObservableList<String> = ObservableArrayList()
+    val countryList: ObservableList<String> = ObservableArrayList()
+    val saveObserver: ObservableBoolean = ObservableBoolean(false)
+
+    val isEdit = ObservableBoolean(false)
+    var startTime: Double = 0.0
+    val isLoading = ObservableBoolean(true)
+    var isMe = ObservableBoolean(false)
+    var chat = ObservableBoolean(false)
+    var opUid: String = ""
+
+    var userProfile: ObservableField<RegisterInfoVO> = ObservableField()
+
+    private var profileUrl: String? = null
+    private var newFilePath: String? = null
+
     var editMode = false
     var imageUri: Uri? = null
-    var description = ""
     var filePath: String = ""
 
-    var interestList = listOf<UploadInterestVO>()
-    var interestListCode = listOf<UploadInterestVO>()
 
-    var selectedCountryName = listOf<String>()
-    var selectedCountryCode = listOf<String>()
-
-    fun getProfileDetail(userId: String) {
+    fun getProfileDetail() {
         onIO {
-            Log.d("TESTING", userId)
-            profileUseCase.getProfileDetail(userId).catch {
-                _detail.value = handleException(it)
+            profileRepository.getProfileDetail(opUid.ifEmpty { getUUID() }).catch {
+                _error.value = handleException(it)
             }.collect {
-                when (it) {
-                    is Resource.Success<*> -> _detail.emit(UiState.Success(it.data!!))
+                curProfile.set(it)
+                setRegisterInfo(it)
+                languageList.addAll(it.languages.map { "${it.name}/LV${it.level}" })
+                countryList.addAll(it.countries.map { it.name })
+                _detail.value = UiState.Success(it.interests)
 
-                    else -> _detail.emit(UiState.Error(it.message ?: "Error found"))
-                }
+                homeRepository.saveLanguageVO(it.languages)
+                homeRepository.saveCountryVO(it.countries)
+                homeRepository.saveInterestVO(it.interests)
+                isLoading.set(false)
             }
         }
     }
 
-    fun setList(profileVO: ProfileVO) {
-        selectedCountryCode = profileVO.countries.map { it.code }
-        selectedCountryName = profileVO.countries.map { it.name }
-        interestList = profileVO.interests.map {
-            UploadInterestVO(category = it.category.code, interests = it.interests.map { it.code })
-        }
-        _languageList.value = profileVO.languages
-    }
-
-    fun updateLanguageList(list: List<LanguageVO>) {
-        _languageList.postValue(list)
-    }
-
-    fun getPreSignedUrl(fileName: String) {
-        onIO {
-            authUseCase.getPreSignedURL(fileName).catch {
-                _upload.value = handleException(it)
-            }.collect {
-                when (it) {
-                    is Resource.Success -> _upload.emit(UiState.Success(it.data!!))
-                    else -> _upload.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                }
-            }
-        }
-    }
-
-    fun saveUserDetail() {
-        registerInfo.profileImageUri?.let {
-            val path = extractPath(it)
-            registerInfo.profileImageUri = path
-        }
-
-        val newProfile = RegisterInfoVO(
-            profileImageUri = profilePath,
-            description = description,
-            preferredInterests = interestListCode,
-            languages = languageList.value?.map {
-                mapOf("code" to it.code, "level" to it.level)
+    private fun setRegisterInfo(data: ProfileVO) {
+        val info = RegisterInfoVO(uuid = data.id,
+            name = data.name,
+            region = data.region.code,
+            description = data.description,
+            profileImageUri = data.profileImageUri,
+            preferredCountries = data.countries.map { it.code },
+            preferredInterests = data.interests.map {
+                UploadInterestVO(it.category.code, it.interests.map { interest ->
+                    interest.code
+                })
             },
-            preferredCountries = selectedCountryCode
-        )
+            languages = data.languages.map {
+                mapOf("code" to it.code, "level" to it.level)
+            })
+        userProfile.set(info)
+    }
 
-        Log.d("TESTING", newProfile.toString())
+    fun getDataFromLocal() {
+        val info = userProfile.get()
+        info?.let {
+            languageList.clear()
+            countryList.clear()
+            val language = homeRepository.getLanguageVO()
+            val country = homeRepository.getCountryVO()
+            val interest = homeRepository.getInterestVO()
+            val value = userProfile.get()
+            value?.let {
+                it.languages = language.map { l -> mapOf("code" to l.code, "level" to l.level) }
+                it.preferredCountries = country.map { c -> c.code }
+                it.preferredInterests = interest.map { i ->
+                    UploadInterestVO(i.category.code, i.interests.map { interest ->
+                        interest.code
+                    })
+                }
+                userProfile.set(it)
+            }
+            languageList.addAll(language.map { "${it.name}/LV${it.level}" })
+            countryList.addAll(country.map { it.name })
+            _detail.value = UiState.Success(interest)
+        }
+    }
+
+
+    fun getPreSignedUrl() {
+        onIO {
+            authRepository.getPreSignedURL(getFileName(filePath)).catch {
+                _error.value = handleException(it)
+            }.collect {
+                profileUrl = it
+                newFilePath = getFileName(filePath)
+            }
+        }
+    }
+
+    fun saveProfile() {
+        isEdit.set(false)
+        isLoading.set(true)
+        if (!newFilePath.isNullOrEmpty()) {
+            uploadImg(filePath)
+        }
+        saveUserDetail()
+    }
+
+    private fun saveUserDetail() {
+        saveObserver.set(true)
+        val endTime = System.currentTimeMillis().toDouble()
+        newFilePath?.let {
+            val change = userProfile.get()
+            change?.let { r ->
+                r.profileImageUri = it
+            }
+            userProfile.set(change)
+        }
 
         onIO {
             try {
-                Log.d("TESTING DETAIL", "${registerInfo}, ${newProfile}")
-                val result = updateProfileUseCase.invoke(registerInfo, newProfile)
-                _register.emit(UiState.Success(result))
+                if (userProfile.get()!!.profileImageUri == curProfile.get()!!.profileImageUri) {
+                    val change = userProfile.get()
+                    change?.let { r ->
+                        r.profileImageUri = getFileName(curProfile.get()!!.profileImageUri)
+                    }
+                    userProfile.set(change)
+                }
+                updateProfileUseCase.invoke(
+                    curProfile.get()!!,
+                    userProfile.get()!!,
+                    endTime - startTime
+                )
             } catch (e: Exception) {
-                _register.value = handleException(e)
+                _error.value = handleException(e)
+            } finally {
+                saveObserver.set(false)
+                isLoading.set(false)
             }
         }
     }
 
-    private fun extractPath(profilePath: String): String? {
-        val regex = Regex("/${getUUID()}.*")
-        val matchResult = regex.find(profilePath)
-        return matchResult?.value
+    private fun getFileName(uri: String): String {
+        if (uri == "") {
+            return ""
+        }
+        val fileName = uri.substringAfterLast("/")
+        return "/${getUUID()}/${fileName}"
     }
 
-    fun uploadImg(filePath: String) {
+    private fun uploadImg(filePath: String) {
         onIO {
-            authUseCase.uploadImg(profileUrl!!, filePath).catch {
-                _register.value = handleException(it)
+            authRepository.uploadImg(profileUrl!!, filePath).catch {
+                _error.value = handleException(it)
             }.collect {
-                when (it) {
-                    is Resource.Success -> _register.value = UiState.Success(it.data!!)
-                    else -> _register.value = UiState.Error(it.message ?: StringSet.error_msg)
-                }
+//                _register.value = UiState.Success(it)
             }
         }
     }
@@ -163,47 +209,33 @@ class ProfileViewModel @Inject constructor(
 
     fun getMyQuestions() {
         onIO {
-            myQuestion.invoke().catch {
+            profileRepository.getMyQuestions().catch {
                 _detail.value = handleException(it)
             }.collect {
                 Log.d("TESTING", it.toString())
-                when (it) {
-                    is Resource.Success<*> -> _detail.emit(UiState.Success(it.data!!))
-                    else -> _detail.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                }
+                _detail.emit(UiState.Success(it))
             }
         }
     }
 
     fun createChannel() {
         onIO {
-            manageChannelUseCase.createChannel(userId).catch {
+            chatRepository.createChannel(opUid).catch {
                 _detail.value = handleException(it)
             }.collect {
-                when (it) {
-                    is Resource.Success<*> -> _create.emit(UiState.Success(it.data!!))
-                    else -> _detail.emit(UiState.Error(it.message ?: StringSet.error_msg))
-                }
+                _create.emit(UiState.Success(it))
             }
         }
     }
 
-    fun saveLanguageFilter(languages: List<LanguageVO>) {
-        onIO {
-            saveLanguageFilterUseCase.invoke(languages)
-        }
-    }
+    fun getUUID() = profileRepository.getUUID()
 
-    fun getLanguageFilter() = getLanguageFilterUseCase.invoke()
+    fun setNotification(b: Boolean) = profileRepository.setPushEnabled(b)
 
-    fun getUUID() = profileUseCase.getUUID()
+    fun getNotification() = profileRepository.getPushEnabled()
 
-    fun setNotification(b: Boolean) = profileUseCase.setNotification(b)
+    override val selectedInterest: MutableLiveData<List<InterestVO>> =
+        MutableLiveData<List<InterestVO>>()
 
-    fun getNotification() = profileUseCase.getNotification()
-
-    fun resetDetail() {
-        _detail.value = UiState.Loading
-    }
-
+    override val collapse: ObservableInt = ObservableInt(0)
 }

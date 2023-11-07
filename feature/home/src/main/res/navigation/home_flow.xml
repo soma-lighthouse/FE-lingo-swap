@@ -12,6 +12,7 @@
             app:destination="@id/filterFragment"
             app:enterAnim="@anim/nav_default_pop_enter_anim"
             app:exitAnim="@anim/nav_default_pop_exit_anim" />
+
     </fragment>
 
     <fragment
@@ -23,6 +24,11 @@
             app:destination="@id/homeFragment"
             app:enterAnim="@anim/nav_default_pop_enter_anim"
             app:exitAnim="@anim/nav_default_pop_exit_anim" />
+
+        <deepLink
+            android:id="@+id/deepLink"
+            android:autoVerify="true"
+            app:uri="https://lingoswap.net/profile/myQuestions/filter?remainingPath={remainingPath}&amp;baseUrl={baseUrl}" />
 
     </fragment>
 

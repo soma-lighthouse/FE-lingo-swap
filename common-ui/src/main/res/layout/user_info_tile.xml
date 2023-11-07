@@ -34,7 +34,7 @@
                 android:layout_marginTop="@dimen/margin_normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-
+                app:setUpImage="@{item.profileImageUri}"
                 tools:src="@drawable/placeholder" />
 
             <TextView
@@ -59,6 +59,8 @@
                 android:layout_marginTop="-25dp"
                 app:layout_constraintStart_toStartOf="@+id/iv_profile_img"
                 app:layout_constraintTop_toBottomOf="@+id/iv_profile_img"
+                app:setUpFlag="@{item.region.code}"
+                app:size="@{null}"
                 tools:layout_height="25dp"
                 tools:layout_width="25dp"
                 tools:src="@drawable/placeholder" />
@@ -69,11 +71,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="@dimen/margin_normal"
-                android:text="@{item.description}"
                 android:textColor="@color/brownish_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
                 app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
+                app:setUpText="@{item.description}"
                 tools:text="introduction" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -90,7 +92,8 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_intro"
                 app:layout_constraintTop_toBottomOf="@+id/tv_profile_intro"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="1.0"
+                app:setUpLanguage="@{item.languages}" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

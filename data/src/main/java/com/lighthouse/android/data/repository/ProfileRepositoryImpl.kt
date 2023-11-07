@@ -4,9 +4,8 @@ import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.mapping.toUpdateFilterDTO
 import com.lighthouse.android.data.model.mapping.toUpdateProfileDTO
 import com.lighthouse.android.data.repository.datasource.ProfileRemoteDataSource
-import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.entity.request.RegisterInfoVO
-import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.MyQuestionsVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.repository.ProfileRepository
@@ -18,58 +17,45 @@ class ProfileRepositoryImpl @Inject constructor(
     private val datasource: ProfileRemoteDataSource,
     private val local: LocalPreferenceDataSource,
 ) : ProfileRepository {
-    override fun getProfileDetail(uuid: String): Flow<Resource<ProfileVO>> =
+    override fun getProfileDetail(uuid: String): Flow<ProfileVO> =
         datasource.getProfileDetail(uuid)
             .map {
-                when (it) {
-                    is Resource.Success -> Resource.Success(it.data!!.toVO())
-                    else -> throw LighthouseException(null, null).addErrorMsg()
-                }
+                it.toVO()
             }
 
-    override fun getMyQuestions(): Flow<Resource<List<MyQuestionsVO>>> =
-        datasource.getMyQuestions(local.getUUID() ?: "")
+    override fun getMyQuestions(): Flow<List<MyQuestionsVO>> =
+        datasource.getMyQuestions(local.getString(LocalKey.USER_ID) ?: "")
             .map {
-                when (it) {
-                    is Resource.Success -> Resource.Success(it.data!!.myQuestionList.map { questions ->
-                        questions.toVO()
-                    })
-
-                    else -> throw LighthouseException(null, null).addErrorMsg()
+                it.myQuestionList.map { questions ->
+                    questions.toVO()
                 }
             }
 
     override fun updateProfile(newProfile: RegisterInfoVO): Flow<Boolean> {
-        return datasource.updateProfile(local.getUUID() ?: "", newProfile.toUpdateProfileDTO())
-            .map {
-                when (it) {
-                    is Resource.Success -> true
-                    else -> false
-                }
-            }
+        return datasource.updateProfile(
+            local.getString(LocalKey.USER_ID) ?: "",
+            newProfile.toUpdateProfileDTO()
+        )
     }
 
     override fun updateFilter(newFilter: RegisterInfoVO): Flow<Boolean> {
-        return datasource.updateFilter(local.getUUID() ?: "", newFilter.toUpdateFilterDTO())
+        return datasource.updateFilter(
+            local.getString(LocalKey.USER_ID) ?: "",
+            newFilter.toUpdateFilterDTO()
+        )
             .map {
-                when (it) {
-                    is Resource.Success -> {
-                        local.saveIfFilterUpdated(true)
-                        true
-                    }
-
-                    else -> false
-                }
+                local.save(LocalKey.FILTER_UPDATED, true)
+                true
             }
     }
 
-    override fun getUUID() = local.getUUID()
+    override fun getUUID() = local.getString(LocalKey.USER_ID) ?: ""
 
     override fun setPushEnabled(enabled: Boolean) {
-        local.setPushEnabled(enabled)
+        local.save(LocalKey.PUSH_ENABLED, enabled)
     }
 
     override fun getPushEnabled(): Boolean {
-        return local.getPushEnabled()
+        return local.getBoolean(LocalKey.PUSH_ENABLED)
     }
 }

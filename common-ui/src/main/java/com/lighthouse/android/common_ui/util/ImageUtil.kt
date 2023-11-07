@@ -1,39 +1,20 @@
 package com.lighthouse.android.common_ui.util
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.DecodeFormat
+import com.lighthouse.android.common_ui.R
 
 class ImageUtils {
     companion object {
         fun newInstance() = ImageUtils()
     }
 
-    fun downloadImage(pUrl: String, pView: View) {
-        when (pView) {
-            is ImageView -> {
-                setImageToView(
-                    pUrl = pUrl,
-                    pView = pView
-                )
-            }
-        }
-    }
-
-    private fun setImageToView(pUrl: String, pView: ImageView) {
-        Glide.with(pView.context)
-            .load(pUrl)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(pView);
-    }
-
-    fun openGallery(pContext: Activity): Intent {
+    fun openGallery(): Intent {
         val intent = Intent()
         // Setting intent type as image to select image from phone storage.
         intent.type = "image/*"
@@ -46,5 +27,27 @@ class ImageUtils {
         val contentResolver = pContext.contentResolver
         val mimeTypeMap = MimeTypeMap.getSingleton()
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri!!))
+    }
+
+    fun setFlagImage(image: ImageView, code: String, context: Context) {
+        val flag = context.resources.getIdentifier(
+            code, "drawable", context.packageName
+        )
+
+        image.setImageResource(flag)
+        image.layoutParams.width = calSize(Constant.PROFILE_FLAG_SIZE)
+        image.layoutParams.height = calSize(Constant.PROFILE_FLAG_SIZE)
+        image.requestLayout()
+    }
+
+    fun setImage(image: ImageView, url: String, context: Context) {
+        Glide.with(context).load(url)
+            .placeholder(R.drawable.placeholder)
+            .skipMemoryCache(false)
+            .format(DecodeFormat.PREFER_RGB_565)
+            .centerInside()
+            .override(calSize(Constant.PROFILE_IMAGE_SIZE))
+            .dontAnimate()
+            .into(image)
     }
 }

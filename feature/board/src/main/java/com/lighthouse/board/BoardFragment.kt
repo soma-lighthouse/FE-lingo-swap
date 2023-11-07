@@ -1,20 +1,17 @@
 package com.lighthouse.board
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.lighthouse.android.common_ui.base.BindingFragment
-import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.QuestionTileBinding
 import com.lighthouse.android.common_ui.util.UiState
@@ -33,46 +30,55 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_board) {
     private val viewModel: BoardViewModel by viewModels()
-    private var questionList = mutableListOf<BoardQuestionVO>()
     private lateinit var adapter: SimpleListAdapter<BoardQuestionVO, QuestionTileBinding>
-    private var tabPosition = 0
 
     private var loading = false
     private var start = true
+    private val observer = Observer<Int> {
+        observeTabChange()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.viewModel = viewModel
         initSpinner()
         initTab()
         initFab()
         initScrollListener()
         initAdapter()
         loadMoreProfiles()
-        initRefresh()
-    }
-
-    private fun initRefresh() {
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.next[tabPosition] = null
-            questionList.clear()
-            viewModel.fetchState(tabPosition, null)
-            binding.swipeRefreshLayout.isRefreshing = false
-        }
     }
 
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.getQuestion(tabPosition).isNullOrEmpty()) {
-            viewModel.fetchState(tabPosition, null)
-        } else {
-            questionList.add(BoardQuestionVO())
-            viewModel.getQuestion(tabPosition)?.let { questionList.addAll(it) }
-            adapter.submitList(questionList)
+
+        if (adapter.currentList.isNotEmpty()) {
+            adapter.submitList(viewModel.getQuestion())
             binding.rvBoard.setVisible()
             binding.fabAdd.setVisible()
             binding.pbBoardLoading.setGone()
         }
+
+        viewModel.categoryId.observe(viewLifecycleOwner, observer)
+        binding.tabBoard.getTabAt(viewModel.categoryId.value ?: 0)?.select()
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        binding.pbBoardLoading.setGone()
+    }
+
+    private fun observeTabChange() {
+        start = true
+        if (!viewModel.getQuestion().isNullOrEmpty()) {
+            val questionList = viewModel.getQuestion()
+
+            adapter.submitList(questionList)
+        } else {
+            viewModel.fetchState(null)
+        }
+
     }
 
     private fun initSpinner() {
@@ -93,52 +99,15 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
         resources.getStringArray(com.lighthouse.android.common_ui.R.array.tab_name).forEach {
             binding.tabBoard.addTab(binding.tabBoard.newTab().setText(it))
         }
-
-        binding.tabBoard.addOnTabSelectedListener(object : OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                questionList.clear()
-                adapter.notifyDataSetChanged()
-                start = true
-                tabPosition = tab?.position ?: 0
-                if (!viewModel.getQuestion(tabPosition).isNullOrEmpty()) {
-                    viewModel.next[tabPosition] = viewModel.getFirstNext(tabPosition)
-                    questionList.add(BoardQuestionVO())
-                    viewModel.getQuestion(tabPosition)?.let { questionList.addAll(it) }
-
-                    adapter.submitList(questionList)
-                } else {
-                    viewModel.next[tabPosition] = null
-                    viewModel.fetchState(tabPosition, null)
-                }
-                binding.tabBoard.isClickable = false
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                // TODO("Not yet implemented")
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                // TODO("Not yet implemented")
-            }
-        })
     }
 
+
     private fun initAdapter() {
-        adapter = makeAdapter(requireContext(), { questionId ->
-            viewModel.updateLike(questionId)
-            viewModel.setLike(tabPosition, questionId, true)
-        }, { questionId ->
-            viewModel.cancelLike(questionId)
-            viewModel.setLike(tabPosition, questionId, false)
-        }, { userId ->
+        adapter = makeAdapter(requireContext(), viewModel) { userId ->
             mainNavigator.navigateToProfile(
                 requireContext(), Pair("userId", userId), Pair("isMe", false), Pair("isChat", false)
             )
-        })
-
-        val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        binding.rvBoard.layoutManager = linearLayoutManager
+        }
         binding.rvBoard.adapter = adapter
     }
 
@@ -152,9 +121,9 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
 
                 val totalCount = recyclerView.adapter?.itemCount?.minus(1)
 
-                if (rvPosition == totalCount && viewModel.page != -1 && !loading) {
+                if (rvPosition == totalCount && !loading) {
                     loading = true
-                    viewModel.fetchState(tabPosition, null)
+                    viewModel.fetchState(null)
                 }
             }
         })
@@ -174,7 +143,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
-                if (questionList.isEmpty() && start) {
+                if (viewModel.getQuestion() == null && start) {
                     binding.pbBoardLoading.setVisible()
                     binding.rvBoard.setGone()
                     binding.tabBoard.disable()
@@ -184,10 +153,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             }
 
             is UiState.Success<*> -> {
-                questionList.add(BoardQuestionVO())
-                questionList.addAll(uiState.data as List<BoardQuestionVO>)
-                Log.d("QUESTION", questionList.size.toString())
-                adapter.submitList(questionList)
+                adapter.submitList(uiState.data as List<BoardQuestionVO>)
                 binding.tabBoard.enable()
                 disableTabForSeconds(2) {
                     bindingWeakRef?.get()?.let { b ->

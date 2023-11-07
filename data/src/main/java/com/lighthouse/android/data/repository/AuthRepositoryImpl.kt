@@ -5,12 +5,11 @@ import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.request.RegisterInfoDTO
 import com.lighthouse.android.data.model.request.UploadInterestDTO
 import com.lighthouse.android.data.repository.datasource.AuthRemoteDataSource
-import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
-import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.TokenVO
 import com.lighthouse.domain.entity.response.vo.UserTokenVO
 import com.lighthouse.domain.repository.AuthRepository
@@ -25,61 +24,49 @@ class AuthRepositoryImpl @Inject constructor(
     private val localPreferenceDataSource: LocalPreferenceDataSource,
     private val authRemoteDataSource: AuthRemoteDataSource,
 ) : AuthRepository {
-    override fun getUserId(): String? {
-        return localPreferenceDataSource.getUUID()
+    override fun getUserId(): String {
+        return localPreferenceDataSource.getString(LocalKey.USER_ID)
     }
 
     override fun getAccessToken(): String {
-        return localPreferenceDataSource.getAccessToken() ?: ""
+        return localPreferenceDataSource.getString(LocalKey.ACCESS_TOKEN)
     }
 
     override fun getExpireTime(): Long {
-        return localPreferenceDataSource.getExpire()
+        return localPreferenceDataSource.getLong(LocalKey.ACCESS_TOKEN_EXPIRE)
     }
 
     override fun getRefreshExpireTime(): Long {
-        return localPreferenceDataSource.getRefreshExpire()
+        return localPreferenceDataSource.getLong(LocalKey.REFRESH_TOKEN_EXPIRE)
     }
 
     override fun saveAccessToken(accessToken: String, expireTime: Long) {
-        localPreferenceDataSource.saveAccessToken(accessToken)
-        localPreferenceDataSource.saveExpire(expireTime)
+        localPreferenceDataSource.save(LocalKey.ACCESS_TOKEN, accessToken)
+        localPreferenceDataSource.save(LocalKey.ACCESS_TOKEN_EXPIRE, expireTime)
     }
 
-    override fun getInterestList(): Flow<Resource<List<InterestVO>>> =
+    override fun getInterestList(): Flow<List<InterestVO>> =
         authRemoteDataSource.getInterestList().map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data!!.interest.map { interest ->
-                    interest.toVO()
-                })
-
-                else -> throw LighthouseException(null, null).addErrorMsg()
+            it.interest.map { interest ->
+                interest.toVO()
             }
         }
 
-    override fun getLanguageList(): Flow<Resource<List<LanguageVO>>> =
+    override fun getLanguageList(): Flow<List<LanguageVO>> =
         authRemoteDataSource.getLanguageList().map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data!!.language.map { language ->
-                    language.toVO()
-                })
-
-                else -> throw LighthouseException(null, null).addErrorMsg()
+            it.language.map { lang ->
+                lang.toVO()
             }
         }
 
-    override fun getCountryList(): Flow<Resource<List<CountryVO>>> =
+    override fun getCountryList(): Flow<List<CountryVO>> =
         authRemoteDataSource.getCountryList().map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data!!.country.map { country ->
-                    country.toVO()
-                })
-
-                else -> throw LighthouseException(null, null).addErrorMsg()
+            it.country.map { country ->
+                country.toVO()
             }
         }
 
-    override fun registerUser(info: RegisterInfoVO): Flow<Resource<Boolean>> {
+    override fun registerUser(info: RegisterInfoVO): Flow<Boolean> {
         val tmp = RegisterInfoDTO(uuid = info.uuid ?: "null",
             name = info.name ?: "null",
             birthday = info.birthday ?: "null",
@@ -93,78 +80,51 @@ class AuthRepositoryImpl @Inject constructor(
             usedLanguages = info.languages ?: listOf(),
             preferredCountries = info.preferredCountries ?: listOf(),
             profileImageUri = info.profileImageUri ?: "")
-        return authRemoteDataSource.registerUser(localPreferenceDataSource.getIdToken(), tmp).map {
-            when (it) {
-                is Resource.Success -> {
-                    val mapping = it.data!!.toVO()
-                    saveTokens(mapping.tokens, mapping.uuid)
-                    localPreferenceDataSource.saveUserName(mapping.userName)
-                    Resource.Success(true)
-                }
-
-                else -> Resource.Error(it.message ?: "Register failed")
-            }
+        return authRemoteDataSource.registerUser(
+            localPreferenceDataSource.getString(LocalKey.ID_TOKEN),
+            tmp
+        ).map {
+            val mapping = it.toVO()
+            saveTokens(mapping.tokens, mapping.uuid)
+            localPreferenceDataSource.save(LocalKey.USER_NAME, mapping.userName)
+            true
         }
     }
 
     override fun uploadImg(
         url: String,
         profilePath: String,
-    ): Flow<Resource<Boolean>> {
+    ): Flow<Boolean> {
         Log.d("PICTURE", profilePath)
         val imageFile = File(profilePath)
         val requestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
 
-        return authRemoteDataSource.uploadImg(url, requestBody).map {
-            when (it) {
-                is Resource.Success -> Resource.Success(true)
-                else -> Resource.Error(it.message ?: "Register failed")
-            }
-        }
+        return authRemoteDataSource.uploadImg(url, requestBody)
     }
 
 
-    override fun getPreSignedURL(fileName: String): Flow<Resource<String>> =
+    override fun getPreSignedURL(fileName: String): Flow<String> =
         authRemoteDataSource.getPreSigned(fileName).map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data?.url ?: "")
-                else -> Resource.Error(it.message ?: "PreSigned URL Failed")
-            }
+            it.url ?: ""
         }
 
-    override fun postGoogleLogin(): Flow<Resource<UserTokenVO>> =
-        authRemoteDataSource.postGoogleLogin(localPreferenceDataSource.getIdToken()).map {
-            when (it) {
-                is Resource.Success -> {
-                    Log.d("TESTING before", it.data.toString())
-                    val mapping = it.data!!.toVO()
-                    saveTokens(mapping.tokens, mapping.uuid)
-                    Resource.Success(it.data!!.toVO())
-                }
-
-                else -> {
-                    Log.d("TESTING", it.message ?: "No message Found")
-                    Resource.Error(
-                        it.message ?: throw LighthouseException(
-                            null, null
-                        ).addErrorMsg()
-                    )
-                }
+    override fun postGoogleLogin(): Flow<UserTokenVO> =
+        authRemoteDataSource.postGoogleLogin(localPreferenceDataSource.getString(LocalKey.ID_TOKEN))
+            .map {
+                val mapping = it.toVO()
+                saveTokens(mapping.tokens, mapping.uuid)
+                it.toVO()
             }
-        }
 
     override fun saveIdToken(idToken: String) {
-        localPreferenceDataSource.saveIdToken(idToken)
+        localPreferenceDataSource.save(LocalKey.ID_TOKEN, idToken)
     }
 
     private fun saveTokens(mapping: TokenVO, uuid: String) {
-        Log.d("TESTING tokens", mapping.toString())
-
-        localPreferenceDataSource.saveAccessToken(mapping.accessToken)
-        localPreferenceDataSource.saveExpire(mapping.expiresIn)
-        localPreferenceDataSource.saveRefreshToken(mapping.refreshToken)
-        localPreferenceDataSource.saveRefreshExpire(mapping.refreshTokenExpiresIn)
-        localPreferenceDataSource.saveUUID(uuid)
+        localPreferenceDataSource.save(LocalKey.ACCESS_TOKEN, mapping.accessToken)
+        localPreferenceDataSource.save(LocalKey.ACCESS_TOKEN_EXPIRE, mapping.expiresIn)
+        localPreferenceDataSource.save(LocalKey.REFRESH_TOKEN, mapping.refreshToken)
+        localPreferenceDataSource.save(LocalKey.REFRESH_TOKEN_EXPIRE, mapping.refreshTokenExpiresIn)
+        localPreferenceDataSource.save(LocalKey.USER_ID, uuid)
     }
 }
-

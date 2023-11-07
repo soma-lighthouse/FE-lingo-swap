@@ -10,12 +10,12 @@ android {
     namespace = "com.lighthouse.android.home"
 
     buildTypes {
+        debug {
+            consumerProguardFile("proguard-rules.pro")
+        }
+
         release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            consumerProguardFile("proguard-rules.pro")
         }
     }
 
@@ -37,9 +37,6 @@ android {
 dependencies {
     implementation(project(":common-ui"))
     implementation(project(":navigation"))
-
-    implementation("androidx.activity:activity-ktx:1.7.2")
-    implementation("androidx.fragment:fragment-ktx:1.6.0")
 
     implementation(libs.bundles.androidx.ui.foundation)
     implementation(libs.google.admob)

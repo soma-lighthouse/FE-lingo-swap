@@ -1,11 +1,11 @@
 package com.lighthouse.android.chats.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +18,6 @@ import com.lighthouse.android.chats.databinding.ChatQuestionTileBinding
 import com.lighthouse.android.chats.databinding.FragmentQuestionBinding
 import com.lighthouse.android.chats.viewmodel.ChatViewModel
 import com.lighthouse.android.common_ui.base.BindingFragment
-import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.disableTabForSeconds
@@ -32,31 +31,41 @@ class QuestionFragment : BindingFragment<FragmentQuestionBinding>(R.layout.fragm
     private val viewModel: ChatViewModel by activityViewModels()
     private lateinit var adapter: SimpleListAdapter<String, ChatQuestionTileBinding>
 
-    private val questionList = mutableListOf<String>()
     private var start = true
-    private var curPosition = 1
     private var loading = false
 
+    private val observer = Observer<Int> {
+        observeChipChange()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.viewModel = viewModel
         super.onViewCreated(view, savedInstanceState)
         val categories =
             resources.getStringArray(com.lighthouse.android.common_ui.R.array.tab_name).toList()
         addChipToGroup(binding.chipCategory, categories)
         initScrollListener()
-        initChip()
         initAdapter()
         observeQuestion()
+        viewModel.position.observe(viewLifecycleOwner, observer)
     }
 
     private fun initAdapter() {
         adapter = makeAdapter {
             viewModel.sendQuestion.value = it
         }
-        val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        binding.rvQuestionPanel.layoutManager = linearLayoutManager
+        binding.rvQuestionPanel.itemAnimator = null
         binding.rvQuestionPanel.adapter = adapter
+    }
+
+    private fun observeChipChange() {
+        start = true
+        binding.chipCategory.isClickable = false
+        if (viewModel.getQuestionList().isNullOrEmpty()) {
+            viewModel.getQuestion()
+        } else {
+            adapter.submitList(viewModel.getQuestionList())
+        }
     }
 
     private fun addChipToGroup(chipGroup: ChipGroup, interestList: List<String>) {
@@ -80,22 +89,6 @@ class QuestionFragment : BindingFragment<FragmentQuestionBinding>(R.layout.fragm
         }
     }
 
-    private fun initChip() {
-        viewModel.getQuestion(curPosition)
-        binding.chipCategory.setOnCheckedStateChangeListener { _, checkedIds ->
-            Log.d("TESTING CHIPS", "enter")
-
-            questionList.clear()
-            adapter.notifyDataSetChanged()
-            curPosition = checkedIds.first()
-            start = true
-            Log.d("TESTING", curPosition.toString())
-            viewModel.next[curPosition] = null
-            viewModel.getQuestion(curPosition)
-            binding.chipCategory.isClickable = false
-        }
-    }
-
     private fun observeQuestion() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -116,9 +109,9 @@ class QuestionFragment : BindingFragment<FragmentQuestionBinding>(R.layout.fragm
 
                 val totalCount = recyclerView.adapter?.itemCount?.minus(1)
 
-                if (rvPosition == totalCount && viewModel.page != -1 && !loading) {
+                if (rvPosition == totalCount && !loading) {
                     loading = true
-                    viewModel.getQuestion(curPosition)
+                    viewModel.getQuestion()
                 }
             }
         })
@@ -127,7 +120,7 @@ class QuestionFragment : BindingFragment<FragmentQuestionBinding>(R.layout.fragm
     private fun render(uiState: UiState) {
         when (uiState) {
             is UiState.Loading -> {
-                if (questionList.isEmpty() && start) {
+                if (viewModel.getQuestionList().isNullOrEmpty() && start) {
                     binding.pbQuestionLoading.setVisible()
                     binding.rvQuestionPanel.setGone()
                     start = false
@@ -135,13 +128,11 @@ class QuestionFragment : BindingFragment<FragmentQuestionBinding>(R.layout.fragm
             }
 
             is UiState.Success<*> -> {
-                questionList.addAll(uiState.data as List<String>)
-                adapter.submitList(questionList)
+                adapter.submitList(uiState.data as List<String>)
                 disableTabForSeconds(1) {
                     bindingWeakRef?.get()?.let { b ->
                         b.rvQuestionPanel.setVisible()
                         b.pbQuestionLoading.setGone()
-                        b.rvQuestionPanel.scrollToPosition(0)
                         b.chipCategory.isClickable = true
                         loading = false
                     }

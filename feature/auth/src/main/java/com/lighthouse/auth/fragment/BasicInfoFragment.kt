@@ -5,41 +5,33 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.base.BindingFragment
-import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
-import com.lighthouse.android.common_ui.base.adapter.makeAdapter
+import com.lighthouse.android.common_ui.base.adapter.makeInterestAdapter
 import com.lighthouse.android.common_ui.databinding.InterestListTileBinding
 import com.lighthouse.android.common_ui.dialog.ImagePickerDialog
+import com.lighthouse.android.common_ui.util.DateTextWatcher
 import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.UriUtil
 import com.lighthouse.android.common_ui.util.calSize
-import com.lighthouse.android.common_ui.util.intentSerializable
-import com.lighthouse.android.common_ui.util.isValidBirthday
-import com.lighthouse.android.common_ui.util.isValidEmail
 import com.lighthouse.android.common_ui.util.onCloseKeyBoard
-import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.auth.databinding.FragmentBasicInfoBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
-import com.lighthouse.domain.entity.request.UploadInterestVO
-import com.lighthouse.domain.entity.response.vo.CountryVO
+import com.lighthouse.domain.entity.response.vo.InterestVO
+import com.lighthouse.lighthousei18n.I18nManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -47,20 +39,14 @@ class BasicInfoFragment :
     BindingFragment<FragmentBasicInfoBinding>(com.lighthouse.auth.R.layout.fragment_basic_info),
     ImagePickerDialog.CameraDialogListener {
     private val viewModel: AuthViewModel by activityViewModels()
-    private val interestList = mutableListOf<UploadInterestVO>()
+    private lateinit var interestAdapter: SimpleListAdapter<InterestVO, InterestListTileBinding>
 
-    private var interestListCode = mutableListOf<UploadInterestVO>()
-    private lateinit var interestAdapter: SimpleListAdapter<UploadInterestVO, InterestListTileBinding>
-    private var selectedCountry: CountryVO? = null
+    @Inject
+    lateinit var i18nManager: I18nManager
+
     private lateinit var imagePicker: ImagePickerDialog
     private lateinit var imageUri: Uri
 
-    private val genderMap = mapOf(
-        0 to "TMP",
-        1 to "MALE",
-        2 to "FEMALE",
-        3 to "RATHER_NOT_SAY"
-    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,14 +54,25 @@ class BasicInfoFragment :
         initSpinner()
         initInterest()
         initCountry()
-        initNext()
         initAdapter()
-        observeCountry()
-        initChip()
+        initNext()
         initCalender()
         initCamera()
         observeImage()
         initBack()
+        setUpBinding()
+
+        binding.etBirthday.addTextChangedListener(DateTextWatcher(binding.etBirthday))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.checkCountryUpdate(false)
+        viewModel.checkInterestUpdate()
+    }
+
+    private fun setUpBinding() {
+        binding.viewModel = viewModel
     }
 
 
@@ -97,7 +94,7 @@ class BasicInfoFragment :
     }
 
     override fun openGallery() {
-        val intent = ImageUtils.newInstance().openGallery(requireActivity())
+        val intent = ImageUtils.newInstance().openGallery()
         resultLauncher.launch(intent)
     }
 
@@ -122,10 +119,8 @@ class BasicInfoFragment :
             val contentUri = Uri.parse(imageUri.toString())
             viewModel.filePath = UriUtil.getRealPath(requireContext(), contentUri) ?: ""
 
-            Glide.with(this).load(imageUri).fitCenter()
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.question)
-                .override(calSize(200f)).into(binding.ivProfileImg)
+            Glide.with(this).load(imageUri).fitCenter().placeholder(R.drawable.placeholder)
+                .error(R.drawable.question).override(calSize(200f)).into(binding.ivProfileImg)
 
             viewModel.getPreSignedUrl(getFileName(viewModel.filePath))
         }
@@ -180,7 +175,7 @@ class BasicInfoFragment :
 
     private fun initCalender() {
         binding.btnCalendar.setOnClickListener {
-            val datePickerFragment = DatePickerFragment()
+            val datePickerFragment = DatePickerFragment(i18nManager)
             val supportFragment = requireActivity().supportFragmentManager
 
             supportFragment.setFragmentResultListener(
@@ -196,112 +191,21 @@ class BasicInfoFragment :
 
     }
 
-    private fun convertToStandardDateFormat(inputDate: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-M-d", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
-        val parsedDate: Date = inputFormat.parse(inputDate) as Date
-        return outputFormat.format(parsedDate)
-    }
-
     private fun initAdapter() {
-        interestAdapter = makeAdapter()
-        val linearLayoutManager = ScrollSpeedLinearLayoutManager(context, 8f)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        binding.rvInterest.layoutManager = linearLayoutManager
+        interestAdapter = makeInterestAdapter(viewModel, false)
         binding.rvInterest.adapter = interestAdapter
+        viewModel.selectedInterest.observe(viewLifecycleOwner) {
+            interestAdapter.submitList(it)
+        }
     }
 
     private fun initNext() {
-        binding.btnNext.setOnClickListener {
-            if (validateInputs()) {
-                viewModel.registerInfo.apply {
-                    uuid = viewModel.userId.toString()
-                    name = binding.etName.text.toString()
-                    email = binding.etEmail.text.toString()
-                    birthday = convertToStandardDateFormat(binding.etBirthday.text.toString())
-                    gender = genderMap[binding.spinnerGender.selectedItemPosition]
-                    region = selectedCountry?.code
-                    preferredInterests = interestListCode
-                    description = binding.etIntroduction.text.toString()
-                }
-
-                findNavController().navigate(BasicInfoFragmentDirections.actionInfoFragmentToLanguageFragment())
+        viewModel.changes.observe(viewLifecycleOwner) {
+            if (it == -3) {
+                findNavController().navigate(BasicInfoFragmentDirections.actionGlobalLanguageNavGraph())
             }
         }
     }
-
-    private fun validateInputs(): Boolean {
-        val emailIsValid = binding.etEmail.text.toString().isValidEmail()
-        setErrorAndBackground(
-            binding.etEmail, emailIsValid, getString(R.string.invalid_email)
-        )
-
-        val birthdayIsValid = binding.etBirthday.text.toString().isValidBirthday()
-        setErrorAndBackground(
-            binding.etBirthday, birthdayIsValid, getString(R.string.invalid_birthday)
-        )
-
-        val nameIsEmpty = binding.etName.text.toString().isEmpty()
-
-        setErrorAndBackground(
-            binding.etName, !nameIsEmpty, getString(R.string.invalid_null)
-        )
-
-        val nameIsValid = isValidName(binding.etName.text.toString())
-
-        setErrorAndBackground(
-            binding.etName, nameIsValid, getString(R.string.invalid_name)
-        )
-
-        val genderIsEmpty =
-            binding.spinnerGender.selectedItem.toString() == getString(R.string.gender)
-        setErrorAndBackground(
-            binding.spinnerGender, !genderIsEmpty, getString(R.string.invalid_null)
-        )
-
-        val nationIsEmpty = binding.btnNation.text.toString().isEmpty()
-        setErrorAndBackground(
-            binding.btnNation, !nationIsEmpty, getString(R.string.invalid_null)
-        )
-
-        val interestIsEmpty = interestListCode.isEmpty()
-        setErrorAndBackground(
-            binding.collapseInterest, !interestIsEmpty, getString(R.string.invalid_null)
-        )
-
-        return emailIsValid && birthdayIsValid && !nameIsEmpty && !genderIsEmpty && !interestIsEmpty && !nationIsEmpty && nameIsValid
-    }
-
-    private fun isValidName(name: String): Boolean {
-        val regex = "^[\\p{L}\\s'-]+$"
-        return name.matches(Regex(regex))
-    }
-
-    private fun setErrorAndBackground(
-        view: View,
-        isValid: Boolean,
-        errorMessage: String,
-    ) {
-        if (view is EditText) {
-            if (!isValid) {
-                view.error = errorMessage
-                view.setBackgroundResource(R.drawable.error_box)
-                view.requestFocus()
-            } else {
-                view.error = null
-                view.setBackgroundResource(R.drawable.edit_box)
-            }
-        } else {
-            if (!isValid) {
-                view.setBackgroundResource(R.drawable.error_box)
-                view.requestFocus()
-            } else {
-                view.setBackgroundResource(R.drawable.edit_box)
-            }
-        }
-    }
-
 
     private fun initSpinner() {
         val arrayList = arrayListOf(
@@ -322,73 +226,18 @@ class BasicInfoFragment :
 
     private fun initInterest() {
         binding.clickInterest.setOnClickListener {
-            val hash = hashMapOf<String, List<String>>()
-
-            interestList.forEach {
-                hash[it.category] = it.interests
-            }
-            val intent = mainNavigator.navigateToInterest(
-                requireContext(),
-                Pair("SelectedList", hash),
+            mainNavigator.navigateToInterest(
+                requireContext()
             )
-            resultLauncher.launch(intent)
         }
     }
 
     private fun initCountry() {
         binding.btnNation.setOnClickListener {
-            val intent =
-                mainNavigator.navigateToCountry(
-                    requireContext(),
-                    Pair("multiSelect", false),
-                    Pair("SelectedList", listOf(selectedCountry?.name ?: ""))
-                )
-            resultLauncher.launch(intent)
+            mainNavigator.navigateToCountry(
+                requireContext(),
+                Pair("multiSelect", false),
+            )
         }
-    }
-
-    private fun observeCountry() {
-        getResult.observe(viewLifecycleOwner) {
-            var result = it.getStringArrayListExtra("CountryNameList")?.toList() ?: listOf()
-
-            if (result.isNotEmpty()) {
-                val code = it.getStringArrayListExtra("CountryCodeList")?.toList() ?: listOf()
-                selectedCountry = CountryVO(code = code.first(), name = result.first())
-                binding.btnNation.text =
-                    result.first()
-            }
-        }
-    }
-
-    private fun initChip() {
-        getResult.observe(viewLifecycleOwner) {
-            val result = it.intentSerializable("InterestList", HashMap::class.java)
-            if (result != null) {
-                val codes = it.intentSerializable("InterestListCode", HashMap::class.java)
-                binding.tvInterestNull.setGone()
-                interestList.clear()
-                for ((key, value) in result) {
-                    value as List<String>
-                    if (value.isNotEmpty()) {
-                        interestList.add(UploadInterestVO(key as String, value))
-                    }
-                }
-                uploadInterest(codes as HashMap<String, List<String>>)
-                interestAdapter.submitList(interestList)
-            }
-        }
-    }
-
-    private fun uploadInterest(codes: HashMap<String, List<String>>?) {
-        val tmp = mutableListOf<UploadInterestVO>()
-        if (codes != null) {
-            for ((key, value) in codes) {
-                value as List<String>
-                if (value.isNotEmpty()) {
-                    tmp.add(UploadInterestVO(key, value))
-                }
-            }
-        }
-        interestListCode = tmp
     }
 }

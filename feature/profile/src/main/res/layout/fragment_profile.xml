@@ -5,9 +5,11 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
-            name="item"
-            type="com.lighthouse.domain.entity.response.vo.ProfileVO" />
+            name="viewModel"
+            type="com.lighthouse.profile.viewmodel.ProfileViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,7 +41,7 @@
                     android:layout_marginTop="20dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-
+                    app:setUpImage="@{viewModel.userProfile.profileImageUri}"
                     tools:src="@drawable/placeholder" />
 
                 <TextView
@@ -48,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="28dp"
                     android:layout_marginTop="16dp"
-                    android:text="@{item.name}"
+                    android:text="@{viewModel.userProfile.name}"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -64,6 +66,8 @@
                     android:layout_marginTop="-25dp"
                     app:layout_constraintStart_toStartOf="@+id/iv_profile_img"
                     app:layout_constraintTop_toBottomOf="@+id/iv_profile_img"
+                    app:setUpFlag="@{viewModel.userProfile.region}"
+                    app:size="@{null}"
                     tools:layout_height="25dp"
                     tools:layout_width="25dp"
                     tools:src="@drawable/placeholder" />
@@ -78,6 +82,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
                     app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
+                    app:setUpDescription="@{viewModel.userProfile}"
                     tools:text="introduction" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -94,7 +99,8 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/tv_description"
                     app:layout_constraintTop_toBottomOf="@+id/tv_description"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintVertical_bias="1.0"
+                    app:setUpLanguage="@{viewModel.curProfile.languages}" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_next"
@@ -112,6 +118,7 @@
                     style="?android:attr/progressBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -228,6 +235,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
+            android:checked="@{viewModel.getNotification()}"
             android:textOff=""
             android:textOn=""
             app:layout_constraintBottom_toBottomOf="@id/iv_notification"

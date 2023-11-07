@@ -27,7 +27,7 @@ fun makeAdapter(
 
             binding.tvInterestTitle.text = item.category
 
-            if (viewHolder.adapterPosition != 0 && hide) {
+            if (viewHolder.absoluteAdapterPosition != 0 && hide) {
                 binding.chipInterest.setGone()
                 binding.bottomLine.setGone()
                 binding.btnInterest.rotation = 180f
@@ -82,7 +82,7 @@ fun makeAdapter(
 
             binding.chipInterest.setOnCheckedStateChangeListener { _, checkedId ->
                 if (chip != null && checkedId.size <= Constant.MAX_SELECTION) {
-                    chip(checkedId, viewHolder.adapterPosition)
+                    chip(checkedId, viewHolder.absoluteAdapterPosition)
                 }
             }
         },

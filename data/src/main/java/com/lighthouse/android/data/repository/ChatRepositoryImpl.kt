@@ -2,10 +2,9 @@ package com.lighthouse.android.data.repository
 
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.repository.datasource.ChatRemoteDataSource
-import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.entity.response.vo.ChannelVO
 import com.lighthouse.domain.entity.response.vo.ChatQuestionsVO
-import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.repository.ChatRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,38 +14,24 @@ class ChatRepositoryImpl @Inject constructor(
     private val chatDataSource: ChatRemoteDataSource,
     private val localDataSource: LocalPreferenceDataSource,
 ) : ChatRepository {
-    override fun createChannel(opUserId: String): Flow<Resource<ChannelVO>> =
+    override fun createChannel(opUserId: String): Flow<ChannelVO> =
         chatDataSource.createChannel(
             opUserId,
-            localDataSource.getUUID().toString()
+            localDataSource.getString(LocalKey.USER_ID)
         ).map {
-            when (it) {
-                is Resource.Success -> {
-                    Resource.Success(it.data!!.toVO())
-                }
-
-                is Resource.Error -> throw LighthouseException(null, null).addErrorMsg()
-            }
-
+            it.toVO()
         }
 
-
-    override fun leaveChannel(): Flow<Resource<Boolean>> =
-        chatDataSource.leaveChannel(localDataSource.getUUID().toString())
+    override fun leaveChannel(): Flow<Boolean> =
+        chatDataSource.leaveChannel(localDataSource.getString(LocalKey.USER_ID))
 
 
     override fun getRecommendedQuestions(
         categoryId: Int,
         nextId: Int?
-    ): Flow<Resource<ChatQuestionsVO>> =
+    ): Flow<ChatQuestionsVO> =
         chatDataSource.getRecommendedQuestions(categoryId, nextId)
             .map {
-                when (it) {
-                    is Resource.Success -> {
-                        Resource.Success(it.data!!.toVO())
-                    }
-
-                    is Resource.Error -> throw LighthouseException(null, null).addErrorMsg()
-                }
+                it.toVO()
             }
 }

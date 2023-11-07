@@ -46,7 +46,7 @@
     <string name="enter_name">이름을 입력하세요</string>
     <string name="email">이메일</string>
     <string name="birthday">생일</string>
-    <string name="enter_birthday">예: 2019-01-01</string>
+    <string name="enter_birthday">예: 23/04/2019</string>
     <string name="enter_email">이메일을 입력하세요</string>
     <string name="nation">국적</string>
     <string name="age">나이</string>
@@ -55,12 +55,13 @@
     <string name="female">여성</string>
     <string name="rather_not_tell">선택 안함</string>
     <string name="unselected">미선택</string>
-    <string name="introduction_optional">자기소개 (선택사항)</string>
+    <string name="introduction_optional">자기소개</string>
     <string name="introduce_yourself">자신을 소개하세요</string>
     <string name="next">다음</string>
     <string name="start">시작하기</string>
     <string name="apply">적용하기</string>
     <string name="select_language_level">언어 및 레벨을 선택해주세요 (2/3)</string>
+    <string name="update_language_level">언어 및 레벨 업데이트</string>
     <string name="language_n_level">언어 및 레벨</string>
     <string name="select_prefer_country">선호 국가를 선택해주세요 (3/3)</string>
 
@@ -117,8 +118,6 @@
     <string name="home_title_4">대화</string>
     <string name="home_title_5">해 보세요 !</string>
 
-    <string name="internet_error">인터넷 연결 오류</string>
-    <string name="server_error">서버 오류 발생. 잠시 후 다시 시도해주세요.</string>
     <string name="camera">카메라</string>
     <string name="gallery">갤러리</string>
     <string name="choose_image">선택</string>
@@ -127,6 +126,7 @@
     <string name="language_limit">최대 5개의 언어만 선택 가능합니다</string>
     <string name="invalid_name">잘못된 이름 형식입니다</string>
     <string name="save">저장</string>
+    <string name="question_upload">질문이 성공적으로 업로드 되었습니다</string>
 
     <string name="term_service">서비스 약관</string>
     <string name="term_use">이용 약관</string>
@@ -134,7 +134,14 @@
     <string name="empty_my_question">작성한 질문이 없습니다.\n게시판에서 질문을 작성해보세요!</string>
 
     <string name="ad_attribution">Ad</string>
+    <string name="invalid_introduction">최소 5자 이상 작성해주세요</string>
 
     <string name="no_user">상대방이 나갔습니다</string>
+
+    <string name="internet_error">인터넷 연결을 확인하고 다시 시도해주세요</string>
+    <string name="server_error">서버 오류 발생, 잠시후 다시 시도해주세요</string>
+
+    <string name="update_title">업데이트</string>
+    <string name="update_body">필수 업데이트가 있습니다. 업데이트 하시겠습니까?</string>
 
 </resources>

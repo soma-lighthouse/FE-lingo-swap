@@ -4,14 +4,14 @@ import android.util.Log
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.request.UploadQuestionDTO
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
-import com.lighthouse.domain.constriant.Resource
+import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.entity.request.UploadQuestionVO
 import com.lighthouse.domain.entity.response.vo.BoardVO
-import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.repository.BoardRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,54 +25,42 @@ class BoardRepositoryImpl @Inject constructor(
         order: String?,
         page: Int?,
         pageSize: Int?,
-    ): Flow<Resource<BoardVO>> =
+    ): Flow<BoardVO> =
         datasource.getBoardQuestions(category, order, page, pageSize).map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data!!.toVO())
-                else -> throw LighthouseException(null, null).addErrorMsg()
-            }
+            it.toVO()
         }
 
     override fun uploadQuestion(
         info: UploadQuestionVO,
-    ): Flow<Resource<Boolean>> =
+    ): Flow<Boolean> =
         datasource.uploadQuestion(
             UploadQuestionDTO(
-                uuid = localPreferenceDataSource.getUUID().toString(),
+                uuid = localPreferenceDataSource.getString(LocalKey.USER_ID),
                 categoryId = info.categoryId,
                 content = info.content
             )
-        ).map {
-            when (it) {
-                is Resource.Success -> Resource.Success(it.data!!)
-                else -> throw LighthouseException(null, null).addErrorMsg()
-            }
-        }
+        )
 
     override fun updateLike(questionId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            datasource.updateLike(questionId).collect {
-                when (it) {
-                    is Resource.Success ->
-                        Log.d("LIKE", "Success")
-
-                    else -> Log.d("LIKE", it.message.toString())
+            datasource.updateLike(questionId)
+                .catch {
+                    Log.d("LIKE", "Failed")
+                }.collect {
+                    Log.d("LIKE", "Success")
                 }
-            }
         }
+
     }
 
     override fun cancelLike(questionId: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            datasource.cancelLike(questionId).collect {
-                when (it) {
-                    is Resource.Success ->
-                        Log.d("LIKE", "Success")
-
-                    else -> Log.d("LIKE", it.message.toString())
+            datasource.cancelLike(questionId)
+                .catch {
+                    Log.d("LIKE", "Failed")
+                }.collect {
+                    Log.d("LIKE", "Success")
                 }
-            }
         }
     }
-
 }

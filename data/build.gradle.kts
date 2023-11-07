@@ -1,9 +1,3 @@
-import org.jetbrains.kotlin.konan.properties.Properties
-
-val lighthouseFile = rootProject.file("lighthouse.properties")
-val properties = Properties()
-properties.load(lighthouseFile.inputStream())
-
 plugins {
     kotlin("android")
     id("com.android.library")
@@ -14,21 +8,13 @@ plugins {
 android {
     namespace = "com.lighthouse.android.data"
 
-    defaultConfig {
-        buildConfigField(
-            "String",
-            "LIGHTHOUSE_BASE_URL",
-            properties.getProperty("LIGHTHOUSE_BASE_URL")
-        )
-    }
-
     buildTypes {
+        debug {
+            consumerProguardFile("proguard-rules.pro")
+        }
+
         release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            consumerProguardFile("proguard-rules.pro")
         }
     }
     buildFeatures {
@@ -40,12 +26,11 @@ dependencies {
     implementation(project(":domain"))
 
     implementation(libs.hilt)
-    implementation("com.google.firebase:protolite-well-known-types:18.0.0")
+    implementation(libs.firebase.bug.fix)
+    implementation(libs.firebase.config)
     kapt(libs.hilt.kapt)
-    kapt(libs.room.complier)
-    implementation(libs.bundles.basic.test)
-    implementation(libs.bundles.room)
-    implementation(libs.bundles.retrofit)
-    implementation(libs.bundles.okhttp)
-    implementation(libs.bundles.gson)
+    api(libs.bundles.basic.test)
+    api(libs.bundles.retrofit)
+    api(libs.bundles.okhttp)
+    api(libs.bundles.gson)
 }

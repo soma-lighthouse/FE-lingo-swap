@@ -1,59 +1,70 @@
 package com.lighthouse.android.home.viewmodel
 
+import android.app.Application
+import android.text.SpannableStringBuilder
+import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableInt
+import androidx.databinding.ObservableList
+import androidx.lifecycle.MutableLiveData
 import com.lighthouse.android.common_ui.base.BaseViewModel
+import com.lighthouse.android.common_ui.listener.InterestListener
+import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
 import com.lighthouse.android.common_ui.util.DispatcherProvider
-import com.lighthouse.android.common_ui.util.StringSet
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
-import com.lighthouse.domain.constriant.Resource
-import com.lighthouse.domain.entity.request.UploadFilterVO
-import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.android.home.util.getHomeTitle
+import com.lighthouse.domain.entity.response.FilterVO
+import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
-import com.lighthouse.domain.usecase.GetFilterSettingUseCase
-import com.lighthouse.domain.usecase.GetLanguageFilterUseCase
-import com.lighthouse.domain.usecase.GetMatchedUserUseCase
-import com.lighthouse.domain.usecase.GetProfileUseCase
-import com.lighthouse.domain.usecase.ManageFilterUpdateUseCase
-import com.lighthouse.domain.usecase.SaveLanguageFilterUseCase
-import com.lighthouse.domain.usecase.UploadFilterSettingUseCase
+import com.lighthouse.domain.logging.FilterInteractLogger
+import com.lighthouse.domain.logging.MatchingTimeAndCountLogger
+import com.lighthouse.domain.repository.HomeRepository
+import com.lighthouse.domain.repository.ProfileRepository
+import com.lighthouse.swm_logging.SWMLogging
+import com.lighthouse.swm_logging.logging_scheme.ClickScheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getMatchedUserUseCase: GetMatchedUserUseCase,
-    private val getLanguageFilterUseCase: GetLanguageFilterUseCase,
-    private val getFilterSettingUseCase: GetFilterSettingUseCase,
-    private val saveLanguageFilterUseCase: SaveLanguageFilterUseCase,
-    private val uploadFilterSettingUseCase: UploadFilterSettingUseCase,
-    private val profileUseCase: GetProfileUseCase,
-    manageFilterUpdateUseCase: ManageFilterUpdateUseCase,
-    dispatcherProvider: DispatcherProvider,
-) : BaseViewModel(dispatcherProvider) {
+    private val homeRepository: HomeRepository,
+    private val profileRepository: ProfileRepository,
+    private val dispatcherProvider: DispatcherProvider,
+    application: Application
+) : BaseViewModel(dispatcherProvider, application), InterestListener {
     private var userProfiles = listOf<ProfileVO>()
+    private lateinit var prevFilter: FilterVO
     var next: Int? = null
 
     private val _filter: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val filter: StateFlow<UiState> = _filter.asStateFlow()
 
-    private var _upload: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val upload: StateFlow<Boolean> = _upload.asStateFlow()
+    private val _changes = MutableSharedFlow<Boolean>()
+    val changes: SharedFlow<Boolean> = _changes.asSharedFlow()
+
+    val countryNameList: ObservableList<String> = ObservableArrayList()
+
+    val languageNameList: ObservableList<String> = ObservableArrayList()
 
     var page = 1
 
     private lateinit var fetchJob: Job
 
     init {
-        val key = manageFilterUpdateUseCase.getIfFilterUpdated()
+        val key = homeRepository.getIfFilterUpdated()
         if (key) {
             userProfiles = listOf()
-            manageFilterUpdateUseCase.saveIfFilterUpdated(false)
+            homeRepository.saveIfFilterUpdated(false)
         }
     }
 
@@ -64,69 +75,85 @@ class HomeViewModel @Inject constructor(
             fetchJob.cancel()
         }
         onIO {
-            getMatchedUserUseCase.invoke(next, pageSize)
+            homeRepository.getMatchedUser(next, pageSize)
                 .onStart {
                     _filter.value = UiState.Loading
                 }
                 .catch {
                     _filter.value = handleException(it)
                 }.collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            if (it.data!!.nextId == -1) {
-                                page = -1
-                            } else {
-                                next = it.data!!.nextId
-                            }
-                            _filter.value = UiState.Success(it.data!!.profile)
-                        }
-
-                        is Resource.Error ->
-                            _filter.value = UiState.Error(it.message ?: StringSet.error_msg)
+                    if (it.nextId == -1) {
+                        page = -1
+                    } else {
+                        next = it.nextId
                     }
+                    _filter.value = UiState.Success(it.profile)
                 }
         }
     }
 
     fun getFilterFromServer() {
         onIO {
-            getFilterSettingUseCase.invoke()
+            homeRepository.getFilterSetting()
                 .catch {
                     _filter.value = handleException(it)
                 }
                 .collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            _filter.value = UiState.Success(it.data!!)
-                        }
-
-                        is Resource.Error -> {
-                            _filter.value = UiState.Error(it.message ?: StringSet.error_msg)
-                        }
-                    }
+                    homeRepository.saveLanguageVO(it.languages)
+                    homeRepository.saveCountryVO(it.countries)
+                    homeRepository.saveInterestVO(it.interests)
+                    languageNameList.clear()
+                    countryNameList.clear()
+                    languageNameList.addAll(it.languages.map { "${it.name}/LV${it.level}" })
+                    countryNameList.addAll(it.countries.map { it.name })
+                    prevFilter = it
+                    _filter.value = UiState.Success(it.interests)
                 }
         }
     }
 
-    fun uploadFilterSetting(filter: UploadFilterVO) {
+    fun uploadFilterSetting() {
         onIO {
-            uploadFilterSettingUseCase.invoke(filter)
+            if (checkFilter()) {
+                _changes.emit(false)
+                return@onIO
+            }
+
+            homeRepository.uploadFilterSetting()
                 .catch {
                     _filter.value = handleException(it)
                 }
                 .collect {
-                    when (it) {
-                        is Resource.Success -> {
-                            _upload.value = it.data!!
-                        }
-
-                        is Resource.Error -> {
-                            _filter.value = UiState.Error(it.message ?: StringSet.error_msg)
-                        }
+                    _changes.emit(it)
+                    if (it) {
+                        next = null
+                        userProfiles = emptyList()
                     }
                 }
         }
     }
+
+    private fun checkFilter(): Boolean {
+        return countryNameList.isEmpty() || languageNameList.isEmpty() || homeRepository.getInterestVO()
+            .isEmpty()
+    }
+
+    fun getFilterFromLocal() {
+        val language = homeRepository.getLanguageVO()
+        val country = homeRepository.getCountryVO()
+        languageNameList.clear()
+        countryNameList.clear()
+        languageNameList.addAll(language.map { "${it.name}/LV${it.level}" })
+        countryNameList.addAll(country.map { it.name })
+        _filter.value = UiState.Success(homeRepository.getInterestVO())
+    }
+
+    suspend fun getSpannableText(): SpannableStringBuilder {
+        return withContext(dispatcherProvider.io) {
+            SpannableStringBuilderProvider.getSpannableBuilder(getHomeTitle(context), context)
+        }
+    }
+
 
     fun saveUserProfiles(profiles: List<ProfileVO>) {
         userProfiles = profiles
@@ -134,19 +161,99 @@ class HomeViewModel @Inject constructor(
 
     fun getUserProfiles() = userProfiles
 
-    fun getLanguageFilter() = getLanguageFilterUseCase.invoke()
-
-    fun saveLanguageFilter(languages: List<LanguageVO>) =
-        saveLanguageFilterUseCase.invoke(languages)
-
-    fun setNotification(b: Boolean) = profileUseCase.setNotification(b)
-
-    fun resetUploadState() {
-        _upload.value = false
-    }
+    fun setNotification(b: Boolean) = profileRepository.setPushEnabled(b)
 
     fun resetFilterState() {
         _filter.value = UiState.Loading
     }
 
+    fun sendHomeClick(
+        opUid: String,
+        name: String,
+        region: String,
+        clickTime: Double,
+        clickCount: Int
+    ) {
+        onIO {
+            val scheme = getHomeClickScheme(opUid, name, region, clickTime, clickCount)
+            SWMLogging.logEvent(scheme)
+        }
+    }
+
+    private fun getHomeClickScheme(
+        opUid: String,
+        name: String,
+        region: String,
+        clickTime: Double,
+        clickCount: Int
+    ): ClickScheme {
+        return MatchingTimeAndCountLogger.Builder()
+            .setName(name)
+            .setRegion(region)
+            .setClickTime(clickTime)
+            .setClickCount(clickCount)
+            .setOpUid(opUid)
+            .build()
+    }
+
+    fun sendFilterClick(
+        stayTime: Double,
+    ) {
+        onIO {
+            val changedFilter = checkChanges()
+            val scheme = getFilterClickScheme(stayTime, changedFilter)
+            SWMLogging.logEvent(scheme)
+        }
+    }
+
+    private fun checkChanges(): List<String> {
+        val currentFilter = homeRepository.getInterestVO()
+        val changedFilter = mutableListOf<String>()
+        if (currentFilter.size != prevFilter.interests.size) {
+            changedFilter.add("interest")
+        } else {
+            for (i in currentFilter.indices) {
+                if (currentFilter[i].interests != prevFilter.interests[i].interests) {
+                    changedFilter.add("interest")
+                    break
+                }
+            }
+        }
+        if (countryNameList.size != prevFilter.countries.size) {
+            changedFilter.add("country")
+        } else {
+            for (i in countryNameList.indices) {
+                if (countryNameList[i] != prevFilter.countries[i].name) {
+                    changedFilter.add("country")
+                    break
+                }
+            }
+        }
+        if (languageNameList.size != prevFilter.languages.size) {
+            changedFilter.add("language")
+        } else {
+            for (i in languageNameList.indices) {
+                if (languageNameList[i] != "${prevFilter.languages[i].name}/LV${prevFilter.languages[i].level}") {
+                    changedFilter.add("language")
+                    break
+                }
+            }
+        }
+        return changedFilter
+    }
+
+    private fun getFilterClickScheme(
+        stayTime: Double,
+        changedFilter: List<String>,
+    ): FilterInteractLogger {
+        return FilterInteractLogger.Builder()
+            .setStayTime(stayTime)
+            .setChangedFilter(changedFilter)
+            .build()
+    }
+
+    override val selectedInterest: MutableLiveData<List<InterestVO>> =
+        MutableLiveData<List<InterestVO>>()
+
+    override val collapse: ObservableInt = ObservableInt(0)
 }

@@ -1,6 +1,7 @@
 package com.lighthouse.lingo_talk.i18n
 
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
+import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.i18n.supportRegions.SupportRegions
 import com.lighthouse.lighthousei18n.I18nCurrency
 import com.lighthouse.lighthousei18n.I18nManager
@@ -21,15 +22,15 @@ class I18nManagerImpl(private val localPreferenceDataSource: LocalPreferenceData
         if (selectedRegion !is SupportRegions) {
             throw IllegalArgumentException("selectedRegion is not SupportRegions")
         }
-        localPreferenceDataSource.saveCurrentRegion(KEY_SELECTED_REGION, selectedRegion.name)
-        localPreferenceDataSource.saveCurrentRegion(
-            KEY_SELECTED_LOCALE,
+        localPreferenceDataSource.save(LocalKey.SELECTED_REGION, selectedRegion.name)
+        localPreferenceDataSource.save(
+            LocalKey.SELECTED_LOCALE,
             locale.toLanguageTag()
         )
     }
 
     override fun getSelectedRegion(): Region? {
-        localPreferenceDataSource.getCurrentRegion(KEY_SELECTED_REGION)?.let {
+        localPreferenceDataSource.getString(LocalKey.SELECTED_REGION)?.let {
             return SupportRegions.valueOf(it)
         }
 
@@ -45,24 +46,24 @@ class I18nManagerImpl(private val localPreferenceDataSource: LocalPreferenceData
     }
 
     override fun getLocale(): Locale {
-        val selectedLanguage = localPreferenceDataSource.getCurrentRegion(KEY_SELECTED_LOCALE)
+        val selectedLanguage = localPreferenceDataSource.getString(LocalKey.SELECTED_LOCALE)
             ?: defaultLocale.supportLanguagesFromJava.first().toLanguageTag()
         return Locale.forLanguageTag(selectedLanguage)
     }
 
     override fun resetSelectedI18n() {
-        localPreferenceDataSource.saveCurrentRegion(KEY_SELECTED_REGION, null)
-        localPreferenceDataSource.saveCurrentRegion(KEY_SELECTED_LOCALE, null)
+        localPreferenceDataSource.save(LocalKey.SELECTED_REGION, "")
+        localPreferenceDataSource.save(LocalKey.SELECTED_LOCALE, "")
     }
 
     override fun getTimezone(): TimeZone {
-        val curTimezone = localPreferenceDataSource.getCurrentRegion(KEY_SELECTED_TIMEZONE)
+        val curTimezone = localPreferenceDataSource.getString(LocalKey.SELECTED_TIMEZONE)
         return curTimezone?.let {
             TimeZone.getTimeZone(it)
         } ?: run {
             val defaultTimezone = defaultLocale.timezones.first()
-            localPreferenceDataSource.saveCurrentRegion(
-                KEY_SELECTED_TIMEZONE,
+            localPreferenceDataSource.save(
+                LocalKey.SELECTED_TIMEZONE,
                 defaultTimezone.id
             )
             defaultTimezone
@@ -82,7 +83,7 @@ class I18nManagerImpl(private val localPreferenceDataSource: LocalPreferenceData
     }
 
     override fun saveTimezoneId(timezoneId: String) {
-        localPreferenceDataSource.saveCurrentRegion(KEY_SELECTED_TIMEZONE, timezoneId)
+        localPreferenceDataSource.save(LocalKey.SELECTED_TIMEZONE, timezoneId)
     }
 
     override fun getFormattingTimeFromTimeStamp(timeStamp: Long): String {
@@ -92,9 +93,4 @@ class I18nManagerImpl(private val localPreferenceDataSource: LocalPreferenceData
         return dateFormat.format(date)
     }
 
-    companion object {
-        private const val KEY_SELECTED_REGION = "KEY_SELECTED_REGION"
-        private const val KEY_SELECTED_LOCALE = "KEY_SELECTED_LOCALE"
-        private const val KEY_SELECTED_TIMEZONE = "KEY_SELECTED_TIMEZONE"
-    }
 }

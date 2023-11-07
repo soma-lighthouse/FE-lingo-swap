@@ -16,16 +16,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.lighthouse.android.common_ui.base.BindingFragment
-import com.lighthouse.android.common_ui.base.adapter.ScrollSpeedLinearLayoutManager
 import com.lighthouse.android.common_ui.base.adapter.SimpleListAdapter
 import com.lighthouse.android.common_ui.databinding.UserInfoTileBinding
-import com.lighthouse.android.common_ui.server_driven.rich_text.SpannableStringBuilderProvider
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.lighthouse.android.home.adapter.makeAdapter
 import com.lighthouse.android.home.databinding.FragmentHomeBinding
-import com.lighthouse.android.home.util.getHomeTitle
 import com.lighthouse.android.home.viewmodel.HomeViewModel
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +37,14 @@ class HomeFragment @Inject constructor() :
     private var profileList = mutableListOf<ProfileVO>()
     private var next: Int? = null
     private var loading = false
+    private var startTime: Double = 0.0
+    private var clickTime: Double = 0.0
+    private var clickCount: Int = 0
+
+    override fun onStart() {
+        super.onStart()
+        startTime = System.currentTimeMillis().toDouble()
+    }
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -50,12 +55,17 @@ class HomeFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val intent = requireActivity().intent
+        binding.viewModels = viewModel
         initAdapter()
         initScrollListener()
         initFab()
         initMatch()
-        initHomeTitle()
         checkPermission()
+        redirectToDestination(
+            intent.getStringExtra("baseUrl") ?: "",
+            intent.getStringExtra("path") ?: ""
+        )
     }
 
     private fun checkPermission() {
@@ -72,16 +82,6 @@ class HomeFragment @Inject constructor() :
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun initHomeTitle() {
-        lifecycleScope.launch {
-            binding.tvHomeTitle.text =
-                SpannableStringBuilderProvider.getSpannableBuilder(
-                    getHomeTitle(requireContext()),
-                    requireContext()
-                )
-        }
-    }
-
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         profileList = viewModel.getUserProfiles().toMutableList()
@@ -90,7 +90,6 @@ class HomeFragment @Inject constructor() :
 
     private fun initMatch() {
         if (viewModel.getUserProfiles().isEmpty()) {
-            Log.d("TESTING INITMATCH", "EMPTY")
             viewModel.resetFilterState()
             viewModel.fetchNextPage()
             loading = true
@@ -121,14 +120,11 @@ class HomeFragment @Inject constructor() :
 
             is UiState.Success<*> -> {
                 binding.rvHome.setVisible()
-                if (uiState.data is List<*>) {
+                if (uiState.data is List<*> && (uiState.data as List<*>).all { it is ProfileVO }) {
                     profileList.add(ProfileVO())
                     profileList.addAll(uiState.data as List<ProfileVO>)
-                    Log.d("TESTING RENDER", profileList.size.toString())
+                    adapter.submitList(profileList)
                 }
-                Log.d("MATCHING", uiState.data.toString())
-                Log.d("MATCHING", profileList.size.toString())
-                adapter.submitList(profileList)
                 binding.pbHomeLoading.setGone()
                 binding.fabFilter.setVisible()
                 viewModel.resetFilterState()
@@ -144,17 +140,20 @@ class HomeFragment @Inject constructor() :
 
 
     private fun initAdapter() {
-        adapter = makeAdapter(requireContext()) { userId ->
+        adapter = makeAdapter(requireContext()) { userId, name, region ->
             mainNavigator.navigateToProfile(
                 context = requireContext(),
                 userId = Pair("userId", userId),
                 isMe = Pair("isMe", false),
                 isChat = Pair("isChat", false)
             )
+            clickCount += 1
+
+
+            clickTime = System.currentTimeMillis().toDouble()
+            viewModel.sendHomeClick(userId, name, region, clickTime - startTime, clickCount)
+
         }
-        val linearLayoutManager = ScrollSpeedLinearLayoutManager(requireContext(), 8f)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        binding.rvHome.layoutManager = linearLayoutManager
         binding.rvHome.adapter = adapter
     }
 

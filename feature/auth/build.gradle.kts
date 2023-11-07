@@ -1,9 +1,3 @@
-import org.jetbrains.kotlin.konan.properties.Properties
-
-val lighthouseFile = rootProject.file("lighthouse.properties")
-val properties = Properties()
-properties.load(lighthouseFile.inputStream())
-
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -15,34 +9,18 @@ plugins {
 android {
     namespace = "com.lighthouse.auth"
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
+    defaultConfig {
+        buildConfigField("String", "CURRENT_VER", "\"${libs.versions.appVersion.get()}\"")
     }
 
-    defaultConfig {
-        buildConfigField(
-            "String",
-            "GOOGLE_CLIENT_ID",
-            properties.getProperty("GOOGLE_CLIENT_ID")
-        )
+    buildTypes {
+        debug {
+            consumerProguardFile("proguard-rules.pro")
+        }
 
-        buildConfigField(
-            "String",
-            "PRIVACY_TERM_URL",
-            properties.getProperty("PRIVACY_TERM_URL")
-        )
-
-        buildConfigField(
-            "String",
-            "SERVICE_TERM_URL",
-            properties.getProperty("SERVICE_TERM_URL")
-        )
+        release {
+            consumerProguardFile("proguard-rules.pro")
+        }
     }
 
     buildFeatures {
@@ -55,17 +33,16 @@ dependencies {
     implementation(project(":common-ui"))
     implementation(project(":navigation"))
 
-    implementation(libs.bundles.androidx.ui.foundation)
-    implementation(libs.bundles.android.basic.ui)
-    implementation(libs.kotlin.coroutines)
-    implementation(libs.hilt)
-    implementation("androidx.core:core-splashscreen:1.0.0-beta02")
-    implementation(libs.google.login)
-    implementation("com.google.guava:guava:31.0.1-android")
-
+    api(libs.bundles.androidx.ui.foundation)
+    api(libs.bundles.android.basic.ui)
+    api(libs.bundles.navigation)
     kapt(libs.hilt.kapt)
+    implementation(libs.hilt)
+    implementation(libs.google.login)
+    implementation(libs.guava)
+    implementation(libs.splash.screen)
+    implementation(libs.firebase.config)
     implementation(libs.bundles.basic.test)
-    implementation(libs.bundles.navigation)
     implementation(libs.bundles.image)
     implementation(libs.bundles.camerax)
 }

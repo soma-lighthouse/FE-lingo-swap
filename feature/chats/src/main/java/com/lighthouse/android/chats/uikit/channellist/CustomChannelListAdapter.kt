@@ -3,10 +3,9 @@ package com.lighthouse.android.chats.uikit.channellist
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.lighthouse.android.chats.R
 import com.lighthouse.android.chats.databinding.ChannelListItemBinding
+import com.lighthouse.android.common_ui.util.ImageUtils
 import com.lighthouse.android.common_ui.util.setGone
 import com.lighthouse.android.common_ui.util.setVisible
 import com.sendbird.android.SendbirdChat
@@ -46,10 +45,8 @@ class CustomChannelListAdapter(
                 opponent = if (members[0].nickname != currentUser) members[0] else members[1]
                 binding.tvName.text = opponent.nickname
                 // channel cover image
-                Glide.with(binding.ivProfileImg.context).load(opponent.profileUrl).centerCrop()
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(com.lighthouse.android.common_ui.R.drawable.placeholder)
-                    .into(binding.ivProfileImg)
+                ImageUtils.newInstance()
+                    .setImage(binding.ivProfileImg, opponent.profileUrl, binding.root.context)
 
                 binding.ivProfileImg.setOnClickListener {
                     toProfile(opponent.userId)

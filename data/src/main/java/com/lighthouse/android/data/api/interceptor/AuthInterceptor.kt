@@ -1,11 +1,12 @@
 package com.lighthouse.android.data.api.interceptor
 
 import android.util.Log
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.gson.Gson
 import com.google.gson.JsonParser
-import com.lighthouse.android.data.BuildConfig
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.response.BaseResponse
+import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.android.data.util.getDto
 import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.domain.entity.response.vo.TokenVO
@@ -23,6 +24,7 @@ import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
     private val localPreferenceDataSource: LocalPreferenceDataSource,
+    private val remoteConfig: FirebaseRemoteConfig,
 ) : Interceptor {
     private val client = OkHttpClient.Builder().build()
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -72,7 +74,7 @@ class AuthInterceptor @Inject constructor(
 
         Log.d("TESTING REFRESH_TOKEN", getRefreshToken())
         val request = Request.Builder()
-            .url(BuildConfig.LIGHTHOUSE_BASE_URL + TOKEN_REQUEST)
+            .url(remoteConfig.getString("LIGHTHOUSE_BASE_URL") + TOKEN_REQUEST)
             .post(body)
             .build()
 
@@ -91,14 +93,11 @@ class AuthInterceptor @Inject constructor(
 
 
     private fun getRefreshToken(): String {
-        return localPreferenceDataSource.getRefreshToken() ?: throw LighthouseException(
-            TOKEN_EMPTY,
-            "Token empty"
-        )
+        return localPreferenceDataSource.getString(LocalKey.REFRESH_TOKEN)
     }
 
     private fun getAccessToken(): String {
-        return localPreferenceDataSource.getAccessToken() ?: ""
+        return localPreferenceDataSource.getString(LocalKey.ACCESS_TOKEN)
     }
 
     private fun requestRefresh(request: Request): BaseResponse<TokenVO> {
@@ -116,16 +115,16 @@ class AuthInterceptor @Inject constructor(
     }
 
     private fun storeToken(accessToken: String, refreshToken: String?) {
-        localPreferenceDataSource.saveAccessToken(accessToken)
+        localPreferenceDataSource.save(LocalKey.ACCESS_TOKEN, accessToken)
         refreshToken?.let {
-            localPreferenceDataSource.saveRefreshToken(refreshToken)
+            localPreferenceDataSource.save(LocalKey.REFRESH_TOKEN, refreshToken)
         }
     }
 
     private fun storeExpire(accessTokenExpire: Long, refreshTokenExpire: Long?) {
-        localPreferenceDataSource.saveExpire(accessTokenExpire)
+        localPreferenceDataSource.save(LocalKey.ACCESS_TOKEN_EXPIRE, accessTokenExpire)
         if (refreshTokenExpire != null && refreshTokenExpire > 0) {
-            localPreferenceDataSource.saveRefreshExpire(refreshTokenExpire)
+            localPreferenceDataSource.save(LocalKey.REFRESH_TOKEN_EXPIRE, refreshTokenExpire)
         }
     }
 

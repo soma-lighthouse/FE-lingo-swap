@@ -8,10 +8,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.messaging.FirebaseMessaging
-import com.lighthouse.android.chats.uikit.CustomFragmentFactory
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.lighthouse.android.chats.uikit.channel.CustomChannel
 import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.base.MyFirebaseMessagingService
 import com.lighthouse.android.common_ui.util.PushUtils
+import com.lighthouse.android.common_ui.util.extractUrlParts
 import com.lighthouse.lingo_talk.databinding.ActivityMainBinding
 import com.lighthouse.navigation.NavigationFlow
 import com.lighthouse.navigation.Navigator
@@ -22,8 +24,11 @@ import com.sendbird.android.handler.InitResultHandler
 import com.sendbird.android.params.InitParams
 import com.sendbird.uikit.SendbirdUIKit
 import com.sendbird.uikit.adapter.SendbirdUIKitAdapter
+import com.sendbird.uikit.fragments.ChannelFragment
 import com.sendbird.uikit.interfaces.UserInfo
+import com.sendbird.uikit.interfaces.providers.ChannelFragmentProvider
 import com.sendbird.uikit.model.configurations.UIKitConfig
+import com.sendbird.uikit.providers.FragmentProviders
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -32,6 +37,9 @@ class MainActivity @Inject constructor() :
     BindingActivity<ActivityMainBinding>(R.layout.activity_main), ToFlowNavigatable {
     @Inject
     lateinit var navigator: Navigator
+
+    @Inject
+    lateinit var remoteConfig: FirebaseRemoteConfig
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +50,7 @@ class MainActivity @Inject constructor() :
 
         FirebaseMessaging.getInstance().token.addOnSuccessListener { task ->
 
-            SendbirdChat.registerPushToken(task) { status, e ->
+            SendbirdChat.registerPushToken(task) { _, e ->
                 if (e != null) {
                     Log.d("MESSAGING", "onInitSucceed: $e")
                 }
@@ -89,6 +97,8 @@ class MainActivity @Inject constructor() :
             return@setOnItemSelectedListener item.onNavDestinationSelected(navController)
         }
         initChatting()
+        initRedirect()
+        com.lighthouse.lingo_talk.MyFirebaseMessagingService().getFirebaseToken()
     }
 
     private fun initChatting() {
@@ -96,7 +106,37 @@ class MainActivity @Inject constructor() :
         if (new) {
             navigateToFlow(NavigationFlow.ChatFlow(intent.getStringExtra("ChannelId") ?: ""))
         }
+    }
 
+    private fun initRedirect() {
+        val url = intent.getStringExtra("url")
+        if (!url.isNullOrEmpty()) {
+            val (base, extract) = url.extractUrlParts()
+            if (extract.isEmpty()) {
+                return
+            }
+            Log.d("TESTING DEEP LINK", "initRedirect: ${extract.first()} ${extract.last()}")
+            when (extract.first()) {
+                "chat" ->
+                    navigateToFlow(
+                        NavigationFlow.ChatFlow(
+                            path = extract.last(),
+                            baseUrl = "${base}/${extract.first()}"
+                        )
+                    )
+
+                "board" ->
+                    navigateToFlow(NavigationFlow.BoardFlow)
+
+                "profile" ->
+                    navigateToFlow(
+                        NavigationFlow.ProfileFlow(
+                            path = extract.last(),
+                            baseUrl = "${base}/${extract.first()}"
+                        )
+                    )
+            }
+        }
     }
 
     override fun navigateToFlow(flow: NavigationFlow) {
@@ -114,7 +154,7 @@ class MainActivity @Inject constructor() :
     private fun initSendBirdChat() {
         SendbirdChat.init(
             InitParams(
-                BuildConfig.SENDBIRD_APPLICATION_ID,
+                remoteConfig.getString("SENDBIRD_APPLICATION_ID"),
                 applicationContext,
                 useCaching = true
             ),
@@ -153,7 +193,7 @@ class MainActivity @Inject constructor() :
     private fun initSendBirdUI() {
         SendbirdUIKit.init(object : SendbirdUIKitAdapter {
             override fun getAppId(): String {
-                return BuildConfig.SENDBIRD_APPLICATION_ID
+                return remoteConfig.getString("SENDBIRD_APPLICATION_ID")
             }
 
             override fun getAccessToken(): String {
@@ -198,7 +238,10 @@ class MainActivity @Inject constructor() :
         }, this)
         UIKitConfig.groupChannelConfig.enableTypingIndicator = true
         UIKitConfig.groupChannelConfig.enableReactions = false
-        SendbirdUIKit.setUIKitFragmentFactory(CustomFragmentFactory())
+        FragmentProviders.channel = ChannelFragmentProvider { url, args ->
+            ChannelFragment.Builder(url).withArguments(args).setUseHeader(true)
+                .setCustomFragment(CustomChannel()).build()
+        }
 
         PushUtils.registerPushHandler(MyFirebaseMessagingService())
     }

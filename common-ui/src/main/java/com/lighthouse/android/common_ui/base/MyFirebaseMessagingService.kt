@@ -80,7 +80,8 @@ class MyFirebaseMessagingService : SendbirdPushHandler() {
             }
             val intent = newRedirectToChannelIntent(context, channelUrl)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            @SuppressLint("UnspecifiedImmutableFlag") val pendingIntent =
+            @SuppressLint("UnspecifiedImmutableFlag")
+            val pendingIntent =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.getActivity(
                     context,
                     messageId.toInt(),

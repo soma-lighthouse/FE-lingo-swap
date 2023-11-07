@@ -1,11 +1,13 @@
 package com.lighthouse.lingo_talk.di
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.lighthouse.android.data.api.AuthApiService
 import com.lighthouse.android.data.api.BoardApiService
 import com.lighthouse.android.data.api.ChatApiService
 import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.ProfileApiService
+import com.lighthouse.android.data.remote.RemoteConfigDataSource
 import com.lighthouse.android.data.repository.datasource.AuthRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.BoardRemoteDataSource
 import com.lighthouse.android.data.repository.datasource.ChatRemoteDataSource
@@ -63,5 +65,11 @@ object DataSourceModule {
     @Singleton
     fun provideChatDataSource(@Main chatApiService: ChatApiService): ChatRemoteDataSource {
         return ChatRemoteDataSourceImpl(chatApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(remoteConfig: FirebaseRemoteConfig): RemoteConfigDataSource {
+        return RemoteConfigDataSource(remoteConfig)
     }
 }

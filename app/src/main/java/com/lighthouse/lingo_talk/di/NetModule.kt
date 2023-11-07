@@ -1,5 +1,6 @@
 package com.lighthouse.lingo_talk.di
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.lighthouse.android.data.api.AuthApiService
 import com.lighthouse.android.data.api.BoardApiService
 import com.lighthouse.android.data.api.ChatApiService
@@ -7,11 +8,11 @@ import com.lighthouse.android.data.api.DrivenApiService
 import com.lighthouse.android.data.api.HomeApiService
 import com.lighthouse.android.data.api.ProfileApiService
 import com.lighthouse.android.data.api.interceptor.AuthInterceptor
-import com.lighthouse.lingo_talk.BuildConfig
-import com.lighthouse.lingo_talk.HeaderInterceptor
 import com.lighthouse.lingo_talk.NullOrEmptyConverter
 import com.lighthouse.lingo_talk.di.annotation.Main
 import com.lighthouse.lingo_talk.di.annotation.Test
+import com.lighthouse.lingo_talk.interceptor.HeaderInterceptor
+import com.lighthouse.lingo_talk.interceptor.RemoteConfigInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +33,7 @@ object NetModule {
     fun provideLightHouseHttpClient(
         headerInterceptor: HeaderInterceptor,
         authInterceptor: AuthInterceptor,
+        remoteConfigInterceptor: RemoteConfigInterceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
@@ -42,14 +44,18 @@ object NetModule {
             })
             .addInterceptor(headerInterceptor)
             .addInterceptor(authInterceptor)
+            .addInterceptor(remoteConfigInterceptor)
             .build()
 
     @Provides
     @Singleton
     @Main
-    fun provideLightHouseRetrofit(@Main okHttpClient: OkHttpClient): Retrofit {
+    fun provideLightHouseRetrofit(
+        @Main okHttpClient: OkHttpClient,
+        remoteConfig: FirebaseRemoteConfig
+    ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.LIGHTHOUSE_BASE_URL)
+            .baseUrl(remoteConfig.getString("LIGHTHOUSE_BASE_URL"))
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(NullOrEmptyConverter())
@@ -65,7 +71,6 @@ object NetModule {
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
-//            .addInterceptor(ContentInterceptor)
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
@@ -76,7 +81,7 @@ object NetModule {
     @Test
     fun provideDrivenRetrofit(@Test okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .baseUrl(BuildConfig.TEST_BASE_URL)
+            .baseUrl("")
             .client(okHttpClient)
 //            .addConverterFactory(
 //                GsonConverterFactory.create(

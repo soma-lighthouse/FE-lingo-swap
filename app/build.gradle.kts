@@ -1,9 +1,3 @@
-import org.jetbrains.kotlin.konan.properties.Properties
-
-val lighthouseFile = rootProject.file("lighthouse.properties")
-val properties = Properties()
-properties.load(lighthouseFile.inputStream())
-
 plugins {
     kotlin("android")
     id("com.android.application")
@@ -19,38 +13,28 @@ android {
 
     defaultConfig {
         applicationId = "com.lighthouse.lingo_talk"
-        versionCode = libs.versions.versionCode.get().toInt()
-        versionName = libs.versions.appVersion.get()
-
-        buildConfigField(
-            "String",
-            "LIGHTHOUSE_BASE_URL",
-            properties.getProperty("LIGHTHOUSE_BASE_URL")
-        )
-
-        buildConfigField(
-            "String",
-            "TEST_BASE_URL",
-            properties.getProperty("TEST_BASE_URL")
-        )
-
-        buildConfigField(
-            "String",
-            "SENDBIRD_APPLICATION_ID",
-            properties.getProperty("SENDBIRD_APPLICATION_ID")
-        )
     }
 
     buildTypes {
-//        debug {
-//
-//        }
-        release {
+        debug {
             isMinifyEnabled = true // APK or AAB
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            resValue("string", "ad_application_id", "ca-app-pub-3940256099942544~3347511713")
+        }
+
+        release {
+            isDebuggable = false
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+
+            resValue("string", "ad_application_id", "ca-app-pub-7050097872547694~2687354079")
         }
     }
 
@@ -65,8 +49,6 @@ kapt {
 }
 
 dependencies {
-
-    implementation("com.sendbird.sdk:uikit:3.+")
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":common-ui"))
@@ -76,24 +58,13 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:auth"))
     implementation(project(":navigation"))
+    implementation(project(":swm-logging"))
 
-    implementation(libs.hilt)
-    implementation(libs.bundles.androidx.ui.foundation)
-    implementation(libs.bundles.android.basic.ui)
     kapt(libs.hilt.kapt)
-    implementation(libs.bundles.basic.test)
-    implementation(libs.bundles.retrofit)
-    implementation(libs.bundles.gson)
-    implementation(libs.bundles.room)
-    kapt(libs.room.complier)
-    implementation(libs.bundles.navigation)
-//    implementation(libs.okhttp.logging.interceptor)
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation(libs.hilt)
     implementation(libs.shared.preference.security)
-    implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
-    implementation("com.google.firebase:firebase-auth:22.1.1")
+    implementation(libs.bundles.firebase)
     implementation(libs.google.services)
     implementation(libs.google.login)
-    implementation(libs.bundles.firebase)
     implementation(libs.google.admob)
 }

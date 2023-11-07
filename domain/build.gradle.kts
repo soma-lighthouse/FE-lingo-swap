@@ -9,11 +9,11 @@ java {
 }
 
 dependencies {
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
-    implementation("javax.inject:javax.inject:1")
+    api(libs.kotlin.coroutines)
+    implementation(libs.java.inject)
 
     dependencies {
-        api(project(mapOf("path" to ":lighthousei18n")))
+        api(project(":lighthousei18n"))
+        api(project(":swm-logging"))
     }
 }

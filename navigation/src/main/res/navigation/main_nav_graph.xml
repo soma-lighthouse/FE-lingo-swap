@@ -28,6 +28,15 @@
         <argument
             android:name="channelUrl"
             app:argType="string" />
+
+        <argument
+            android:name="path"
+            app:argType="string" />
+
+        <argument
+            android:name="baseUrl"
+            app:argType="string" />
+
     </action>
 
     <action
@@ -42,6 +51,13 @@
         app:destination="@id/profile_flow"
         app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
-        app:popUpTo="@id/main_nav_graph" />
+        app:popUpTo="@id/main_nav_graph">
+        <argument
+            android:name="path"
+            app:argType="string" />
+        <argument
+            android:name="baseUrl"
+            app:argType="string" />
+    </action>
 
 </navigation>
