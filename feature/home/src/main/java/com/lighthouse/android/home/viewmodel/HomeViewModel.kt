@@ -13,11 +13,14 @@ import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.android.home.util.getHomeTitle
+import com.lighthouse.domain.entity.request.UploadFilterVO
+import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.FilterVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.logging.FilterInteractLogger
 import com.lighthouse.domain.logging.MatchingTimeAndCountLogger
+import com.lighthouse.domain.repository.AuthRepository
 import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.domain.repository.ProfileRepository
 import com.lighthouse.swm_logging.SWMLogging
@@ -37,12 +40,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     private val homeRepository: HomeRepository,
     private val profileRepository: ProfileRepository,
     private val dispatcherProvider: DispatcherProvider,
     application: Application
 ) : BaseViewModel(dispatcherProvider, application), InterestListener {
     private var userProfiles = listOf<ProfileVO>()
+    private lateinit var newFilter: UploadFilterVO
     private lateinit var prevFilter: FilterVO
     var next: Int? = null
 
@@ -118,8 +123,19 @@ class HomeViewModel @Inject constructor(
                 _changes.emit(false)
                 return@onIO
             }
+            newFilter = UploadFilterVO(
+                homeRepository.getCountryVO().map { it.code },
+                homeRepository.getLanguageVO()
+                    .map { mapOf("code" to it.code, "level" to it.level) },
+                homeRepository.getInterestVO().map {
+                    UploadInterestVO(
+                        it.category.code,
+                        it.interests.map { i -> i.code })
+                },
+            )
 
-            homeRepository.uploadFilterSetting()
+
+            homeRepository.uploadFilterSetting(newFilter)
                 .catch {
                     _filter.value = handleException(it)
                 }
@@ -188,6 +204,7 @@ class HomeViewModel @Inject constructor(
         clickCount: Int
     ): ClickScheme {
         return MatchingTimeAndCountLogger.Builder()
+            .setUuid(authRepository.getUserId() ?: "")
             .setName(name)
             .setRegion(region)
             .setClickTime(clickTime)
@@ -247,8 +264,10 @@ class HomeViewModel @Inject constructor(
         changedFilter: List<String>,
     ): FilterInteractLogger {
         return FilterInteractLogger.Builder()
+            .setUuid(authRepository.getUserId() ?: "")
             .setStayTime(stayTime)
             .setChangedFilter(changedFilter)
+            .setFilter(newFilter)
             .build()
     }
 

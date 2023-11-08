@@ -4,4 +4,9 @@
         <key>LIGHTHOUSE_BASE_URL</key>
         <value>https://lingoswap.net</value>
     </entry>
+
+    <entry>
+        <key>LOG_SERVER_URL</key>
+        <value>https://api.lingoswap.net</value>
+    </entry>
 </defaultsMap>

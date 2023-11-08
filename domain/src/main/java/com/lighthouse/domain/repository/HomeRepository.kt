@@ -1,5 +1,6 @@
 package com.lighthouse.domain.repository
 
+import com.lighthouse.domain.entity.request.UploadFilterVO
 import com.lighthouse.domain.entity.response.FilterVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
@@ -24,7 +25,7 @@ interface HomeRepository {
     fun saveRegion(region: CountryVO)
 
     fun getFilterSetting(): Flow<FilterVO>
-    fun uploadFilterSetting(): Flow<Boolean>
+    fun uploadFilterSetting(filter: UploadFilterVO): Flow<Boolean>
 
     fun getIfFilterUpdated(): Boolean
     fun saveIfFilterUpdated(update: Boolean)

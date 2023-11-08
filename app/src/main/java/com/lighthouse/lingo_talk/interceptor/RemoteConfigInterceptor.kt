@@ -14,7 +14,7 @@ class RemoteConfigInterceptor @Inject constructor(
         val originalRequest = chain.request()
         val originalUrl = originalRequest.url
 
-        if (originalUrl.host == "lingoswap.s3.ap-northeast-2.amazonaws.com") {
+        if (originalUrl.host != "https://lingoswap.net") {
             return chain.proceed(originalRequest)
         }
 

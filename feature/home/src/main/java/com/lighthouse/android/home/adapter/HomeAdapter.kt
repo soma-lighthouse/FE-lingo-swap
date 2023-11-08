@@ -27,5 +27,5 @@ fun makeAdapter(
             binding.setVariable(BR.item, item)
         },
         ads = true,
-        context = context
+        context = context,
     )

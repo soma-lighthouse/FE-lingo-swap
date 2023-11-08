@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit
 
 
 object SWMLogging {
-    private lateinit var uuid: String
     private lateinit var appVersion: String
     private lateinit var OSNameAndVersion: String
     private lateinit var baseUrl: String
@@ -82,14 +81,12 @@ object SWMLogging {
     }
 
     fun init(
-        uuid: String,
         appVersion: String,
         osNameAndVersion: String,
         baseUrl: String,
         serverPath: String,
         token: String
     ) {
-        this.uuid = uuid
         this.appVersion = appVersion
         this.OSNameAndVersion = osNameAndVersion
         this.baseUrl = baseUrl
@@ -105,9 +102,5 @@ object SWMLogging {
 
     fun getOsNameAndVersion(): String {
         return OSNameAndVersion
-    }
-
-    fun getUID(): String {
-        return uuid
     }
 }
