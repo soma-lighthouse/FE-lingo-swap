@@ -18,8 +18,11 @@ object DomainModule {
 
     @Provides
     @Singleton
-    fun provideUpdateUserProfileUseCase(profileRepository: ProfileRepository): UpdateUserProfileUseCase {
-        return UpdateUserProfileUseCase(profileRepository)
+    fun provideUpdateUserProfileUseCase(
+        profileRepository: ProfileRepository,
+        authRepository: AuthRepository
+    ): UpdateUserProfileUseCase {
+        return UpdateUserProfileUseCase(profileRepository, authRepository)
     }
 
     @Provides

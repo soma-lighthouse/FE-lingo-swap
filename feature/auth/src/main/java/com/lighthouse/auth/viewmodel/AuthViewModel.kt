@@ -48,6 +48,9 @@ class AuthViewModel @Inject constructor(
     dispatcherProvider: DispatcherProvider,
     application: Application
 ) : BaseViewModel(dispatcherProvider, application), InterestListener {
+    private var startTime: Double = 0.0
+    private var endTime: Double = 0.0
+
     private val _loginState: MutableLiveData<LoginState> = MutableLiveData()
     val loginState: LiveData<LoginState> = _loginState
 
@@ -189,7 +192,12 @@ class AuthViewModel @Inject constructor(
                     _register.value = false
                 }.collect {
                     loading.set(false)
-                    _register.value = true
+                    _register.value = it
+
+                    if (it) {
+                        endTime = System.currentTimeMillis().toDouble()
+                        sendRegisterExposureLogging(endTime - startTime)
+                    }
                 }
         }
     }
@@ -240,6 +248,7 @@ class AuthViewModel @Inject constructor(
             authRepository.postGoogleLogin().onStart {
                 _result.value = UiState.Loading
             }.catch {
+                startTime = System.currentTimeMillis().toDouble()
                 _result.value = handleException(it)
             }.collect {
                 _result.emit(UiState.Success(it))
@@ -439,6 +448,7 @@ class AuthViewModel @Inject constructor(
 
     private fun getRegisterExposureLogging(stayTime: Double): RegisterExposureLogger {
         return RegisterExposureLogger.Builder()
+            .setUuid(registerInfo.uuid ?: "")
             .setStayTime(stayTime)
             .build()
     }

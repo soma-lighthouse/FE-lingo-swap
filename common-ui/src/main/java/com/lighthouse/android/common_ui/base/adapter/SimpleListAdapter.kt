@@ -23,8 +23,11 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.lighthouse.android.common_ui.BuildConfig
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.databinding.NativeAdBinding
+import javax.inject.Inject
 
 
 class SimpleListAdapter<T : Any, B : ViewDataBinding>(
@@ -36,6 +39,9 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
 ) : ListAdapter<T, ViewHolder<B>>(diffCallBack) {
 
     private var isLoadingVisible = false
+
+    @Inject
+    lateinit var remoteConfig: FirebaseRemoteConfig
 
     companion object {
         private const val TYPE_ITEM = 0
@@ -66,8 +72,14 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
             onBindCallback(holder, getItem(position))
             holder.onBind(getItem(position))
         } else if (getItemViewType(position) == TYPE_AD && context != null) {
+            val adID = if (BuildConfig.DEBUG || !::remoteConfig.isInitialized) {
+                "ca-app-pub-3940256099942544/2247696110"
+            } else {
+                remoteConfig.getString("AD_ID")
+            }
+
             val loader =
-                AdLoader.Builder(context, "ca-app-pub-3940256099942544/2247696110").forNativeAd {
+                AdLoader.Builder(context, adID).forNativeAd {
                     Log.d("TESTING ADS2", it.toString())
                     if (holder.binding is NativeAdBinding) {
                         populateNativeAdView(it, holder.binding.nativeAdView)

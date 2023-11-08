@@ -3,12 +3,14 @@ package com.lighthouse.domain.usecase
 import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.logging.ProfileEditLogger
+import com.lighthouse.domain.repository.AuthRepository
 import com.lighthouse.domain.repository.ProfileRepository
 import com.lighthouse.swm_logging.SWMLogging
 import javax.inject.Inject
 
 class UpdateUserProfileUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
+    private val authRepository: AuthRepository
 ) {
     private lateinit var prev: ProfileVO
     private lateinit var cur: RegisterInfoVO
@@ -80,6 +82,7 @@ class UpdateUserProfileUseCase @Inject constructor(
 
     private fun sendLog(duration: Double) {
         val scheme = ProfileEditLogger.Builder()
+            .setUuid(authRepository.getUserId() ?: "")
             .setChanges(changed)
             .setDuration(duration)
             .build()

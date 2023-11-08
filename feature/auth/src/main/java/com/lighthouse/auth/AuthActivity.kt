@@ -30,8 +30,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth) {
     private val viewModel: AuthViewModel by viewModels()
-    private var startTime: Double = 0.0
-    private var endTime: Double = 0.0
     private lateinit var loginState: LoginState
     private lateinit var navController: NavController
 
@@ -40,11 +38,6 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
 
     @Inject
     lateinit var remoteConfig: FirebaseRemoteConfig
-
-    override fun onStart() {
-        super.onStart()
-        startTime = System.currentTimeMillis().toDouble()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -127,8 +120,7 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
             osNameAndVersion = "$ANDROID ${android.os.Build.VERSION.SDK_INT}",
             baseUrl = remoteConfig.getString("LOG_SERVER_URL"),
             serverPath = "log",
-            token = "",
-            uuid = getUUID()
+            token = ""
         )
     }
 
@@ -171,14 +163,6 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
             } else {
                 checkRegister()
             }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (loginState == LoginState.LOGIN_FAILURE) {
-            endTime = System.currentTimeMillis().toDouble()
-            viewModel.sendRegisterExposureLogging(endTime - startTime)
         }
     }
 

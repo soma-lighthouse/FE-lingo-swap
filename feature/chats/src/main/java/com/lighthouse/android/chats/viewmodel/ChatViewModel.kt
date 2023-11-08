@@ -7,6 +7,7 @@ import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.logging.ChatQuestionInteractLogger
+import com.lighthouse.domain.repository.AuthRepository
 import com.lighthouse.domain.repository.ChatRepository
 import com.lighthouse.swm_logging.SWMLogging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
+    private val authRepository: AuthRepository,
     dispatcherProvider: DispatcherProvider,
     application: Application
 ) : BaseViewModel(dispatcherProvider, application) {
@@ -65,6 +67,7 @@ class ChatViewModel @Inject constructor(
         position: Int
     ): ChatQuestionInteractLogger {
         return ChatQuestionInteractLogger.Builder()
+            .setUuid(authRepository.getUserId() ?: "")
             .setStayTime(stayTime)
             .setQuestion(question)
             .setCategory(position)

@@ -56,6 +56,10 @@
 -keep public class com.google.gson.*
 
 -keep class com.lighthouse.domain.entity.** { *;}
+-keep class com.lighthouse.swm_logging.** { *;}
+
+-keep class com.google.crypto.tink.** { *; }
+
 
 ##---------------End: proguard configuration for Gson  ----------
 

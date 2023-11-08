@@ -17,7 +17,7 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = true // APK or AAB
+            isMinifyEnabled = false // APK or AAB
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
