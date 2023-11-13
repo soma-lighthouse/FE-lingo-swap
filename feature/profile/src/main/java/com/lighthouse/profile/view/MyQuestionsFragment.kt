@@ -34,7 +34,6 @@ class MyQuestionsFragment :
         getQuestionList()
         initAdapter()
         initBack()
-        redirectToDestination(args.baseUrl, args.remainingPath)
     }
 
     private fun initAdapter() {

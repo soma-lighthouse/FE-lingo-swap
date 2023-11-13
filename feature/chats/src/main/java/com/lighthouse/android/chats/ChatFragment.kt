@@ -23,6 +23,7 @@ class ChatFragment : CustomChannelList() {
             joinChannel(channelUrl)
         }
         if (args.path.isNotEmpty()) {
+            // 어떤 데이터가 필요한지 domain에서 가져오는 것이 좋다. (path, argument를 domain에서 관리한다)
             args.path.getParams().let {
                 if (it["channelUrl"].isNullOrEmpty()) return@let
                 joinChannel(it["channelUrl"]!!)

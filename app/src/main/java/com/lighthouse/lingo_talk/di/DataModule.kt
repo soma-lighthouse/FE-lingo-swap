@@ -41,19 +41,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import java.security.GeneralSecurityException
 import java.security.KeyStore
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
-    @Qualifier
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class DefaultPreference
-
-    @Qualifier
-    @Retention(AnnotationRetention.RUNTIME)
-    annotation class EncryptedPreference
 
     @Provides
     @Singleton

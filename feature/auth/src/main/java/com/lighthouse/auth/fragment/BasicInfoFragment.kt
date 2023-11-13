@@ -120,7 +120,8 @@ class BasicInfoFragment :
             viewModel.filePath = UriUtil.getRealPath(requireContext(), contentUri) ?: ""
 
             Glide.with(this).load(imageUri).fitCenter().placeholder(R.drawable.placeholder)
-                .error(R.drawable.question).override(calSize(200f)).into(binding.ivProfileImg)
+                .error(R.drawable.question).override(calSize(200f))
+                .into(binding.ivProfileImg)
 
             viewModel.getPreSignedUrl(getFileName(viewModel.filePath))
         }

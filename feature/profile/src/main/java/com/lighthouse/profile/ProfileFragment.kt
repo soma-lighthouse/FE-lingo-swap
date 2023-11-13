@@ -36,12 +36,6 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         initLogout()
         initToggle()
         observeError()
-        redirectToDestination(args.baseUrl, args.path)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.getProfileDetail()
     }
 
     private fun initToggle() {

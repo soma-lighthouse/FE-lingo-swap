@@ -120,12 +120,9 @@ abstract class BindingFragment<T : ViewDataBinding>(
     }
 
     protected fun redirectToDestination(base: String, path: String) {
-        Log.d("TESTING PUSH0", path)
         val split = path.splitPath()
 
-        Log.d("TESTING PUSH1", split.toString())
         if (split.isEmpty()) return
-        Log.d("TESTING PUSH2", "$base/${split.first()}")
         val viewType =
             findClassByPath("$base/${split.first()}", "$base/${split.first()}", split.last())
         findNavController().deepLinkNavigateTo(viewType)

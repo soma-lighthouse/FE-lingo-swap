@@ -109,6 +109,7 @@ class MainActivity @Inject constructor() :
     }
 
     private fun initRedirect() {
+        // onNewIntent을 이용해서 앱이 꺼지지 않고 프로세스가 날라가지 않거 다시 켜지지 않게 한다
         val url = intent.getStringExtra("url")
         if (!url.isNullOrEmpty()) {
             val (base, extract) = url.extractUrlParts()
