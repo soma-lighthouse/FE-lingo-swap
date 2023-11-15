@@ -1,5 +1,13 @@
 # lingo-swap
 
+<p align="middle">
+  <a href='https://play.google.com/store/apps/details?id=com.lighthouse.lingo_talk&pli=1&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+    <img width="200px;"; alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/>
+  </a>
+</p>
+
+***
+
 ## Introduction
 ### Korean
 ![](screenshot/screenshot_kr.png)
@@ -8,15 +16,11 @@
 ![](screenshot/screenshot_en.png)
 
 
-
 The Main Project that was carried out during the SW Maestro 14th
 
 
 
 This is a free application that can be used to make foreign friend and chatting with them using various question made by other users!
-
-
-[You can try out my app on PlayStore!](https://play.google.com/store/apps/details?id=com.lighthouse.lingo_talk)
 
 ***
 
