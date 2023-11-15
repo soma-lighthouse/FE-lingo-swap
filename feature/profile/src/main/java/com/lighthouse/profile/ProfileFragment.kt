@@ -9,7 +9,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.base.MyFirebaseMessagingService
 import com.lighthouse.android.common_ui.dialog.showOKDialog
@@ -26,7 +25,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragment_profile) {
     private val viewModel: ProfileViewModel by viewModels()
-    private val args: ProfileFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,6 +34,11 @@ class ProfileFragment : BindingFragment<FragmentProfileBinding>(R.layout.fragmen
         initLogout()
         initToggle()
         observeError()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getProfileDetail()
     }
 
     private fun initToggle() {

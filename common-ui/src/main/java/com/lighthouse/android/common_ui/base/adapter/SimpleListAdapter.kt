@@ -72,10 +72,10 @@ class SimpleListAdapter<T : Any, B : ViewDataBinding>(
             onBindCallback(holder, getItem(position))
             holder.onBind(getItem(position))
         } else if (getItemViewType(position) == TYPE_AD && context != null) {
-            val adID = if (BuildConfig.DEBUG || !::remoteConfig.isInitialized) {
+            val adID = if (BuildConfig.DEBUG) {
                 "ca-app-pub-3940256099942544/2247696110"
             } else {
-                remoteConfig.getString("AD_ID")
+                "ca-app-pub-7050097872547694/7608508260"
             }
 
             val loader =
