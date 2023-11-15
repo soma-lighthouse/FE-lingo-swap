@@ -1,10 +1,16 @@
 # lingo-swap
 
 <p align="middle">
+  <img src = https://github.com/soma-lighthouse/FE-lingo-talk/assets/123813671/43370711-c979-43f1-b90a-d90b8e10aa90 width = "250">
+</p>
+
+<p align="middle">
   <a href='https://play.google.com/store/apps/details?id=com.lighthouse.lingo_talk&pli=1&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
     <img width="200px;"; alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'/>
   </a>
 </p>
+
+
 
 ***
 
