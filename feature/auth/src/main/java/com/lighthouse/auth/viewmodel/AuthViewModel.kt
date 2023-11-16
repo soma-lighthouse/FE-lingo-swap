@@ -13,17 +13,14 @@ import com.lighthouse.android.common_ui.listener.InterestListener
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
-import com.lighthouse.android.common_ui.util.isValidBirthday
-import com.lighthouse.android.common_ui.util.isValidEmail
-import com.lighthouse.android.common_ui.util.isValidName
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.auth.BuildConfig
 import com.lighthouse.domain.constriant.LoginState
 import com.lighthouse.domain.entity.request.RegisterInfoVO
-import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.logging.RegisterClickLogger
 import com.lighthouse.domain.logging.RegisterExposureLogger
 import com.lighthouse.domain.repository.AuthRepository
 import com.lighthouse.domain.repository.HomeRepository
@@ -50,7 +47,6 @@ class AuthViewModel @Inject constructor(
 ) : BaseViewModel(dispatcherProvider, application), InterestListener {
     private var startTime: Double = 0.0
     private var endTime: Double = 0.0
-
     private val _loginState: MutableLiveData<LoginState> = MutableLiveData()
     val loginState: LiveData<LoginState> = _loginState
 
@@ -110,6 +106,8 @@ class AuthViewModel @Inject constructor(
         context.resources.getString(R.string.level5)
     )
 
+    private val registerUuid = UUID.randomUUID().toString()
+
     init {
         checkUpdate()
     }
@@ -118,11 +116,29 @@ class AuthViewModel @Inject constructor(
         homeRepository.clearAllData()
     }
 
+    fun getBasicInfo(
+        email: String?,
+        name: String?,
+        birthday: String,
+        locale: String,
+        profileUrl: String?,
+        gender: String
+    ) {
+        registerInfo.email = email
+        registerInfo.name = name
+        registerInfo.birthday = birthday
+        registerInfo.region = locale
+        registerInfo.profileImageUri = profileUrl
+        registerInfo.gender = gender
+
+        Log.d("TESTING REGISTER2", registerInfo.toString())
+    }
+
     private fun checkUpdate() {
         viewModelScope.launch {
             val minVersion = homeRepository.fetchRemoteConfig("MIN_VER").split(".")
             val currentVersion = BuildConfig.CURRENT_VER.split(".")
-            Log.d("TESTING VERSION", minVersion.toString())
+            Log.d("MIN_VER", minVersion.toString())
             if (minVersion.size != currentVersion.size) {
                 _error.value = mapOf()
                 return@launch
@@ -130,6 +146,9 @@ class AuthViewModel @Inject constructor(
             for (i in minVersion.indices) {
                 if (minVersion[i].toInt() > currentVersion[i].toInt()) {
                     _error.value = mapOf("error" to "true", "type" to "dialog")
+                    return@launch
+                } else if (minVersion[i].toInt() < currentVersion[i].toInt()) {
+                    _error.value = mapOf()
                     return@launch
                 }
             }
@@ -205,8 +224,8 @@ class AuthViewModel @Inject constructor(
     fun registerBasicInfo() {
         collect.set(true)
         registerInfo.region = selectedCountry.value?.first()?.code
-        registerInfo.preferredInterests = selectedInterest.value?.map {
-            UploadInterestVO(it.category.code, it.interests.map { c -> c.code })
+        registerInfo.preferredInterests = selectedInterest.value?.flatMap {
+            it.interests.flatMap { c -> listOf(c.code) }
         }
         validateInputs()
         val intersect =
@@ -224,17 +243,6 @@ class AuthViewModel @Inject constructor(
                 _result.value = handleException(it)
             }.collect {
                 _result.emit(UiState.Success(it))
-            }
-        }
-    }
-
-    fun uploadImg(filePath: String) {
-        onIO {
-            authRepository.uploadImg(profileUrl!!, filePath).catch {
-                _upload.value = false
-                handleException(it)
-            }.collect {
-                _upload.value = it
             }
         }
     }
@@ -262,29 +270,11 @@ class AuthViewModel @Inject constructor(
 
     private fun validateInputs() {
         val tmp = mutableListOf<Int>().apply {
-            if (!registerInfo.name.isValidName()) {
+            if (selectedCountry.value.isNullOrEmpty()) {
                 add(1)
             }
-            if (!registerInfo.birthday.isValidBirthday()) {
-                add(2)
-            }
-            if (!registerInfo.email.isValidEmail()) {
-                add(3)
-            }
-            if (registerInfo.gender == "TMP") {
-                add(4)
-            }
-            if (registerInfo.region.isNullOrEmpty()) {
-                add(5)
-            }
-            if (selectedInterest.value.isNullOrEmpty()) {
-                add(6)
-            }
-            if (selectedCountry.value.isNullOrEmpty()) {
-                add(7)
-            }
             if (registerInfo.description.isNullOrEmpty()) {
-                add(8)
+                add(2)
             }
         }
         collect.set(false)
@@ -360,14 +350,9 @@ class AuthViewModel @Inject constructor(
     fun startRegister() {
         validateInputs()
         if (errorNumber.value!!.size == 1 && errorNumber.value!!.first() == 0) {
-            registerInfo.uuid = userId.toString()
             registerInfo.preferredCountries = selectedCountry.value?.map { it.code }
-            loading.set(true)
-            if (filePath != "") {
-                uploadImg(filePath)
-            } else {
-                registerUser()
-            }
+            registerUser()
+            Log.d("TESTING REGISTER", registerInfo.toString())
         }
     }
 
@@ -377,9 +362,16 @@ class AuthViewModel @Inject constructor(
             interest = it.filter {
                 it.interests.isNotEmpty()
             }
-            homeRepository.saveInterestVO(it)
-            _changes.value = finish
+            registerInfo.preferredInterests = selectedInterest.value?.flatMap {
+                it.interests.flatMap { c -> listOf(c.code) }
+            }
 
+            if (registerInfo.preferredInterests.isNullOrEmpty()) {
+                return@let
+            }
+            homeRepository.saveInterestVO(it)
+            _changes.value = next
+            _changes.value = none
         }
     }
 
@@ -435,13 +427,12 @@ class AuthViewModel @Inject constructor(
         list?.let {
             val final = it.filter { l -> l.name != context.getString(R.string.language) }
             homeRepository.saveLanguageVO(final)
-            registerInfo.languages = final.map { l -> mapOf("code" to l.code, "level" to l.level) }
             _changes.value = if (isRegister) next else finish
             _changes.value = none
         }
     }
 
-    fun sendRegisterExposureLogging(stayTime: Double) {
+    private fun sendRegisterExposureLogging(stayTime: Double) {
         val scheme = getRegisterExposureLogging(stayTime)
         SWMLogging.logEvent(scheme)
     }
@@ -451,6 +442,26 @@ class AuthViewModel @Inject constructor(
             .setUuid(registerInfo.uuid ?: "")
             .setStayTime(stayTime)
             .build()
+    }
+
+
+    fun sendRegisterClickLogging(stayTime: Double, screenName: String, eventLogName: String) {
+        val scheme = getRegisterClickLogging(stayTime, screenName, eventLogName)
+        SWMLogging.logEvent(scheme)
+    }
+
+    private fun getRegisterClickLogging(
+        stayTime: Double,
+        screenName: String,
+        eventLogName: String
+    ): RegisterClickLogger {
+        return RegisterClickLogger.Builder()
+            .setStayTime(stayTime)
+            .setScreenName(screenName)
+            .setEventLogName(eventLogName)
+            .setUUID(registerUuid)
+            .build()
+
     }
 
     companion object {

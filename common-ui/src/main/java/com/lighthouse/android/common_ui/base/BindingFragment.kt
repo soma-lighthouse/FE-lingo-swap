@@ -15,18 +15,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import androidx.navigation.fragment.findNavController
 import com.lighthouse.android.common_ui.R
 import com.lighthouse.android.common_ui.dialog.showOKDialog
 import com.lighthouse.android.common_ui.util.Injector
 import com.lighthouse.android.common_ui.util.UiState
-import com.lighthouse.android.common_ui.util.splitPath
 import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.domain.constriant.ErrorTypeHandling
 import com.lighthouse.domain.entity.response.vo.LighthouseException
 import com.lighthouse.navigation.MainNavigator
-import com.lighthouse.navigation.deepLinkNavigateTo
-import com.lighthouse.navigation.findClassByPath
 import dagger.hilt.android.EntryPointAccessors
 import java.lang.ref.WeakReference
 
@@ -117,15 +113,6 @@ abstract class BindingFragment<T : ViewDataBinding>(
         sharedPreferences.edit().clear().apply()
         mainNavigator.navigateToLogin(requireContext())
         requireActivity().finish()
-    }
-
-    protected fun redirectToDestination(base: String, path: String) {
-        val split = path.splitPath()
-
-        if (split.isEmpty()) return
-        val viewType =
-            findClassByPath("$base/${split.first()}", "$base/${split.first()}", split.last())
-        findNavController().deepLinkNavigateTo(viewType)
     }
 
     override fun onDestroyView() {

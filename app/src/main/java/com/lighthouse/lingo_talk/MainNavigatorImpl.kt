@@ -33,16 +33,14 @@ class MainNavigatorImpl : MainNavigator {
         context.navigateActivity<DetailProfileActivity>(userId, isMe, isChat)
     }
 
-    override fun navigateToInterest(
-        context: Context,
-    ) =
-        context.navigateActivity<InterestListActivity>()
-
     override fun navigateToCountry(
         context: Context,
         multiSelect: Pair<String, Boolean>,
     ) =
         context.navigateActivity<CountryListActivity>(multiSelect)
+
+    override fun navigateToInterest(context: Context, isRegister: Pair<String, Boolean>) =
+        context.navigateActivity<InterestListActivity>(isRegister)
 
     override fun navigateToLanguage(
         context: Context,

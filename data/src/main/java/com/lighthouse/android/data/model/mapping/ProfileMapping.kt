@@ -20,7 +20,6 @@ fun RegisterInfoVO.toUpdateProfileDTO(): UpdateProfileDTO {
 fun RegisterInfoVO.toUpdateFilterDTO(): UploadFilterDTO {
     return UploadFilterDTO(
         preferredCountries = preferredCountries ?: emptyList(),
-        usedLanguages = languages ?: emptyList(),
         preferredInterests = preferredInterests ?: emptyList(),
     )
 }

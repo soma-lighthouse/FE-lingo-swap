@@ -270,6 +270,42 @@ fun setUpChip(chipGroup: ChipGroup, value: ObservableList<String>) {
     }
 }
 
+@BindingAdapter("setUpString")
+fun setUpString(recycler: RecyclerView, item: List<String>) {
+    val adapter =
+        SimpleListAdapter<String, LanguageTabBinding>(diffCallBack = ItemDiffCallBack(
+            onContentsTheSame = { old, new -> old == new },
+            onItemsTheSame = { old, new -> old == new }),
+            layoutId = R.layout.language_tab,
+            onBindCallback = { v, s ->
+                val binding = v.binding
+                binding.tvLanguage.text = s
+            })
+
+
+    adapter.submitList(item)
+    recycler.adapter = adapter
+}
+
+@BindingAdapter("setUpInterest")
+fun setUpInterest(recycler: RecyclerView, item: ObservableField<RegisterInfoVO>) {
+    val adapter =
+        SimpleListAdapter<String, LanguageTabBinding>(diffCallBack = ItemDiffCallBack(
+            onContentsTheSame = { old, new -> old == new },
+            onItemsTheSame = { old, new -> old == new }),
+            layoutId = R.layout.language_tab,
+            onBindCallback = { v, s ->
+                val binding = v.binding
+                binding.tvLanguage.text = s
+            })
+
+    item.get()?.preferredInterests?.let {
+        adapter.submitList(it)
+        recycler.adapter = adapter
+    }
+
+}
+
 @BindingAdapter(value = ["isValid", "number", "onError"], requireAll = true)
 fun isValid(view: View, tagNumber: Int, number: MutableLiveData<List<Int>>, errorMessage: String) {
     if (number.value?.contains(tagNumber) == true) {

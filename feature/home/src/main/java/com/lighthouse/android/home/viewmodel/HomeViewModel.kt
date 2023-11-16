@@ -14,13 +14,13 @@ import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.android.home.util.getHomeTitle
 import com.lighthouse.domain.entity.request.UploadFilterVO
-import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.FilterVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
-import com.lighthouse.domain.entity.response.vo.ProfileVO
+import com.lighthouse.domain.entity.response.vo.MatchProfileVO
 import com.lighthouse.domain.logging.FilterInteractLogger
 import com.lighthouse.domain.logging.MatchingTimeAndCountLogger
 import com.lighthouse.domain.repository.AuthRepository
+import com.lighthouse.domain.repository.ChatRepository
 import com.lighthouse.domain.repository.HomeRepository
 import com.lighthouse.domain.repository.ProfileRepository
 import com.lighthouse.swm_logging.SWMLogging
@@ -43,16 +43,20 @@ class HomeViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val homeRepository: HomeRepository,
     private val profileRepository: ProfileRepository,
+    private val chatRepository: ChatRepository,
     private val dispatcherProvider: DispatcherProvider,
     application: Application
 ) : BaseViewModel(dispatcherProvider, application), InterestListener {
-    private var userProfiles = listOf<ProfileVO>()
+    private var userProfiles = listOf<MatchProfileVO>()
     private lateinit var newFilter: UploadFilterVO
     private lateinit var prevFilter: FilterVO
     var next: Int? = null
 
     private val _filter: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
     val filter: StateFlow<UiState> = _filter.asStateFlow()
+
+    private val _chat: MutableStateFlow<String> = MutableStateFlow("")
+    val chat: StateFlow<String> = _chat.asStateFlow()
 
     private val _changes = MutableSharedFlow<Boolean>()
     val changes: SharedFlow<Boolean> = _changes.asSharedFlow()
@@ -127,11 +131,9 @@ class HomeViewModel @Inject constructor(
                 homeRepository.getCountryVO().map { it.code },
                 homeRepository.getLanguageVO()
                     .map { mapOf("code" to it.code, "level" to it.level) },
-                homeRepository.getInterestVO().map {
-                    UploadInterestVO(
-                        it.category.code,
-                        it.interests.map { i -> i.code })
-                },
+                homeRepository.getInterestVO().flatMap {
+                    it.interests.map { i -> i.code }
+                }
             )
 
 
@@ -171,7 +173,7 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    fun saveUserProfiles(profiles: List<ProfileVO>) {
+    fun saveUserProfiles(profiles: List<MatchProfileVO>) {
         userProfiles = profiles
     }
 
@@ -269,6 +271,25 @@ class HomeViewModel @Inject constructor(
             .setChangedFilter(changedFilter)
             .setFilter(newFilter)
             .build()
+    }
+
+    fun startChatting(userId: String) {
+        onIO {
+            chatRepository.createChannel(userId)
+                .onStart {
+                    _chat.value = ""
+                }
+                .catch {
+                    _filter.value = handleException(it)
+                }
+                .collect {
+                    _chat.value = it.id
+                }
+        }
+    }
+
+    fun clearChat() {
+        _chat.value = ""
     }
 
     override val selectedInterest: MutableLiveData<List<InterestVO>> =

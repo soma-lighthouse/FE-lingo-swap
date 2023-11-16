@@ -9,7 +9,6 @@ data class RegisterInfoDTO(
     val description: String,
     val region: String,
     val profileImageUri: String,
-    val preferredInterests: List<UploadInterestDTO>,
-    val usedLanguages: List<Map<String, Any>>,
+    val preferredInterests: List<String>,
     val preferredCountries: List<String>,
 )

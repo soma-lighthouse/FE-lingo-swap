@@ -22,7 +22,6 @@ class LanguageLevelFragment :
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
         binding.isRegister = viewModel.isRegister
-        initBack()
         initAdapter()
         observeClick()
     }
@@ -35,25 +34,12 @@ class LanguageLevelFragment :
             if (it == -3) {
                 findNavController().navigate(LanguageNavGraphDirections.actionGlobalCountryFragment())
             }
-            if (it == -4) {
-                findNavController().navigate(LanguageLevelFragmentDirections.actionLanguageLevelFragmentToLanguagesFragment())
-            }
         }
 
         viewModel.selectedLanguage.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
 
-    }
-
-    private fun initBack() {
-        binding.btnBack.setOnClickListener {
-            if (viewModel.isRegister) {
-                findNavController().navigate(LanguageNavGraphDirections.actionPopLanguageNavGraph())
-            } else {
-                requireActivity().finish()
-            }
-        }
     }
 
     private fun initAdapter() {

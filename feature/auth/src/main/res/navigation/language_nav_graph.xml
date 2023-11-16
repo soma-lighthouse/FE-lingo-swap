@@ -9,11 +9,7 @@
         android:id="@+id/languageLevelFragment"
         android:name="com.lighthouse.auth.fragment.LanguageLevelFragment"
         android:label="LanguageLevelFragment"
-        tools:layout="@layout/fragment_language_level">
-        <action
-            android:id="@+id/action_languageLevelFragment_to_languagesFragment"
-            app:destination="@id/languagesFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_language_level"></fragment>
 
     <fragment
         android:id="@+id/languagesFragment"
@@ -27,9 +23,5 @@
         app:enterAnim="@anim/nav_default_pop_enter_anim"
         app:exitAnim="@anim/nav_default_pop_exit_anim" />
 
-    <action
-        android:id="@+id/action_pop_language_nav_graph"
-        app:destination="@id/info_fragment"
-        app:popUpTo="@+id/auth_nav_graph" />
 
 </navigation>

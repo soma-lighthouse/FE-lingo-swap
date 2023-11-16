@@ -40,7 +40,7 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override fun updateFilter(newFilter: RegisterInfoVO): Flow<Boolean> {
         return datasource.updateFilter(
-            local.getString(LocalKey.USER_ID) ?: "",
+            local.getString(LocalKey.USER_ID),
             newFilter.toUpdateFilterDTO()
         )
             .map {

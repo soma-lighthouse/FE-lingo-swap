@@ -7,6 +7,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.lighthouse.android.common_ui.base.BindingFragment
+import com.lighthouse.android.common_ui.util.onCloseKeyBoard
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentCountryBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragment_country) {
     private val viewModel: AuthViewModel by activityViewModels()
-
+    private val startTime = System.currentTimeMillis()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initBack()
@@ -26,6 +27,7 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
         initCountry()
         observeUpload()
         observeRegister()
+        binding.etIntroduction.onCloseKeyBoard(requireContext())
         binding.viewModel = viewModel
     }
 
@@ -75,6 +77,12 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
 
     private fun registerComplete(result: Boolean) {
         if (result) {
+            viewModel.sendRegisterClickLogging(
+                System.currentTimeMillis().toDouble() - startTime.toDouble(),
+                "countryScreen",
+                "country_click"
+            )
+
             val intent = mainNavigator.navigateToMain(
                 requireContext(),
                 Pair("NewChat", false),

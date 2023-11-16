@@ -26,6 +26,14 @@ android {
     buildFeatures {
         dataBinding = true
         buildConfig = true
+        viewBinding = true
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -45,4 +53,10 @@ dependencies {
     implementation(libs.bundles.basic.test)
     implementation(libs.bundles.image)
     implementation(libs.bundles.camerax)
+
+    implementation("com.google.apis:google-api-services-people:v1-rev20210419-1.31.0")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.11.3")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.11.3")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.11.3")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.3")
 }

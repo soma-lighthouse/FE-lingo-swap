@@ -22,6 +22,7 @@ object SWMLogging {
     private lateinit var serverPath: String
     private lateinit var accessToken: String
     private lateinit var loggingService: LoggingService
+    private lateinit var modelName: String
 
     private val observable = PublishSubject.create<SWMLoggingScheme>() // 발행
     private val observer = object : Observer<SWMLoggingScheme> { // 구독
@@ -85,13 +86,15 @@ object SWMLogging {
         osNameAndVersion: String,
         baseUrl: String,
         serverPath: String,
-        token: String
+        token: String,
+        modelName: String
     ) {
         this.appVersion = appVersion
         this.OSNameAndVersion = osNameAndVersion
         this.baseUrl = baseUrl
         this.serverPath = serverPath
         this.accessToken = token
+        this.modelName = modelName
         setLoggingService()
         observable.throttleFirst(500, TimeUnit.MILLISECONDS).subscribe(observer)
     }
@@ -102,5 +105,13 @@ object SWMLogging {
 
     fun getOsNameAndVersion(): String {
         return OSNameAndVersion
+    }
+
+    fun getModelName(): String {
+        return modelName
+    }
+
+    fun getAppVersion(): String {
+        return appVersion
     }
 }

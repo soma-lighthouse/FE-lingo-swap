@@ -131,10 +131,7 @@ class MainActivity @Inject constructor() :
 
                 "profile" ->
                     navigateToFlow(
-                        NavigationFlow.ProfileFlow(
-                            path = extract.last(),
-                            baseUrl = "${base}/${extract.first()}"
-                        )
+                        NavigationFlow.ProfileFlow
                     )
             }
         }

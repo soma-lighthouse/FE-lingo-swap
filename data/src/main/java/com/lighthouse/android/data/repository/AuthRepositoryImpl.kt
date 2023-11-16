@@ -3,7 +3,6 @@ package com.lighthouse.android.data.repository
 import android.util.Log
 import com.lighthouse.android.data.local.LocalPreferenceDataSource
 import com.lighthouse.android.data.model.request.RegisterInfoDTO
-import com.lighthouse.android.data.model.request.UploadInterestDTO
 import com.lighthouse.android.data.repository.datasource.AuthRemoteDataSource
 import com.lighthouse.android.data.util.LocalKey
 import com.lighthouse.domain.entity.request.RegisterInfoVO
@@ -18,6 +17,8 @@ import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -67,19 +68,18 @@ class AuthRepositoryImpl @Inject constructor(
         }
 
     override fun registerUser(info: RegisterInfoVO): Flow<Boolean> {
-        val tmp = RegisterInfoDTO(uuid = info.uuid ?: "null",
+        val tmp = RegisterInfoDTO(
+            uuid = info.uuid ?: "null",
             name = info.name ?: "null",
-            birthday = info.birthday ?: "null",
+            birthday = parseJsonToDate(info.birthday),
             email = info.email ?: "null",
-            gender = info.gender ?: "null",
+            gender = parseGender(info.gender),
             region = info.region ?: "null",
-            preferredInterests = info.preferredInterests?.map {
-                UploadInterestDTO(it.category, it.interests)
-            } ?: listOf(),
+            preferredInterests = info.preferredInterests ?: listOf(),
             description = info.description ?: "",
-            usedLanguages = info.languages ?: listOf(),
             preferredCountries = info.preferredCountries ?: listOf(),
-            profileImageUri = info.profileImageUri ?: "")
+            profileImageUri = info.profileImageUri ?: ""
+        )
         return authRemoteDataSource.registerUser(
             localPreferenceDataSource.getString(LocalKey.ID_TOKEN),
             tmp
@@ -89,6 +89,28 @@ class AuthRepositoryImpl @Inject constructor(
             localPreferenceDataSource.save(LocalKey.USER_NAME, mapping.userName)
             true
         }
+    }
+
+    private fun parseGender(gender: String?): String {
+        return when (gender) {
+            "male" -> "MALE"
+            "female" -> "FEMALE"
+            else -> "RATHER_NOT_SAY"
+        }
+    }
+
+    private fun parseJsonToDate(jsonString: String?): String {
+        val json = jsonString?.trim() ?: return ""
+        val year = json.substringAfter("\"year\":").substringBefore(",").toInt()
+        val month = json.substringAfter("\"month\":").substringBefore(",").toInt()
+        val day = json.substringAfter("\"day\":").substringBefore("}").toInt()
+
+        return formatDate(LocalDate.of(year, month, day))
+    }
+
+    private fun formatDate(date: LocalDate): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return date.format(formatter)
     }
 
     override fun uploadImg(

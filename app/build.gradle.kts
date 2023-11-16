@@ -38,6 +38,12 @@ android {
         }
     }
 
+    packaging {
+        resources {
+            excludes += "/META-INF/DEPENDENCIES"
+        }
+    }
+
 
     buildFeatures {
         dataBinding = true

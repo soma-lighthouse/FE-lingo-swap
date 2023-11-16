@@ -7,8 +7,10 @@ abstract class SWMLoggingScheme {
     open lateinit var screenName: String
     open var logVersion: Int = 0
     private val osVersionAndName: String = SWMLogging.getOsNameAndVersion()
+    private val modelName: String = SWMLogging.getModelName()
     private lateinit var uuid: String
     private var logData: MutableMap<String, Any>? = mutableMapOf()
+    private val appVersion: String = SWMLogging.getAppVersion()
     fun setLoggingScheme(
         uuid: String,
         eventLogName: String,

@@ -85,7 +85,7 @@ class TermFragment : BindingFragment<FragmentTermBinding>(R.layout.fragment_term
         binding.btnNext.setBackgroundResource(com.lighthouse.android.common_ui.R.drawable.custom_button_disable)
         binding.btnNext.disable()
         binding.btnNext.setOnClickListener {
-            findNavController().navigate(TermFragmentDirections.actionTermFragmentToInfoFragment())
+            findNavController().navigate(TermFragmentDirections.actionTermFragmentToInterestFragment())
         }
     }
 }

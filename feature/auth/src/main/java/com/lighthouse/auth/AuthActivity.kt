@@ -1,10 +1,10 @@
 package com.lighthouse.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
@@ -13,8 +13,9 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.lighthouse.android.common_ui.base.BindingActivity
-import com.lighthouse.android.common_ui.dialog.showOKDialog
+import com.lighthouse.android.common_ui.dialog.showBlockingDialog
 import com.lighthouse.android.common_ui.dialog.showUpdateDialog
+import com.lighthouse.android.common_ui.util.InternetUtil
 import com.lighthouse.auth.databinding.ActivityAuthBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.constriant.LoginState
@@ -45,39 +46,18 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_auth) as NavHostFragment
         navController = navHostFragment.navController
-        checkUpdate()
         checkGooglePlayServices()
         login()
-        handleBackPressed()
         initI18n()
         initLogging()
+        checkRegister()
         viewModel.clearAllData()
-    }
 
-    private fun handleBackPressed() {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-
-                if (navController.currentDestination?.id == R.id.info_fragment) {
-                    showOKDialog(
-                        this@AuthActivity,
-                        getString(com.lighthouse.android.common_ui.R.string.exit_title),
-                        getString(com.lighthouse.android.common_ui.R.string.exit_body)
-                    ) { _, _ ->
-                        navController.popBackStack()
-                    }
-                } else {
-                    if (navController.currentDestination?.id == R.id.loginFragment) {
-                        finish()
-                    } else {
-                        navController.popBackStack()
-                    }
-                }
-            }
+        if (!InternetUtil.checkInternetConnection(this)) {
+            showBlockingDialog(this)
         }
-
-        this.onBackPressedDispatcher.addCallback(this, callback)
     }
+
 
     private fun checkRegister() {
         viewModel.getLoginStatus()
@@ -93,15 +73,14 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
             override fun onPreDraw(): Boolean {
                 return if (::loginState.isInitialized) {
                     if (loginState == LoginState.LOGIN_SUCCESS) {
-                        val intent =
+                        val intentMain =
                             mainNavigator.navigateToMain(
                                 this@AuthActivity,
                                 Pair("NewChat", false),
                                 Pair("ChannelId", ""),
                                 Pair("url", intent.getStringExtra("url") ?: "")
                             )
-                        startActivity(intent)
-                        finish()
+                        checkUpdate(intentMain)
                     }
                     content.viewTreeObserver.removeOnPreDrawListener(this)
                     true
@@ -120,7 +99,8 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
             osNameAndVersion = "$ANDROID ${android.os.Build.VERSION.SDK_INT}",
             baseUrl = remoteConfig.getString("LOG_SERVER_URL"),
             serverPath = "log",
-            token = ""
+            token = "",
+            modelName = android.os.Build.MODEL
         )
     }
 
@@ -149,7 +129,7 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         }
     }
 
-    private fun checkUpdate() {
+    private fun checkUpdate(intent: Intent) {
         viewModel.error.observe(this) {
             if (it["error"] == "true") {
                 showUpdateDialog(
@@ -161,7 +141,8 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
                     finish()
                 }
             } else {
-                checkRegister()
+                startActivity(intent)
+                finish()
             }
         }
     }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LingoTalk</string>
+    <string name="title_activity_interest_list">dsds</string>
     <string name="unknown_view_type">Unknown View Type!</string>
     <!--  Home  -->
     <string name="btn_nav_home">홈</string>
@@ -63,7 +64,12 @@
     <string name="select_language_level">언어 및 레벨을 선택해주세요 (2/3)</string>
     <string name="update_language_level">언어 및 레벨 업데이트</string>
     <string name="language_n_level">언어 및 레벨</string>
-    <string name="select_prefer_country">선호 국가를 선택해주세요 (3/3)</string>
+
+    <string name="register_order1">1/2</string>
+    <string name="register_order2">2/2</string>
+    <string name="select_interest">선호 관심 분야를 입력해주세요</string>
+    <string name="select_prefer_country">자기소개와 선호 국가</string>
+    <string name="enter_introduction">자기소개를 통해 자신을 표현해보세요!</string>
 
     <string name="invalid_email">잘못된 이메일 형식 입니다</string>
     <string name="invalid_birthday">잘못된 생일 형식 입니다</string>

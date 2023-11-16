@@ -12,7 +12,6 @@ class LingoApplication : Application() {
         super.onCreate()
         MobileAds.initialize(this)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
     }
 }

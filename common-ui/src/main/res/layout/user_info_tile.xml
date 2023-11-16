@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.lighthouse.domain.entity.response.vo.ProfileVO" />
+            type="com.lighthouse.domain.entity.response.vo.MatchProfileVO" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -51,6 +51,16 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="name" />
 
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_chat"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_margin="20dp"
+                android:background="@drawable/start_chatting"
+                android:tint="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/iv_flag"
                 android:layout_width="wrap_content"
@@ -59,7 +69,7 @@
                 android:layout_marginTop="-25dp"
                 app:layout_constraintStart_toStartOf="@+id/iv_profile_img"
                 app:layout_constraintTop_toBottomOf="@+id/iv_profile_img"
-                app:setUpFlag="@{item.region.code}"
+                app:setUpFlag="@{item.region}"
                 app:size="@{null}"
                 tools:layout_height="25dp"
                 tools:layout_width="25dp"
@@ -93,7 +103,7 @@
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_intro"
                 app:layout_constraintTop_toBottomOf="@+id/tv_profile_intro"
                 app:layout_constraintVertical_bias="1.0"
-                app:setUpLanguage="@{item.languages}" />
+                app:setUpString="@{item.interests}" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

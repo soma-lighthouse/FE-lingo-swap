@@ -39,6 +39,12 @@
         </activity>
 
         <activity
+            android:name="com.lighthouse.auth.view.InterestListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.LingoTheme" />
+
+        <activity
             android:name="com.lighthouse.lingo_talk.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.LingoTheme" />
@@ -62,10 +68,7 @@
             android:name="com.lighthouse.auth.view.CountryListActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.lighthouse.auth.view.InterestListActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name="com.lighthouse.auth.view.LanguageListActivity"
             android:exported="false"

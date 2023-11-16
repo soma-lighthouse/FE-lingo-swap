@@ -4,10 +4,11 @@
 
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment_language"
+        android:id="@+id/nav_host_fragment_interest"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
-        app:navGraph="@navigation/language_nav_graph" />
+        app:navGraph="@navigation/interest_nav" />
+
 </layout>

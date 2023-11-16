@@ -62,18 +62,13 @@ class UpdateUserProfileUseCase @Inject constructor(
     private fun checkFilterUpdate(): Boolean {
         var isUpdated = false
         if (prev.interests.flatMap { it.interests.map { it.code } }
-                .toSet() != cur.preferredInterests!!.flatMap { it.interests }.toSet()) {
+                .toSet() != cur.preferredInterests!!.toSet()) {
             changed.add("interest")
             isUpdated = true
         }
 
         if (prev.countries.map { it.code } != cur.preferredCountries) {
             changed.add("country")
-            isUpdated = true
-        }
-
-        if (prev.languages.map { mapOf("level" to it.level, "code" to it.code) } != cur.languages) {
-            changed.add("language")
             isUpdated = true
         }
 

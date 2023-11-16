@@ -9,8 +9,5 @@ sealed class NavigationFlow {
     ) : NavigationFlow()
 
     object BoardFlow : NavigationFlow()
-    data class ProfileFlow(
-        val path: String = "",
-        val baseUrl: String = ""
-    ) : NavigationFlow()
+    object ProfileFlow : NavigationFlow()
 }

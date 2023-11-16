@@ -16,9 +16,7 @@ class Navigator {
 
         NavigationFlow.BoardFlow -> navController.navigate(MainNavGraphDirections.actionGlobalBoardFlow())
         is NavigationFlow.ProfileFlow -> navController.navigate(
-            MainNavGraphDirections.actionGlobalProfileFlow(
-                navigationFlow.path, navigationFlow.baseUrl
-            )
+            MainNavGraphDirections.actionGlobalProfileFlow()
         )
     }
 }

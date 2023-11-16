@@ -15,7 +15,6 @@ import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.domain.entity.request.RegisterInfoVO
-import com.lighthouse.domain.entity.request.UploadInterestVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.ProfileVO
 import com.lighthouse.domain.repository.AuthRepository
@@ -64,7 +63,6 @@ class ProfileViewModel @Inject constructor(
     var userProfile: ObservableField<RegisterInfoVO> = ObservableField()
 
     private var profileUrl: String? = null
-    private var newFilePath: String? = null
 
     var editMode = false
     var imageUri: Uri? = null
@@ -91,20 +89,17 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun setRegisterInfo(data: ProfileVO) {
-        val info = RegisterInfoVO(uuid = data.id,
+        val info = RegisterInfoVO(
+            uuid = data.id,
             name = data.name,
             region = data.region.code,
             description = data.description,
             profileImageUri = data.profileImageUri,
             preferredCountries = data.countries.map { it.code },
-            preferredInterests = data.interests.map {
-                UploadInterestVO(it.category.code, it.interests.map { interest ->
-                    interest.code
-                })
+            preferredInterests = data.interests.flatMap {
+                it.interests.flatMap { c -> listOf(c.code) }
             },
-            languages = data.languages.map {
-                mapOf("code" to it.code, "level" to it.level)
-            })
+        )
         userProfile.set(info)
     }
 
@@ -118,12 +113,9 @@ class ProfileViewModel @Inject constructor(
             val interest = homeRepository.getInterestVO()
             val value = userProfile.get()
             value?.let {
-                it.languages = language.map { l -> mapOf("code" to l.code, "level" to l.level) }
                 it.preferredCountries = country.map { c -> c.code }
-                it.preferredInterests = interest.map { i ->
-                    UploadInterestVO(i.category.code, i.interests.map { interest ->
-                        interest.code
-                    })
+                it.preferredInterests = interest.flatMap {
+                    it.interests.flatMap { c -> listOf(c.code) }
                 }
                 userProfile.set(it)
             }
@@ -140,7 +132,6 @@ class ProfileViewModel @Inject constructor(
                 _error.value = handleException(it)
             }.collect {
                 profileUrl = it
-                newFilePath = getFileName(filePath)
             }
         }
     }
@@ -148,29 +139,19 @@ class ProfileViewModel @Inject constructor(
     fun saveProfile() {
         isEdit.set(false)
         isLoading.set(true)
-        if (!newFilePath.isNullOrEmpty()) {
-            uploadImg(filePath)
-        }
         saveUserDetail()
     }
 
     private fun saveUserDetail() {
         saveObserver.set(true)
         val endTime = System.currentTimeMillis().toDouble()
-        newFilePath?.let {
-            val change = userProfile.get()
-            change?.let { r ->
-                r.profileImageUri = it
-            }
-            userProfile.set(change)
-        }
-
+        Log.d("TESTING UPDATE", userProfile.get().toString())
         onIO {
             try {
                 if (userProfile.get()!!.profileImageUri == curProfile.get()!!.profileImageUri) {
                     val change = userProfile.get()
                     change?.let { r ->
-                        r.profileImageUri = getFileName(curProfile.get()!!.profileImageUri)
+                        r.profileImageUri = curProfile.get()!!.profileImageUri
                     }
                     userProfile.set(change)
                 }
@@ -188,8 +169,8 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun getFileName(uri: String): String {
-        if (uri == "") {
+    private fun getFileName(uri: String?): String {
+        if (uri.isNullOrEmpty()) {
             return ""
         }
         val fileName = uri.substringAfterLast("/")

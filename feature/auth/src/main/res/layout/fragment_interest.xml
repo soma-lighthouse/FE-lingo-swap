@@ -8,6 +8,10 @@
         <variable
             name="viewModel"
             type="com.lighthouse.auth.viewmodel.AuthViewModel" />
+
+        <variable
+            name="text"
+            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,7 +19,7 @@
         android:layout_height="match_parent"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        tools:context=".view.InterestListActivity">
+        tools:context=".fragment.InterestListFragment">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tb_info"
@@ -24,6 +28,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register_order1"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/tb_info"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tb_info" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_back"
@@ -39,11 +53,12 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/interest"
-            app:layout_constraintBottom_toBottomOf="@id/tb_info"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_margin="20dp"
+            android:text="@string/select_interest"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tb_info" />
+            app:layout_constraintTop_toBottomOf="@id/tb_info" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_interest_list"
@@ -53,10 +68,9 @@
             app:layout_constraintBottom_toTopOf="@+id/bottom_rectangle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tb_info"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
             tools:itemCount="3"
             tools:listitem="@layout/interest_list_tile" />
-
 
         <View
             android:id="@+id/bottom_rectangle"
@@ -96,7 +110,7 @@
             android:background="@drawable/custom_button"
             android:elevation="9dp"
             android:onClick="@{() -> viewModel.uploadInterest()}"
-            android:text="@string/apply"
+            android:text="@{text}"
             app:layout_constraintBottom_toBottomOf="@id/bottom_rectangle"
             app:layout_constraintEnd_toEndOf="@id/bottom_rectangle"
             app:layout_constraintStart_toStartOf="@id/bottom_rectangle" />

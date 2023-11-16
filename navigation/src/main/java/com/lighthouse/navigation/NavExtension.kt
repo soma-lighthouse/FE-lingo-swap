@@ -27,36 +27,6 @@ fun NavController.deepLinkNavigateTo(
 }
 
 sealed class DeepLinkDestination(val address: String) {
-    class FromFilterToLanguageLevel(start: Int = 1) :
-        DeepLinkDestination("lingoSwap://languageLevel/startDestination?start=${start}")
-
-    data class FromProfileToMyQuestions(
-        val baseUrl: String,
-        val remainingPath: String,
-    ) : DeepLinkDestination("https://lingoswap.net/profile/myQuestions?remainingPath=${remainingPath}&baseUrl=${baseUrl}")
-
-    data class FromMyQuestionsToLanguage(
-        val baseUrl: String,
-        val remainingPath: String,
-    ) : DeepLinkDestination("https://lingoswap.net/profile/myQuestions/filter?remainingPath=${remainingPath}&baseUrl=${baseUrl}")
-
-    data object Unknown : DeepLinkDestination("lingoSwap://unknown")
-
-}
-
-fun findClassByPath(path: String, baseUrl: String, remainingPath: String): DeepLinkDestination {
-    return when {
-        path.startsWith("lingoSwap://languageLevel/startDestination") -> DeepLinkDestination.FromFilterToLanguageLevel()
-        path == "https://lingoswap.net/profile/myQuestions" -> DeepLinkDestination.FromProfileToMyQuestions(
-            baseUrl,
-            remainingPath
-        )
-
-        path == "https://lingoswap.net/profile/myQuestions/filter" -> DeepLinkDestination.FromMyQuestionsToLanguage(
-            baseUrl,
-            remainingPath
-        )
-
-        else -> DeepLinkDestination.Unknown
-    }
+    data class FromDetailToInterest(val isRegister: Boolean) :
+        DeepLinkDestination("https://lingoswap.net/interests?isRegister=$isRegister")
 }

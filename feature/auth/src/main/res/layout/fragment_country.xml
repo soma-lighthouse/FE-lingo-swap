@@ -15,6 +15,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         tools:context=".fragment.CountryFragment">
 
         <androidx.constraintlayout.widget.Group
@@ -31,6 +34,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register_order2"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@id/tb_info"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tb_info" />
+
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
@@ -41,16 +54,46 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <EditText
+            android:id="@+id/et_introduction"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_normal"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edit_box"
+            android:hint="@string/introduce_yourself"
+            android:maxLength="100"
+            android:padding="14dp"
+            android:text="@={viewModel.registerInfo.description}"
+            android:textColorHint="@color/brown_grey"
+            android:textSize="14sp"
+            app:isValid="@{1}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_introduction_title"
+            app:number="@{viewModel.errorNumber}"
+            app:onError="@{@string/invalid_name}" />
+
         <TextView
-            android:id="@+id/tv_country_title"
+            android:id="@+id/tv_introduction_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_normal"
-            android:text="@string/select_prefer_country"
+            android:layout_margin="@dimen/margin_normal"
+            android:text="@string/enter_introduction"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tb_info" />
+
+        <TextView
+            android:id="@+id/tv_country_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="@string/select_prefer_country"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
         <View
             android:id="@+id/click_rectangle"
@@ -59,7 +102,7 @@
             android:layout_alignParentBottom="true"
             android:background="@color/white"
             android:clickable="@{viewModel.loading ? false : true}"
-            app:isValid="@{7}"
+            app:isValid="@{2}"
             app:layout_constraintBottom_toBottomOf="@id/tv_prefer_country"
             app:layout_constraintEnd_toEndOf="@id/btn_country"
             app:layout_constraintStart_toStartOf="@id/tv_prefer_country"
@@ -81,8 +124,7 @@
             android:id="@+id/tv_prefer_country"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginTop="40dp"
+            android:layout_margin="@dimen/margin_normal"
             android:text="@string/prefer_country"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_country_title" />
@@ -133,6 +175,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.4" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

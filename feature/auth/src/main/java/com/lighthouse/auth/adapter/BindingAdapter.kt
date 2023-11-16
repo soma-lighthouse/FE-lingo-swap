@@ -104,7 +104,7 @@ fun updateInterestChip(chipGroup: ChipGroup, interests: MutableLiveData<List<Int
     val inflater = LayoutInflater.from(chipGroup.context)
     interests.value?.flatMap { it.interests }?.forEach {
         val chip = inflater.inflate(
-            com.lighthouse.android.common_ui.R.layout.home_chip, chipGroup, false
+            R.layout.home_chip, chipGroup, false
         ) as Chip
         chip.text = it.name
         chip.isCloseIconVisible = false

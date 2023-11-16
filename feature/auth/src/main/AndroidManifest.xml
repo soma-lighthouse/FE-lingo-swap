@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application android:theme="@style/Theme.LingoTheme">
-
+        <activity
+            android:name=".view.InterestListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_interest_list"
+            android:theme="@style/Theme.LingoTheme" />
     </application>
 
 </manifest>

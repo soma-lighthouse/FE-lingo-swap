@@ -68,9 +68,9 @@ class FilterFragment : BindingFragment<FragmentFilterBinding>(R.layout.fragment_
 
     private fun initInterest() {
         binding.clickInterest.setOnClickListener {
-            mainNavigator.navigateToInterest(
-                requireContext(),
-            )
+//            mainNavigator.navigateToInterest(
+//                requireContext(),
+//            )
         }
     }
 

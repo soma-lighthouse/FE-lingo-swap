@@ -203,7 +203,7 @@ class BasicInfoFragment :
     private fun initNext() {
         viewModel.changes.observe(viewLifecycleOwner) {
             if (it == -3) {
-                findNavController().navigate(BasicInfoFragmentDirections.actionGlobalLanguageNavGraph())
+//                findNavController().navigate(BasicInfoFragmentDirections.actionGlobalLanguageNavGraph())
             }
         }
     }
@@ -227,9 +227,9 @@ class BasicInfoFragment :
 
     private fun initInterest() {
         binding.clickInterest.setOnClickListener {
-            mainNavigator.navigateToInterest(
-                requireContext()
-            )
+//            mainNavigator.navigateToInterest(
+//                requireContext()
+//            )
         }
     }
 

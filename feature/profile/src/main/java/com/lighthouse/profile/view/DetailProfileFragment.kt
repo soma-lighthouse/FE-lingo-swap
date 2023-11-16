@@ -39,7 +39,6 @@ class DetailProfileFragment :
         initAdapter()
         initCountry()
         initInterest()
-        initLanguage()
         initCamera()
         observeImage()
         initStartChatting()
@@ -57,6 +56,7 @@ class DetailProfileFragment :
         binding.clickInterest2.setOnClickListener {
             mainNavigator.navigateToInterest(
                 requireContext(),
+                Pair("isRegister", false)
             )
         }
     }
@@ -66,15 +66,6 @@ class DetailProfileFragment :
             mainNavigator.navigateToCountry(
                 requireContext(),
                 Pair("multiSelect", true),
-            )
-        }
-    }
-
-    private fun initLanguage() {
-        binding.clickLanguage.setOnClickListener {
-            mainNavigator.navigateToLanguage(
-                requireContext(),
-                Pair("isRegister", false),
             )
         }
     }

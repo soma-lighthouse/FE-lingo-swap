@@ -6,8 +6,6 @@
 
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.lighthouse.profile.view.DetailProfileFragment">
-
-    </fragment>
+        android:name="com.lighthouse.profile.view.DetailProfileFragment" />
 
 </navigation>

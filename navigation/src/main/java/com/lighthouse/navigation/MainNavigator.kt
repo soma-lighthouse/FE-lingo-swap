@@ -18,13 +18,14 @@ interface MainNavigator {
         isChat: Pair<String, Boolean>
     )
 
-    fun navigateToInterest(
-        context: Context,
-    )
-
     fun navigateToCountry(
         context: Context,
         multiSelect: Pair<String, Boolean>,
+    )
+
+    fun navigateToInterest(
+        context: Context,
+        isRegister: Pair<String, Boolean>
     )
 
     fun navigateToLanguage(
