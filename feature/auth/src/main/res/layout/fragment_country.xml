@@ -12,141 +12,207 @@
             type="com.lighthouse.auth.viewmodel.AuthViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        tools:context=".fragment.CountryFragment">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/group_country"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="btn_back,chip_country,btn_country,btn_start,click_rectangle" />
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tb_info"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/register_order2"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@id/tb_info"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tb_info" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                tools:context=".fragment.CountryFragment">
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_small"
-            android:background="@drawable/arrow"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="btn_back,chip_country,btn_country,btn_start,click_rectangle" />
 
-        <EditText
-            android:id="@+id/et_introduction"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_normal"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/edit_box"
-            android:hint="@string/introduce_yourself"
-            android:maxLength="100"
-            android:padding="14dp"
-            android:text="@={viewModel.registerInfo.description}"
-            android:textColorHint="@color/brown_grey"
-            android:textSize="14sp"
-            app:isValid="@{1}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_introduction_title"
-            app:number="@{viewModel.errorNumber}"
-            app:onError="@{@string/invalid_name}" />
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/tb_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_introduction_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
-            android:text="@string/enter_introduction"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tb_info" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/register_order2"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tb_info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tb_info" />
 
-        <TextView
-            android:id="@+id/tv_country_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="@string/select_prefer_country"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline6" />
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/btn_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:background="@drawable/arrow"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <View
-            android:id="@+id/click_rectangle"
-            android:layout_width="411dp"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/white"
-            android:clickable="@{viewModel.loading ? false : true}"
-            app:isValid="@{2}"
-            app:layout_constraintBottom_toBottomOf="@id/tv_prefer_country"
-            app:layout_constraintEnd_toEndOf="@id/btn_country"
-            app:layout_constraintStart_toStartOf="@id/tv_prefer_country"
-            app:layout_constraintTop_toTopOf="@id/tv_prefer_country"
-            app:number="@{viewModel.errorNumber}"
-            app:onError="@{@string/invalid_name}" />
+                <EditText
+                    android:id="@+id/et_introduction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/edit_box"
+                    android:hint="@string/introduce_yourself"
+                    android:inputType="text|textCapSentences"
+                    android:maxHeight="90dp"
+                    android:maxLength="100"
+                    android:maxLines="3"
+                    android:padding="14dp"
+                    android:text="@={viewModel.registerInfo.description}"
+                    android:textColorHint="@color/brown_grey"
+                    android:textSize="14sp"
+                    app:isValid="@{1}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_description"
+                    app:number="@{viewModel.errorNumber}"
+                    app:onError="@{@string/invalid_name}" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_country"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin_normal"
-            android:background="@drawable/side_arrow"
-            app:layout_constraintBottom_toBottomOf="@id/tv_prefer_country"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_prefer_country" />
+                <TextView
+                    android:id="@+id/tv_country_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:text="@string/select_prefer_country"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tb_info" />
 
-        <TextView
-            android:id="@+id/tv_prefer_country"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
-            android:text="@string/prefer_country"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_country_title" />
+                <TextView
+                    android:id="@+id/tv_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="@string/enter_introduction"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chip_interest" />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_country"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_normal"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_prefer_country"
-            app:setUpChip="@{viewModel.selectedCountry}" />
+                <View
+                    android:id="@+id/click_rectangle"
+                    android:layout_width="411dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/white"
+                    android:clickable="@{viewModel.loading ? false : true}"
+                    app:isValid="@{2}"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_prefer_country"
+                    app:layout_constraintEnd_toEndOf="@id/btn_country"
+                    app:layout_constraintStart_toStartOf="@id/tv_prefer_country"
+                    app:layout_constraintTop_toTopOf="@id/tv_prefer_country"
+                    app:number="@{viewModel.errorNumber}"
+                    app:onError="@{@string/invalid_name}" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/btn_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_normal"
+                    android:background="@drawable/side_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_prefer_country"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_prefer_country" />
+
+                <TextView
+                    android:id="@+id/tv_prefer_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:text="@string/prefer_country"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_country_title" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_country"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_prefer_country"
+                    app:setUpChip="@{viewModel.selectedCountry}" />
+
+                <TextView
+                    android:id="@+id/tv_interest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="@string/select_interest"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chip_country" />
+
+                <TextView
+                    android:id="@+id/tv_prefer_interest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="@string/enter_interest"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_interest" />
+
+                <View
+                    android:id="@+id/click_interest"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:clickable="@{viewModel.loading ? false : true}"
+                    app:isValid="@{6}"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_prefer_interest"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_prefer_interest"
+                    app:number="@{viewModel.errorNumber}"
+                    app:onError="@{@string/invalid_name}" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/btn_interest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin_normal"
+                    android:background="@drawable/side_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_prefer_interest"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_prefer_interest" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_interest"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_prefer_interest"
+                    app:updateInterestChip="@{viewModel.selectedInterest}" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
 
         <View
             android:id="@+id/bottom_rectangle"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:background="@color/white" />
 
         <Button
             android:id="@+id/btn_start"
@@ -159,29 +225,16 @@
             android:layout_marginVertical="10dp"
             android:background="@drawable/custom_button"
             android:elevation="9dp"
+
             android:onClick="@{()->viewModel.startRegister()}"
-            android:text="@string/start"
-            app:layout_constraintBottom_toBottomOf="@id/bottom_rectangle"
-            app:layout_constraintEnd_toEndOf="@id/bottom_rectangle"
-            app:layout_constraintStart_toStartOf="@id/bottom_rectangle" />
+            android:text="@string/start" />
 
         <ProgressBar
             android:id="@+id/pb_start"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{viewModel.loading ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.4" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_centerInParent="true"
+            android:visibility="@{viewModel.loading ? View.VISIBLE : View.GONE}" />
+    </RelativeLayout>
 </layout>

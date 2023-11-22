@@ -33,7 +33,8 @@
 
     <string name="register_order1">1/2</string>
     <string name="register_order2">2/2</string>
-    <string name="select_interest">Enter your prefer interest</string>
+    <string name="select_interest">Enter your prefer interest!</string>
+    <string name="enter_interest">Prefer interest</string>
     <string name="language_and_level">Language and level</string>
     <string name="interest_country">Prefer country</string>
     <string name="chat_title">Chat</string>

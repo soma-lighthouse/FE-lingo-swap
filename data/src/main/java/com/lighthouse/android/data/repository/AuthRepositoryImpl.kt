@@ -9,6 +9,7 @@ import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.entity.response.vo.PreSignedUrlVO
 import com.lighthouse.domain.entity.response.vo.TokenVO
 import com.lighthouse.domain.entity.response.vo.UserTokenVO
 import com.lighthouse.domain.repository.AuthRepository
@@ -17,8 +18,6 @@ import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -47,38 +46,40 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun getInterestList(): Flow<List<InterestVO>> =
-        authRemoteDataSource.getInterestList().map {
-            it.interest.map { interest ->
-                interest.toVO()
+        authRemoteDataSource.getInterestList(localPreferenceDataSource.getString(LocalKey.ID_TOKEN))
+            .map {
+                it.interest.map { interest ->
+                    interest.toVO()
+                }
             }
-        }
 
     override fun getLanguageList(): Flow<List<LanguageVO>> =
-        authRemoteDataSource.getLanguageList().map {
-            it.language.map { lang ->
-                lang.toVO()
+        authRemoteDataSource.getLanguageList(localPreferenceDataSource.getString(LocalKey.ID_TOKEN))
+            .map {
+                it.language.map { lang ->
+                    lang.toVO()
+                }
             }
-        }
 
     override fun getCountryList(): Flow<List<CountryVO>> =
-        authRemoteDataSource.getCountryList().map {
-            it.country.map { country ->
-                country.toVO()
+        authRemoteDataSource.getCountryList(localPreferenceDataSource.getString(LocalKey.ID_TOKEN))
+            .map {
+                it.country.map { country ->
+                    country.toVO()
+                }
             }
-        }
 
     override fun registerUser(info: RegisterInfoVO): Flow<Boolean> {
         val tmp = RegisterInfoDTO(
             uuid = info.uuid ?: "null",
             name = info.name ?: "null",
-            birthday = parseJsonToDate(info.birthday),
+            birthday = info.birthday ?: "null",
             email = info.email ?: "null",
-            gender = parseGender(info.gender),
+            gender = info.gender ?: "null",
             region = info.region ?: "null",
             preferredInterests = info.preferredInterests ?: listOf(),
             description = info.description ?: "",
             preferredCountries = info.preferredCountries ?: listOf(),
-            profileImageUri = info.profileImageUri ?: ""
         )
         return authRemoteDataSource.registerUser(
             localPreferenceDataSource.getString(LocalKey.ID_TOKEN),
@@ -91,28 +92,6 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun parseGender(gender: String?): String {
-        return when (gender) {
-            "male" -> "MALE"
-            "female" -> "FEMALE"
-            else -> "RATHER_NOT_SAY"
-        }
-    }
-
-    private fun parseJsonToDate(jsonString: String?): String {
-        val json = jsonString?.trim() ?: return ""
-        val year = json.substringAfter("\"year\":").substringBefore(",").toInt()
-        val month = json.substringAfter("\"month\":").substringBefore(",").toInt()
-        val day = json.substringAfter("\"day\":").substringBefore("}").toInt()
-
-        return formatDate(LocalDate.of(year, month, day))
-    }
-
-    private fun formatDate(date: LocalDate): String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        return date.format(formatter)
-    }
-
     override fun uploadImg(
         url: String,
         profilePath: String,
@@ -121,13 +100,25 @@ class AuthRepositoryImpl @Inject constructor(
         val imageFile = File(profilePath)
         val requestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
 
-        return authRemoteDataSource.uploadImg(url, requestBody)
+        return authRemoteDataSource.uploadImg(
+            url,
+            requestBody
+        )
+    }
+
+    override fun updateImgInfo(url: String): Flow<Boolean> {
+        return authRemoteDataSource.updateImgInfo(
+            url,
+            getUserId()
+        )
     }
 
 
-    override fun getPreSignedURL(fileName: String): Flow<String> =
-        authRemoteDataSource.getPreSigned(fileName).map {
-            it.url ?: ""
+    override fun getPreSignedURL(fileName: String): Flow<PreSignedUrlVO> =
+        authRemoteDataSource.getPreSigned(
+            fileName
+        ).map {
+            it.toVO()
         }
 
     override fun postGoogleLogin(): Flow<UserTokenVO> =

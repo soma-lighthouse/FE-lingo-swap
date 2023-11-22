@@ -9,6 +9,7 @@ import android.widget.EditText
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.databinding.BindingAdapter
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -140,6 +141,19 @@ fun onLanguageLevelSelected(spinner: AppCompatSpinner, position: Int, viewModel:
 
         override fun onNothingSelected(parent: AdapterView<*>?) {
             // Do nothing
+        }
+    }
+}
+
+@BindingAdapter(value = ["checkStateChange", "chipChecked"], requireAll = true)
+fun checkStateChange(chip: Chip, checked: ObservableInt, chipChecked: Int) {
+    chip.setOnCheckedChangeListener { _, b ->
+        Log.d("TESTING GENDER", b.toString())
+        if (!b && checked.get() == chipChecked) {
+            chip.isChecked = true
+        }
+        if (b) {
+            checked.set(chipChecked)
         }
     }
 }

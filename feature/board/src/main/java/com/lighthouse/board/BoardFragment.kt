@@ -155,7 +155,7 @@ class BoardFragment : BindingFragment<FragmentBoardBinding>(R.layout.fragment_bo
             is UiState.Success<*> -> {
                 adapter.submitList(uiState.data as List<BoardQuestionVO>)
                 binding.tabBoard.enable()
-                disableTabForSeconds(2) {
+                disableTabForSeconds(1) {
                     bindingWeakRef?.get()?.let { b ->
                         b.rvBoard.setVisible()
                         b.pbBoardLoading.setGone()

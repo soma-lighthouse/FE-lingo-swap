@@ -9,4 +9,9 @@
         <key>LOG_SERVER_URL</key>
         <value>https://api.lingoswap.net</value>
     </entry>
+
+    <entry>
+        <key>GOOGLE_CLIENT_ID</key>
+        <value>826220318801-6h9ohpni7qhfitg6ea2s81ghscmrf767.apps.googleusercontent.com</value>
+    </entry>
 </defaultsMap>

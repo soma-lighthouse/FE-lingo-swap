@@ -27,29 +27,17 @@
         android:name="com.lighthouse.auth.fragment.TermFragment"
         tools:layout="@layout/fragment_term">
         <action
-            android:id="@+id/action_termFragment_to_interestFragment"
-            app:destination="@id/interestFragment" />
+            android:id="@+id/action_termFragment_to_basicInfoFragment"
+            app:destination="@id/basicInfoFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/interestFragment"
-        android:name="com.lighthouse.auth.fragment.InterestListFragment"
-        tools:layout="@layout/fragment_interest">
+        android:id="@+id/basicInfoFragment"
+        android:name="com.lighthouse.auth.fragment.BasicInfoFragment"
+        tools:layout="@layout/fragment_basic_info">
         <action
-            android:id="@+id/action_interestFragment_to_countryFragment"
+            android:id="@+id/action_basicInfoFragment_to_countryFragment"
             app:destination="@id/countryFragment" />
-
-        <deepLink
-            android:id="@+id/deepLink"
-            android:autoVerify="true"
-            app:uri="https://lingoswap.net/interests?isRegister={isRegister}" />
-
-        <argument
-            android:name="isRegister"
-            android:defaultValue="true"
-            app:argType="boolean" />
-
-
     </fragment>
 
 </navigation>

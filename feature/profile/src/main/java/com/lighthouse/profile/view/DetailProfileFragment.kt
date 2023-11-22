@@ -151,8 +151,6 @@ class DetailProfileFragment :
 
             ImageUtils.newInstance()
                 .setImage(binding.ivProfileImg, viewModel.imageUri.toString(), requireContext())
-
-            viewModel.getPreSignedUrl()
         }
     }
 

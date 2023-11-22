@@ -29,6 +29,14 @@ class RemoteConfigDataSource @Inject constructor(
                     )
                 }
             }
+                .addOnFailureListener {
+                    remoteConfig.fetchAndActivate()
+                    continuation.resumeWith(
+                        Result.failure(
+                            it
+                        )
+                    )
+                }
         }
     }
 }

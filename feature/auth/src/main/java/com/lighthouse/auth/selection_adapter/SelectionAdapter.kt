@@ -11,6 +11,7 @@ import com.lighthouse.auth.databinding.LanguageLevelTileBinding
 import com.lighthouse.auth.selection_adapter.viewholder.CountryViewHolder
 import com.lighthouse.auth.selection_adapter.viewholder.LanguageLevelViewHolder
 import com.lighthouse.auth.viewmodel.AuthViewModel
+import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.Selection
 
 class SelectionAdapter(
@@ -43,7 +44,13 @@ class SelectionAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is CountryViewHolder -> holder.onBind(position, viewModel, multiSelection)
+            is CountryViewHolder -> holder.onBind(
+                getItem(position) as CountryVO,
+                position,
+                viewModel,
+                multiSelection
+            )
+
             is LanguageLevelViewHolder -> holder.onBind(position, viewModel)
         }
     }

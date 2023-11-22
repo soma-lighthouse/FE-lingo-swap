@@ -13,6 +13,7 @@ import com.lighthouse.android.common_ui.listener.InterestListener
 import com.lighthouse.android.common_ui.util.Constant
 import com.lighthouse.android.common_ui.util.DispatcherProvider
 import com.lighthouse.android.common_ui.util.UiState
+import com.lighthouse.android.common_ui.util.isValidBirthday
 import com.lighthouse.android.common_ui.util.onIO
 import com.lighthouse.auth.BuildConfig
 import com.lighthouse.domain.constriant.LoginState
@@ -79,10 +80,8 @@ class AuthViewModel @Inject constructor(
 
     private var _selectedPosition: Int = 0
 
-    val userId: UUID = UUID.randomUUID()
     val registerInfo = RegisterInfoVO()
-    var profilePath: String? = null
-    var profileUrl: String? = null
+    var googleImageUrl: String? = null
     var filePath: String = ""
     val errorNumber: MutableLiveData<List<Int>> = MutableLiveData()
     val collect: ObservableBoolean = ObservableBoolean()
@@ -106,6 +105,8 @@ class AuthViewModel @Inject constructor(
         context.resources.getString(R.string.level5)
     )
 
+    var gender: ObservableInt = ObservableInt(-1)
+
     private val registerUuid = UUID.randomUUID().toString()
 
     init {
@@ -116,27 +117,13 @@ class AuthViewModel @Inject constructor(
         homeRepository.clearAllData()
     }
 
-    fun getBasicInfo(
-        email: String?,
-        name: String?,
-        birthday: String,
-        locale: String,
-        profileUrl: String?,
-        gender: String
-    ) {
-        registerInfo.email = email
-        registerInfo.name = name
-        registerInfo.birthday = birthday
-        registerInfo.region = locale
-        registerInfo.profileImageUri = profileUrl
-        registerInfo.gender = gender
-
-        Log.d("TESTING REGISTER2", registerInfo.toString())
-    }
-
     private fun checkUpdate() {
         viewModelScope.launch {
-            val minVersion = homeRepository.fetchRemoteConfig("MIN_VER").split(".")
+            val minVersion = try {
+                homeRepository.fetchRemoteConfig("MIN_VER").split(".")
+            } catch (e: Exception) {
+                listOf("1", "2", "2")
+            }
             val currentVersion = BuildConfig.CURRENT_VER.split(".")
             Log.d("MIN_VER", minVersion.toString())
             if (minVersion.size != currentVersion.size) {
@@ -154,6 +141,12 @@ class AuthViewModel @Inject constructor(
             }
             _error.value = mapOf()
         }
+    }
+
+    fun saveUserInfo(name: String, photoUrl: String, email: String) {
+        registerInfo.name = name
+        googleImageUrl = photoUrl
+        registerInfo.email = email
     }
 
     fun getLoginStatus() {
@@ -210,39 +203,46 @@ class AuthViewModel @Inject constructor(
                 .catch {
                     _register.value = false
                 }.collect {
-                    loading.set(false)
-                    _register.value = it
-
-                    if (it) {
-                        endTime = System.currentTimeMillis().toDouble()
-                        sendRegisterExposureLogging(endTime - startTime)
+                    if (filePath.isNotEmpty()) {
+                        getPreSignedUrl(getFileName(filePath))
+                    } else {
+                        updateImageInfo(googleImageUrl ?: "")
                     }
                 }
         }
     }
 
+    private fun getFileName(uri: String): String {
+        if (uri == "") {
+            return ""
+        }
+        val fileName = uri.substringAfterLast("/")
+        return "/${authRepository.getUserId()}/${fileName}"
+    }
+
     fun registerBasicInfo() {
         collect.set(true)
         registerInfo.region = selectedCountry.value?.first()?.code
-        registerInfo.preferredInterests = selectedInterest.value?.flatMap {
-            it.interests.flatMap { c -> listOf(c.code) }
-        }
         validateInputs()
+        registerInfo.gender = if (gender.get() == 1) "MALE" else "FEMALE"
+        Log.d("TESTING REGISTER", registerInfo.toString())
         val intersect =
-            errorNumber.value?.intersect(setOf(1, 2, 3, 4, 5, 6, 8)) ?: listOf()
+            errorNumber.value?.intersect(setOf(3, 4, 5, 6)) ?: listOf()
         if (intersect.isEmpty()) {
+            errorNumber.value = listOf(0)
             _changes.value = next
             _changes.value = none
             return
         }
     }
 
-    fun getPreSignedUrl(fileName: String) {
+    private fun getPreSignedUrl(fileName: String) {
         onIO {
             authRepository.getPreSignedURL(fileName).catch {
                 _result.value = handleException(it)
             }.collect {
-                _result.emit(UiState.Success(it))
+                uploadImg(it.url)
+                updateImageInfo("${it.endPoint}$fileName")
             }
         }
     }
@@ -276,6 +276,21 @@ class AuthViewModel @Inject constructor(
             if (registerInfo.description.isNullOrEmpty()) {
                 add(2)
             }
+            if (registerInfo.name.isNullOrEmpty()) {
+                add(3)
+            }
+            if (!registerInfo.birthday.isValidBirthday()) {
+                add(4)
+            }
+            if (gender.get() == -1) {
+                add(5)
+            }
+            if (registerInfo.region.isNullOrEmpty()) {
+                add(6)
+            }
+            if (selectedInterest.value.isNullOrEmpty()) {
+                add(7)
+            }
         }
         collect.set(false)
         errorNumber.value = tmp
@@ -285,7 +300,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun getClickPosition(position: Int, multi: Boolean) {
+    fun getClickPosition(country: CountryVO, multi: Boolean, position: Int) {
         val data = selectedCountry.value ?: listOf()
 
         if (!multi) {
@@ -295,15 +310,15 @@ class AuthViewModel @Inject constructor(
                     _changes.value = index
                 }
             }
-            selectedCountry.value = listOf(_country[position])
-        } else if (data.size == Constant.MAX_SELECTION && _country[position] !in data) {
+            selectedCountry.value = listOf(country)
+        } else if (data.size == Constant.MAX_SELECTION && country !in data) {
             return
-        } else if (_country[position] !in data) {
-            selectedCountry.value = data + _country[position]
+        } else if (country !in data) {
+            selectedCountry.value = data + country
         } else {
-            selectedCountry.value = data - _country[position]
+            selectedCountry.value = data - country
         }
-        _country[position].select = !_country[position].select
+        country.select = !country.select
         _changes.value = position
     }
 
@@ -349,10 +364,43 @@ class AuthViewModel @Inject constructor(
 
     fun startRegister() {
         validateInputs()
-        if (errorNumber.value!!.size == 1 && errorNumber.value!!.first() == 0) {
+        if (errorNumber.value!!.size == 1 && errorNumber.value!!.first() == 0 && !loading.get()) {
+            loading.set(true)
             registerInfo.preferredCountries = selectedCountry.value?.map { it.code }
+            registerInfo.preferredInterests = selectedInterest.value?.flatMap {
+                it.interests.flatMap { c -> listOf(c.code) }
+            }
             registerUser()
             Log.d("TESTING REGISTER", registerInfo.toString())
+        }
+    }
+
+    private fun uploadImg(presignUrl: String) {
+        onIO {
+            authRepository.uploadImg(presignUrl, filePath).catch {
+                _upload.value = false
+                handleException(it)
+            }.collect {
+                _upload.value = it
+            }
+        }
+    }
+
+    private fun updateImageInfo(url: String) {
+        onIO {
+            Log.d("TESTING IMAGE", url)
+            authRepository.updateImgInfo(url)
+                .catch {
+                    handleException(it)
+                }
+                .collect {
+                    if (it) {
+                        endTime = System.currentTimeMillis().toDouble()
+                        sendRegisterExposureLogging(endTime - startTime)
+                    }
+                    _register.value = it
+                    loading.set(false)
+                }
         }
     }
 
@@ -446,8 +494,10 @@ class AuthViewModel @Inject constructor(
 
 
     fun sendRegisterClickLogging(stayTime: Double, screenName: String, eventLogName: String) {
-        val scheme = getRegisterClickLogging(stayTime, screenName, eventLogName)
-        SWMLogging.logEvent(scheme)
+        onIO {
+            val scheme = getRegisterClickLogging(stayTime, screenName, eventLogName)
+            SWMLogging.logEvent(scheme)
+        }
     }
 
     private fun getRegisterClickLogging(

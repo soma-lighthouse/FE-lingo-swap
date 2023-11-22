@@ -7,7 +7,6 @@ import com.lighthouse.domain.entity.request.RegisterInfoVO
 fun RegisterInfoVO.toUpdateProfileDTO(): UpdateProfileDTO {
     return UpdateProfileDTO(
         uuid = uuid ?: "",
-        profileImageUri = profileImageUri ?: "",
         birthday = birthday ?: "",
         name = name ?: "",
         email = email ?: "",

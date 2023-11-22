@@ -16,6 +16,7 @@ import com.lighthouse.android.common_ui.base.BindingActivity
 import com.lighthouse.android.common_ui.dialog.showBlockingDialog
 import com.lighthouse.android.common_ui.dialog.showUpdateDialog
 import com.lighthouse.android.common_ui.util.InternetUtil
+import com.lighthouse.android.common_ui.util.toast
 import com.lighthouse.auth.databinding.ActivityAuthBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.domain.constriant.LoginState
@@ -54,6 +55,7 @@ class AuthActivity : BindingActivity<ActivityAuthBinding>(R.layout.activity_auth
         viewModel.clearAllData()
 
         if (!InternetUtil.checkInternetConnection(this)) {
+            applicationContext.toast("Check internet connection")
             showBlockingDialog(this)
         }
     }

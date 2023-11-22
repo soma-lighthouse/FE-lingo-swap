@@ -10,16 +10,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.Scope
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest
-import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.client.json.jackson2.JacksonFactory
-import com.google.api.services.people.v1.PeopleServiceScopes
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.lighthouse.android.common_ui.base.BindingFragment
 import com.lighthouse.android.common_ui.util.UiState
@@ -30,12 +24,7 @@ import com.lighthouse.auth.databinding.FragmentLoginBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.lighthousei18n.I18nManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -69,64 +58,14 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
                 viewModel.saveIdToken(idToken)
                 getResult.value = null
                 login = true
-                uploadUserBasicInfo(account)
+                viewModel.saveUserInfo(
+                    account.displayName ?: "",
+                    account.photoUrl.toString(),
+                    account.email ?: ""
+                )
                 viewModel.postGoogleLogin()
             } catch (e: ApiException) {
                 Log.d("TESTING", e.stackTraceToString())
-            }
-        }
-    }
-
-    private fun uploadUserBasicInfo(account: GoogleSignInAccount) {
-        val transport = NetHttpTransport()
-        val jsonFactory = JacksonFactory.getDefaultInstance()
-
-        runBlocking(Dispatchers.IO) {
-            val response = GoogleAuthorizationCodeTokenRequest(
-                transport,
-                jsonFactory,
-                remoteConfig.getString("GOOGLE_CLIENT_ID"),
-                remoteConfig.getString("GOOGLE_CLIENT_SECRET"),
-                account.serverAuthCode,
-                ""
-            ).execute()
-
-            (URL(
-                "https://people.googleapis.com/v1/people/${account.id}?personFields=birthdays,genders,locales&key=${
-                    remoteConfig.getString(
-                        "GOOGLE_API_KEY"
-                    )
-                }"
-            ).openConnection() as HttpURLConnection).apply {
-                setRequestProperty("Authorization", "Bearer ${response.accessToken}")
-                inputStream.bufferedReader().use {
-
-                    val json = JSONObject(it.readText())
-                    val gender = try {
-                        json.getJSONArray("genders").getJSONObject(0)["value"].toString()
-                    } catch (e: Exception) {
-                        "RATHER_NOT_SAY"
-                    }
-                    val birthday = try {
-                        json.getJSONArray("birthdays").getJSONObject(0)["date"].toString()
-                    } catch (e: Exception) {
-                        ""
-                    }
-                    val locale = try {
-                        json.getJSONArray("locales").getJSONObject(0)["value"].toString()
-                    } catch (e: Exception) {
-                        i18nManager.getLocale().country
-                    }
-
-                    viewModel.getBasicInfo(
-                        account.email,
-                        account.displayName,
-                        birthday,
-                        locale,
-                        account.photoUrl.toString(),
-                        gender
-                    )
-                }
             }
         }
     }
@@ -150,12 +89,11 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>(R.layout.fragment_lo
 
     private fun getGoogleClient(): GoogleSignInClient {
         val googleSignInOptions =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestScopes(
-                Scope(PeopleServiceScopes.USER_BIRTHDAY_READ),
-                Scope(PeopleServiceScopes.USER_GENDER_READ),
-            ).requestIdToken(remoteConfig.getString("GOOGLE_CLIENT_ID"))
-                .requestServerAuthCode(remoteConfig.getString("GOOGLE_CLIENT_ID")).requestEmail()
-                .requestProfile().build()
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(remoteConfig.getString("GOOGLE_CLIENT_ID"))
+                .requestEmail()
+                .requestProfile()
+                .build()
 
         return GoogleSignIn.getClient(requireActivity(), googleSignInOptions)
     }

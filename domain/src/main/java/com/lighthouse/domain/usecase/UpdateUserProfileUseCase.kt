@@ -51,11 +51,6 @@ class UpdateUserProfileUseCase @Inject constructor(
             changed.add("description")
             isUpdated = true
         }
-        if (cur.profileImageUri!! !in prev.profileImageUri) {
-            println("${prev.profileImageUri} ${cur.profileImageUri!!}")
-            changed.add("profileImage")
-            isUpdated = true
-        }
         return isUpdated
     }
 

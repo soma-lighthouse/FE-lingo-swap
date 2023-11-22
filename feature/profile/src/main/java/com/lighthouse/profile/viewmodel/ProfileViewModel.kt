@@ -61,6 +61,7 @@ class ProfileViewModel @Inject constructor(
     var opUid: String = ""
 
     var userProfile: ObservableField<RegisterInfoVO> = ObservableField()
+    var displayProfile: ObservableField<RegisterInfoVO> = ObservableField()
 
     private var profileUrl: String? = null
 
@@ -100,7 +101,20 @@ class ProfileViewModel @Inject constructor(
                 it.interests.flatMap { c -> listOf(c.code) }
             },
         )
+
+        val display = RegisterInfoVO(
+            uuid = data.id,
+            name = data.name,
+            region = data.region.name,
+            description = data.description,
+            profileImageUri = data.profileImageUri,
+            preferredCountries = data.countries.map { it.name },
+            preferredInterests = data.interests.flatMap {
+                it.interests.flatMap { c -> listOf(c.name) }
+            },
+        )
         userProfile.set(info)
+        displayProfile.set(display)
     }
 
     fun getDataFromLocal() {
@@ -123,18 +137,28 @@ class ProfileViewModel @Inject constructor(
             countryList.addAll(country.map { it.name })
             _detail.value = UiState.Success(interest)
         }
-    }
 
-
-    fun getPreSignedUrl() {
-        onIO {
-            authRepository.getPreSignedURL(getFileName(filePath)).catch {
-                _error.value = handleException(it)
-            }.collect {
-                profileUrl = it
+        val display = displayProfile.get()
+        display?.let {
+            languageList.clear()
+            countryList.clear()
+            val language = homeRepository.getLanguageVO()
+            val country = homeRepository.getCountryVO()
+            val interest = homeRepository.getInterestVO()
+            val value = displayProfile.get()
+            value?.let {
+                it.preferredCountries = country.map { c -> c.name }
+                it.preferredInterests = interest.flatMap {
+                    it.interests.flatMap { c -> listOf(c.name) }
+                }
+                displayProfile.set(it)
             }
+            languageList.addAll(language.map { "${it.name}/LV${it.level}" })
+            countryList.addAll(country.map { it.name })
+            _detail.value = UiState.Success(interest)
         }
     }
+
 
     fun saveProfile() {
         isEdit.set(false)

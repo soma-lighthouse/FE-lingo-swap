@@ -8,7 +8,6 @@ data class RegisterInfoDTO(
     val gender: String,
     val description: String,
     val region: String,
-    val profileImageUri: String,
     val preferredInterests: List<String>,
     val preferredCountries: List<String>,
 )

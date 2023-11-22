@@ -50,6 +50,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="28dp"
                     android:layout_marginTop="16dp"
+                    android:gravity="left"
+                    android:maxLength="30"
                     android:text="@{viewModel.userProfile.name}"
                     android:textColor="@color/black"
                     android:textSize="16sp"
@@ -78,12 +80,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginEnd="20dp"
+                    android:gravity="left"
+                    android:maxHeight="60dp"
                     android:textColor="@color/brownish_grey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
                     app:layout_constraintTop_toBottomOf="@+id/tv_profile_name"
                     app:setUpDescription="@{viewModel.userProfile}"
-                    tools:text="introduction" />
+                    tools:text="ddssdasdadasdasdasdasdasdsadsadasdsadasdsaddasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdsadasdsadsadsadasdasdasdsaddasdasdasdasdasdasdasdasdasds" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_language"
@@ -100,7 +104,7 @@
                     app:layout_constraintStart_toStartOf="@+id/tv_description"
                     app:layout_constraintTop_toBottomOf="@+id/tv_description"
                     app:layout_constraintVertical_bias="1.0"
-                    app:setUpInterest="@{viewModel.userProfile}" />
+                    app:setUpInterest="@{viewModel.displayProfile}" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/btn_next"

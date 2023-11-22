@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.lighthouse.android.common_ui.base.BindingFragment
@@ -12,6 +13,7 @@ import com.lighthouse.android.common_ui.util.disable
 import com.lighthouse.android.common_ui.util.enable
 import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentTermBinding
+import com.lighthouse.auth.viewmodel.AuthViewModel
 import com.lighthouse.lighthousei18n.I18nManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -24,6 +26,9 @@ class TermFragment : BindingFragment<FragmentTermBinding>(R.layout.fragment_term
 
     @Inject
     lateinit var i18nManager: I18nManager
+
+    private val viewModel: AuthViewModel by viewModels()
+    private val startTime = System.currentTimeMillis().toDouble()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -85,7 +90,12 @@ class TermFragment : BindingFragment<FragmentTermBinding>(R.layout.fragment_term
         binding.btnNext.setBackgroundResource(com.lighthouse.android.common_ui.R.drawable.custom_button_disable)
         binding.btnNext.disable()
         binding.btnNext.setOnClickListener {
-            findNavController().navigate(TermFragmentDirections.actionTermFragmentToInterestFragment())
+            viewModel.sendRegisterClickLogging(
+                System.currentTimeMillis().toDouble() - startTime,
+                "termScreen",
+                "term_click"
+            )
+            findNavController().navigate(TermFragmentDirections.actionTermFragmentToBasicInfoFragment())
         }
     }
 }

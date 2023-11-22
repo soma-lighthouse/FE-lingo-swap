@@ -99,6 +99,10 @@ class BoardViewModel @Inject constructor(
     }
 
     fun uploadQuestion(upload: UploadQuestionVO) {
+        isLoading.set(true)
+        if (!isLoading.get()) {
+            return
+        }
         onIO {
             val text = upload.content
             if (text.length <= 10 || text.length >= 200) {
@@ -116,6 +120,7 @@ class BoardViewModel @Inject constructor(
                     _result.value = handleException(it)
                 }.collect {
                     _result.value = UiState.Success(it)
+                    isLoading.set(false)
                 }
             }
         }

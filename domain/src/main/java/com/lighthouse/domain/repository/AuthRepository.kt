@@ -4,6 +4,7 @@ import com.lighthouse.domain.entity.request.RegisterInfoVO
 import com.lighthouse.domain.entity.response.vo.CountryVO
 import com.lighthouse.domain.entity.response.vo.InterestVO
 import com.lighthouse.domain.entity.response.vo.LanguageVO
+import com.lighthouse.domain.entity.response.vo.PreSignedUrlVO
 import com.lighthouse.domain.entity.response.vo.UserTokenVO
 import kotlinx.coroutines.flow.Flow
 
@@ -18,9 +19,11 @@ interface AuthRepository {
 
     fun registerUser(info: RegisterInfoVO): Flow<Boolean>
 
-    fun getPreSignedURL(fileName: String): Flow<String>
+    fun getPreSignedURL(fileName: String): Flow<PreSignedUrlVO>
 
     fun uploadImg(url: String, profilePath: String): Flow<Boolean>
+
+    fun updateImgInfo(url: String): Flow<Boolean>
 
     fun postGoogleLogin(): Flow<UserTokenVO>
 

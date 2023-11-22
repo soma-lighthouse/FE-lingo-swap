@@ -27,7 +27,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> viewModel.getClickPosition(position, multi)}">
+        android:onClick="@{() -> viewModel.getClickPosition(country, multi, position)}">
 
         <ImageView
             android:id="@+id/iv_flag"

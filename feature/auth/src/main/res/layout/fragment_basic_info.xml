@@ -37,6 +37,15 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/register_order1"
+                    app:layout_constraintBottom_toBottomOf="@id/tb_info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tb_info" />
+
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/btn_back"
                     android:layout_width="wrap_content"
@@ -47,25 +56,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_info_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_normal"
-                    android:text="@string/enter_info"
-                    android:textSize="@dimen/textSize_normal"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tb_info" />
-
                 <RelativeLayout
                     android:id="@+id/circle_profile"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_info_title">
+                    app:layout_constraintTop_toBottomOf="@id/tb_info">
 
                     <androidx.camera.view.PreviewView
                         android:id="@+id/colorOverlay"
@@ -75,10 +73,11 @@
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/iv_profile_img"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_centerInParent="true"
-                        android:src="@drawable/person" />
+                        android:src="@drawable/person"
+                        app:setUpImage="@{viewModel.googleImageUrl}" />
 
                 </RelativeLayout>
 
@@ -144,7 +143,7 @@
                     android:text="@={viewModel.registerInfo.name}"
                     android:textColorHint="@color/brown_grey"
                     android:textSize="14sp"
-                    app:isValid="@{1}"
+                    app:isValid="@{3}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_name_title"
@@ -168,15 +167,16 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/margin_normal"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:background="@drawable/edit_box"
                     android:hint="@string/enter_birthday"
                     android:inputType="date"
                     android:padding="14dp"
                     android:textColorHint="@color/brown_grey"
                     android:textSize="14sp"
-                    app:isValid="@{2}"
+                    app:isValid="@{4}"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.475"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_date_title"
                     app:number="@{viewModel.errorNumber}"
@@ -194,80 +194,6 @@
                     app:layout_constraintEnd_toEndOf="@id/et_birthday"
                     app:layout_constraintTop_toTopOf="@id/et_birthday" />
 
-                <TextView
-                    android:id="@+id/tv_email_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_normal"
-                    android:text="@string/email"
-                    android:textColor="@color/brownish_grey"
-                    android:textSize="@dimen/textSize_small"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/et_birthday" />
-
-
-                <EditText
-                    android:id="@+id/et_email"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin_normal"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/edit_box"
-                    android:hint="@string/enter_email"
-                    android:inputType="textEmailAddress"
-                    android:padding="14dp"
-                    android:text="@={viewModel.registerInfo.email}"
-                    android:textColorHint="@color/brown_grey"
-                    android:textSize="14sp"
-                    app:isValid="@{3}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_email_title"
-                    app:number="@{viewModel.errorNumber}"
-                    app:onError="@{@string/invalid_email}" />
-
-                <TextView
-                    android:id="@+id/tv_nation_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="@dimen/margin_normal"
-                    android:text="@string/nation"
-                    android:textColor="@color/brownish_grey"
-                    android:textSize="@dimen/textSize_small"
-                    app:layout_constraintStart_toStartOf="@id/guideline2"
-                    app:layout_constraintTop_toBottomOf="@id/et_email" />
-
-                <TextView
-                    android:id="@+id/btn_nation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="@dimen/margin_normal"
-                    android:background="@drawable/edit_box"
-                    android:hint="@string/nation"
-                    android:padding="14dp"
-                    android:text="@{viewModel.selectedCountry[0].name}"
-                    android:textColorHint="@color/brown_grey"
-                    android:textSize="14sp"
-                    app:isValid="@{5}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/guideline2"
-                    app:layout_constraintTop_toBottomOf="@id/tv_nation_title"
-                    app:number="@{viewModel.errorNumber}"
-                    app:onError="@{@string/invalid_null}" />
-
-                <ImageView
-                    android:id="@+id/iv_side_btn"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/arrow_rotate"
-                    app:layout_constraintBottom_toBottomOf="@id/btn_nation"
-                    app:layout_constraintEnd_toEndOf="@id/btn_nation"
-                    app:layout_constraintTop_toTopOf="@id/btn_nation" />
 
                 <TextView
                     android:id="@+id/tv_gender_title"
@@ -279,176 +205,119 @@
                     android:textColor="@color/brownish_grey"
                     android:textSize="@dimen/textSize_small"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/et_email" />
+                    app:layout_constraintTop_toBottomOf="@id/et_birthday" />
 
-                <androidx.appcompat.widget.AppCompatSpinner
-                    android:id="@+id/spinner_gender"
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_male"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_normal"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/edit_box"
-                    android:gravity="start|center_vertical"
-                    android:padding="10dp"
-                    android:textSize="@dimen/textSize_normal"
-                    app:getSpinnerValue="@{viewModel.registerInfo}"
-                    app:isValid="@{4}"
-                    app:layout_constraintEnd_toStartOf="@id/guideline2"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    android:checkable="true"
+                    android:checked="@{viewModel.gender == 1}"
+                    android:text="@string/male"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    app:checkStateChange="@{viewModel.gender}"
+                    app:checkedIconEnabled="false"
+                    app:checkedIconVisible="false"
+                    app:chipBackgroundColor="@color/chip_state"
+                    app:chipChecked="@{1}"
+                    app:layout_constraintEnd_toEndOf="@id/guideline7"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_gender_title"
+                    app:layout_constraintTop_toBottomOf="@id/tv_gender_title" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_female"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    android:checkable="true"
+                    android:checked="@{viewModel.gender == 2}"
+                    android:text="@string/female"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    app:checkStateChange="@{viewModel.gender}"
+                    app:checkedIconEnabled="false"
+                    app:checkedIconVisible="false"
+                    app:chipBackgroundColor="@color/chip_state"
+                    app:chipChecked="@{2}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/guideline7"
+                    app:layout_constraintTop_toBottomOf="@id/tv_gender_title" />
+
+                <View
+                    android:id="@+id/gender_error_box"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginHorizontal="20dp"
+                    app:isValid="@{5}"
+                    app:layout_constraintBottom_toBottomOf="@id/chip_male"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/chip_male"
                     app:number="@{viewModel.errorNumber}"
-                    app:onError="@{@string/invalid_null}"
-                    app:setUpObserver="@{viewModel.collect}" />
+                    app:onError="@{@string/invalid_birthday}" />
+
+                <TextView
+                    android:id="@+id/tv_nation_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="@string/nation"
+                    android:textColor="@color/brownish_grey"
+                    android:textSize="@dimen/textSize_small"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/gender_error_box" />
+
+                <View
+                    android:id="@+id/click_nation"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="@drawable/edit_box"
+                    app:isValid="@{6}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_nation_title"
+                    app:number="@{viewModel.errorNumber}"
+                    app:onError="@{@string/invalid_null}" />
+
+                <TextView
+                    android:id="@+id/tv_nation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:hint="@string/nation"
+                    android:text="@{viewModel.selectedCountry[0].name}"
+                    app:layout_constraintBottom_toBottomOf="@id/click_nation"
+                    app:layout_constraintStart_toEndOf="@id/iv_flag"
+                    app:layout_constraintTop_toTopOf="@id/click_nation"
+                    tools:text="Korea" />
+
+
+                <ImageView
+                    android:id="@+id/iv_flag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintBottom_toBottomOf="@id/click_nation"
+                    app:layout_constraintStart_toStartOf="@id/click_nation"
+                    app:layout_constraintTop_toTopOf="@id/click_nation"
+                    app:setUpFlag="@{viewModel.selectedCountry[0].code}"
+                    app:size="@{null}"
+                    tools:layout_height="25dp"
+                    tools:layout_width="25dp"
+                    tools:src="@drawable/placeholder" />
 
                 <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guideline2"
+                    android:id="@+id/guideline7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent="0.5" />
-
-                <View
-                    android:id="@+id/line4"
-                    android:layout_width="0dp"
-                    android:layout_height="4dp"
-                    android:layout_marginTop="@dimen/margin_normal"
-                    android:background="@color/very_light_pink"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_gender" />
-
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/collapse_interest"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:isValid="@{6}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/line4"
-                    app:number="@{viewModel.errorNumber}"
-                    app:onError="@{@string/invalid_null}">
-
-                    <TextView
-                        android:id="@+id/tv_interest"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/margin_normal"
-                        android:text="@string/interest"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <View
-                        android:id="@+id/click_interest"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        app:layout_constraintBottom_toBottomOf="@id/tv_interest"
-                        app:layout_constraintTop_toTopOf="@id/tv_interest" />
-
-
-                    <androidx.appcompat.widget.AppCompatImageButton
-                        android:id="@+id/btn_interest"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/margin_normal"
-                        android:background="@drawable/side_arrow"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_interest"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tv_interest" />
-
-                    <TextView
-                        android:id="@+id/tv_interest_null"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_normal"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/unselected"
-                        android:textColor="@color/brown_grey"
-                        android:textSize="@dimen/textSize_small"
-                        android:textStyle="normal"
-                        android:visibility="@{viewModel.selectedInterest.size == 0 ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tv_interest" />
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cv_interest"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="@dimen/margin_normal"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="0dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@id/btn_interest"
-                        app:layout_constraintStart_toStartOf="@id/tv_interest"
-                        app:layout_constraintTop_toBottomOf="@id/tv_interest"
-                        app:strokeColor="@color/very_light_pink"
-                        app:strokeWidth="1dp">
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/rv_interest"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                tools:itemCount="3"
-                                tools:listitem="@layout/interest_list_tile" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                <View
-                    android:id="@+id/bottom_line"
-                    android:layout_width="0dp"
-                    android:layout_height="4dp"
-                    android:layout_marginTop="1dp"
-                    android:background="@color/very_light_pink"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/collapse_interest" />
-
-                <TextView
-                    android:id="@+id/tv_introduction"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:text="@string/introduction_optional"
-                    android:textColor="@color/brownish_grey"
-                    android:textSize="@dimen/textSize_small"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/bottom_line" />
-
-                <EditText
-                    android:id="@+id/et_introduction"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/margin_normal"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="80dp"
-                    android:background="@drawable/edit_box"
-                    android:hint="@string/introduce_yourself"
-                    android:padding="14dp"
-                    android:text="@={viewModel.registerInfo.description}"
-                    android:textColorHint="@color/brown_grey"
-                    android:textSize="14sp"
-                    app:isValid="@{8}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_introduction"
-                    app:number="@{viewModel.errorNumber}"
-                    app:onError="@{@string/invalid_name}" />
-
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 

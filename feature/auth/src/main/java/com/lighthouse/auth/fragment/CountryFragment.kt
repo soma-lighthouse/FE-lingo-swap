@@ -12,8 +12,6 @@ import com.lighthouse.auth.R
 import com.lighthouse.auth.databinding.FragmentCountryBinding
 import com.lighthouse.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -25,7 +23,7 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
         initBack()
         initStart()
         initCountry()
-        observeUpload()
+        initInterest()
         observeRegister()
         binding.etIntroduction.onCloseKeyBoard(requireContext())
         binding.viewModel = viewModel
@@ -34,25 +32,12 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
     override fun onResume() {
         super.onResume()
         viewModel.checkCountryUpdate(true)
+        viewModel.checkInterestUpdate()
     }
 
     private fun initBack() {
         binding.btnBack.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
-        }
-    }
-
-    private fun observeUpload() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.upload.drop(1).collect {
-                    if (it) {
-                        viewModel.registerUser()
-                    } else {
-                        flowOf(getString(com.lighthouse.android.common_ui.R.string.upload_error))
-                    }
-                }
-            }
         }
     }
 
@@ -105,5 +90,13 @@ class CountryFragment : BindingFragment<FragmentCountryBinding>(R.layout.fragmen
         mainNavigator.navigateToCountry(
             requireContext(), Pair("multiSelect", true)
         )
+    }
+
+    private fun initInterest() {
+        binding.clickInterest.setOnClickListener {
+            mainNavigator.navigateToInterest(
+                requireContext(), Pair("isRegister", true)
+            )
+        }
     }
 }

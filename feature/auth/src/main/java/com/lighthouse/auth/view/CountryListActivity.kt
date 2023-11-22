@@ -97,6 +97,7 @@ class CountryListActivity : BindingActivity<ActivityCountryBinding>(R.layout.act
                 val query = s.toString().trim().lowercase()
                 val filteredItems =
                     viewModel.country.filter { it.name.lowercase().contains(query) }
+                Log.d("TESTING DATA", filteredItems.toString())
                 adapter.submitList(filteredItems)
             }
         })
